@@ -10,14 +10,12 @@ import com.krux.hyperion.HyperionContext
 import com.typesafe.config.ConfigFactory
 
 
-class ExampleSpark extends {
-
-    override implicit val hc: HyperionContext = new HyperionContext(ConfigFactory.load("example"))
-
-  } with DataPipelineDef {
+class ExampleSpark extends DataPipelineDef {
 
   val target = "the-target"
   val jar = "s3://sample-jars/sample-jar-assembly-current.jar"
+
+  override implicit val hc: HyperionContext = new HyperionContext(ConfigFactory.load("example"))
 
   override lazy val schedule = Schedule()
     .startAtActivation
