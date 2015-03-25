@@ -1,18 +1,20 @@
-val scalatestArtifact = "org.scalatest" %% "scalatest" % "2.2.4" % "test"
-val awsDatapipelineArtifact = "com.amazonaws" % "aws-java-sdk-datapipeline" % "1.9.19"
-val nscalaTimeArtifact = "com.github.nscala-time" %% "nscala-time" % "1.8.0"
-val json4sJacksonArtifact = "org.json4s" %% "json4s-jackson" % "3.2.11"
-val scoptArtifact = "com.github.scopt" %% "scopt" % "3.3.0"
-val configArtifact = "com.typesafe" % "config" % "1.2.1"
+val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "2.2.4"  % "test"
+val awsDatapipelineArtifact = "com.amazonaws"          %  "aws-java-sdk-datapipeline" % "1.9.19"
+val nscalaTimeArtifact      = "com.github.nscala-time" %% "nscala-time"               % "1.8.0"
+val json4sJacksonArtifact   = "org.json4s"             %% "json4s-jackson"            % "3.2.11"
+val scoptArtifact           = "com.github.scopt"       %% "scopt"                     % "3.3.0"
+val configArtifact          = "com.typesafe"           %  "config"                    % "1.2.1"
+
+licenses += ("Apache", url("http://opensource.org/licenses/Apache-2.0"))
 
 lazy val commonSettings = Seq(
   organization := "com.krux",
   scalacOptions ++= Seq("-deprecation", "-feature", "-Xlint", "-Xfatal-warnings"),
-  version := "1.0.0",
+  version := "1.0.0-SNAPSHOT",
   scalaVersion := "2.11.6",
   crossScalaVersions := Seq("2.10.4", "2.11.6"),
   libraryDependencies += scalatestArtifact,
-  test in assembly := {},  // skip test during assembly
+  test in assembly := {}, // skip test during assembly
   assemblyJarName in assembly := "hyperion",
   assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(
     Seq(
@@ -25,7 +27,6 @@ lazy val commonSettings = Seq(
         |fi
         |exec java -cp $ext_jar$0 com.krux.hyperion.Hyperion $@""".stripMargin
   )))
-
 )
 
 lazy val root = (project in file(".")).
@@ -40,3 +41,4 @@ lazy val root = (project in file(".")).
       configArtifact
     )
   )
+

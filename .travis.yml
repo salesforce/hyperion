@@ -10,6 +10,7 @@ language: scala
 
 scala:
    - 2.10.4
+   - 2.11.6
 
 jdk:
    - oraclejdk7
@@ -23,4 +24,11 @@ notifications:
     - seth.yates@krux.com
     - kxie@krux.com
     - ysalomon@krux.com
+
+after_success:
+  - >
+      test "${TRAVIS_PULL_REQUEST}" = 'false' &&
+      test "${TRAVIS_JDK_VERSION}" = 'oraclejdk7' &&
+      test "${SONATYPE_USERNAME}" != '' &&
+      sbt 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publish
 
