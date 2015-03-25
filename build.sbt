@@ -5,7 +5,41 @@ val json4sJacksonArtifact   = "org.json4s"             %% "json4s-jackson"      
 val scoptArtifact           = "com.github.scopt"       %% "scopt"                     % "3.3.0"
 val configArtifact          = "com.typesafe"           %  "config"                    % "1.2.1"
 
-licenses += ("Apache", url("http://opensource.org/licenses/Apache-2.0"))
+licenses += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
+
+// Publishing stuff for sonatype
+publishMavenStyle := true
+
+pomIncludeRepository := { _ => false }
+
+publishTo <<= version { _.endsWith("SNAPSHOT") match {
+    case true  => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+    case false => Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+  }
+}
+
+pomExtra := (
+         <scm>
+            <url>git@github.com:krux/hyperion.git</url>
+            <connection>scm:git:git@github.com:krux/hyperion.git</connection>
+         </scm>
+         <developers>
+            <developer>
+              <id>realstraw</id>
+              <name>Kexin Xie</name>
+              <url>http://github.com/realstraw</url>
+            </developer>
+         </developers>
+)
+
+// Scaladoc publishing stuff
+site.settings
+
+ghpages.settings
+
+git.remoteRepo := "git@github.com:krux/hyperion.git"
+
+site.includeScaladoc()
 
 lazy val commonSettings = Seq(
   organization := "com.krux",
@@ -41,4 +75,3 @@ lazy val root = (project in file(".")).
       configArtifact
     )
   )
-

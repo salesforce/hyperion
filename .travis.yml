@@ -26,9 +26,5 @@ notifications:
     - ysalomon@krux.com
 
 after_success:
-  - >
-      test "${TRAVIS_PULL_REQUEST}" = 'false' &&
-      test "${TRAVIS_JDK_VERSION}" = 'oraclejdk7' &&
-      test "${SONATYPE_USERNAME}" != '' &&
-      sbt 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publish
+   - "[[ \"${TRAVIS_BRANCH}\" == \"master\" ]] && sbt ++$TRAVIS_SCALA_VERSION 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publish ghpagesPushSite"
 
