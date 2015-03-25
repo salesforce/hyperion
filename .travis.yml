@@ -1,0 +1,26 @@
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.m2/repository
+    - $HOME/.sbt
+    - $HOME/.ivy2
+
+language: scala
+
+scala:
+   - 2.10.4
+
+jdk:
+   - oraclejdk7
+
+sbt_args: -no-colors -J-Xss2m
+
+script: sbt ++$TRAVIS_SCALA_VERSION -Dsbt.log.noformat=true assembly test
+
+notifications:
+  email:
+    - seth.yates@krux.com
+    - kxie@krux.com
+    - ysalomon@krux.com
+

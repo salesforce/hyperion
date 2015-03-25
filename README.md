@@ -1,4 +1,5 @@
 # Hyperion
+[![Build Status](https://secure.travis-ci.org/krux/hyperion.png)](http://travis-ci.org/krux/hyperion)
 
 > In Starcraft, the Hyperion is a Behemoth-class battlecruiser. During the
 > Second Great War, Raynor's Raiders made strategic decisions on the
