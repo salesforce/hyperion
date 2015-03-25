@@ -92,11 +92,6 @@ The Scaladoc API for this project can be found [here](http://krux.github.io/hype
 
 Hyperion is licensed under [APL 2.0](LICENSE).
 
-
-```shell
-$ ./hyperion activate df-1234567890
-```
-
 ## Note
 
 Due to AWS data pipeline bug, all schemas involve data pipleine needs be available in the default
