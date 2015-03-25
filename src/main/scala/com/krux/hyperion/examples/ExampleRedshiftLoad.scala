@@ -9,7 +9,11 @@ import com.typesafe.config.ConfigFactory
 /**
  * An example redshift loader object
  */
-class ExampleRedshiftLoad extends DataPipelineDef {
+class ExampleRedshiftLoad extends {
+
+    override implicit val hc: HyperionContext = new HyperionContext(ConfigFactory.load("example"))
+
+  } with DataPipelineDef {
 
   object MockRedshift extends RedshiftDatabase {
     val id = "_MockRedshift"
@@ -20,7 +24,6 @@ class ExampleRedshiftLoad extends DataPipelineDef {
     val databaseName = "mock_db"
   }
 
-  override implicit val hc: HyperionContext = new HyperionContext(ConfigFactory.load("example"))
 
   override lazy val schedule = Schedule()
     .startAtActivation
