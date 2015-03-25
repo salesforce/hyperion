@@ -48,6 +48,13 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.6",
   crossScalaVersions := Seq("2.10.4", "2.11.6"),
   libraryDependencies += scalatestArtifact,
+  scalacOptions in (Compile, doc) <++= baseDirectory.map { (bd: File) =>
+    Seq(
+      "-sourcepath",
+      bd.getAbsolutePath,
+      "-doc-source-url",
+      "https://github.com/krux/hyperion/tree/master/€{FILE_PATH}.scala")
+  },
   test in assembly := {}, // skip test during assembly
   assemblyJarName in assembly := "hyperion",
   assemblyOption in assembly := (assemblyOption in assembly).value.copy(prependShellScript = Some(
