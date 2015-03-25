@@ -14,7 +14,8 @@ import scala.language.implicitConversions
  */
 trait DataPipelineDef {
 
-  implicit val hc: HyperionContext = new HyperionContext()
+  private lazy val context = new HyperionContext()
+  implicit def hc: HyperionContext = context
 
   def schedule: Schedule
 
