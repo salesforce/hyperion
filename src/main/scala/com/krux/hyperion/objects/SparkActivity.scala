@@ -16,7 +16,7 @@ case class SparkActivity (
   def withStepSeq(steps: Seq[SparkStep]) = this.copy(steps = steps)
   def withSteps(steps: SparkStep*) = this.copy(steps = steps)
 
-  def dependsOn(activities: EmrActivity*) = this.copy(dependsOn = activities)
+  def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = activities)
   def forClient(client: String) = this.copy(id = s"${id}_${client}")
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ dependsOn
