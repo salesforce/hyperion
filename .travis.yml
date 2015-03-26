@@ -2,18 +2,18 @@ sudo: false
 
 cache:
   directories:
-    - $HOME/.m2/repository
-    - $HOME/.sbt
-    - $HOME/.ivy2
+  - $HOME/.m2/repository
+  - $HOME/.sbt
+  - $HOME/.ivy2
 
 language: scala
 
 scala:
-   - 2.10.4
-   - 2.11.6
+- 2.10.4
+- 2.11.6
 
 jdk:
-   - oraclejdk7
+- oraclejdk7
 
 sbt_args: -no-colors -J-Xss2m
 
@@ -21,14 +21,34 @@ script: sbt ++$TRAVIS_SCALA_VERSION -Dsbt.log.noformat=true assembly test
 
 notifications:
   email:
-    - seth.yates@krux.com
-    - kxie@krux.com
-    - ysalomon@krux.com
+  - seth.yates@krux.com
+  - kxie@krux.com
+  - ysalomon@krux.com
 
 after_success:
-   - >
-        if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-            sbt ghpagesPushSite
-            sbt ++$TRAVIS_SCALA_VERSION 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publish
-        fi
+- |
+  if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+      sbt ++$TRAVIS_SCALA_VERSION 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publishSigned
+      sbt ghpagesPushSite
+  fi
 
+deploy:
+  provider: releases
+  api_key:
+    secure: I4pATNVFCtmETltcJ/uDw5sEgoU0qsooQPmyJ19orqb6ZhuWHqEMflQLkF9+YniXqTCMXvlMLmFpoY9kYXYtqnQwCK9g3v9h3uhNqLiI1iERPbABUtNxWXmKvSvL9YMaJrQOhTyZmfyZ4aktD+zzFVCx4DLYdkQJDhM4985D7v0=
+  file: target/scala-2.11/hyperion
+  on:
+    repo: krux/hyperion
+
+env:
+  global:
+  - secure: gxPE96KH5Ku+CZlmzM5i4qvQ0UUs+ftshhnvP5d9dbwC3fKdK3SWbCSuBoOCyjzW9wtjHCPJv/72JbPPoP0NLyW4J+LEiakFroXOhF3blPlu35BdqSrNbMprQt3afP+/0+r7rGvc4k2H5VdnYUvs2IgI8SIn/HCUNTKChvu75T0=
+  - secure: OEITQtulUhEqXTM8lDf9wQCbFp9Rq8uft2En3Q4pri90mb9+GlnCwNeygfdIYZtUri7DMfLjjm6d5gx+soyicX0yg4HCD2wCPtrtqq2wGmWa6uagn9yKZxls+sH723O6/OgQ8U80vDkVhZhXdthV2tXewFb+fUqE8gJhP4V5Mmc=
+  - secure: AgcMDBdt4c+3W5yUFoeKBy0o4cc0oPsCJB5phuzmXaVOjvtQL2QPzJSjd+peZ3muNgEHbWEAXDllQYWCv9Rz1A6/2vmSUYRzOjBAP+rcrjii/oXv7KZJbdVGc76U1H3vY0R0u/iFaq7U+AtqpJ5qSI2SqW51TT9fKnAS2fABO1I=
+  - secure: QtTEQi3ElKLNYbKI1lOJ21JKgJB0X8BsdhngMzMZymRVsbEF/vB0dI3wlBogxe8CIHMF0AhaNhO8f9ivV2nkPfHBNIRj4RpNE5NTHoVZwGittAnX0WUsHwnDIMJCgUi4+X/Q/rNlE32KpXL7bGfXu2UJBn2GfPLlpB0NMeaOYP8=
+
+before_install:
+- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
+  -in pubring.asc.enc -out pubring.asc -d
+- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
+  -in secring.asc.enc -out secring.asc -d
