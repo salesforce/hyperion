@@ -25,10 +25,16 @@ notifications:
   - kxie@krux.com
   - ysalomon@krux.com
 
+before_install:
+- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
+  -in pubring.asc.enc -out pubring.asc -d
+- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
+  -in secring.asc.enc -out secring.asc -d
+
 after_success:
 - |
   if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-      sbt ++$TRAVIS_SCALA_VERSION 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publishSigned
+      sbt ++$TRAVIS_SCALA_VERSION 'set pgpPassphrase := Some(System.getenv("PGP_PASSPHRASE").toCharArray); set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publishSigned
       sbt ghpagesPushSite
   fi
 
@@ -46,9 +52,5 @@ env:
   - secure: OEITQtulUhEqXTM8lDf9wQCbFp9Rq8uft2En3Q4pri90mb9+GlnCwNeygfdIYZtUri7DMfLjjm6d5gx+soyicX0yg4HCD2wCPtrtqq2wGmWa6uagn9yKZxls+sH723O6/OgQ8U80vDkVhZhXdthV2tXewFb+fUqE8gJhP4V5Mmc=
   - secure: AgcMDBdt4c+3W5yUFoeKBy0o4cc0oPsCJB5phuzmXaVOjvtQL2QPzJSjd+peZ3muNgEHbWEAXDllQYWCv9Rz1A6/2vmSUYRzOjBAP+rcrjii/oXv7KZJbdVGc76U1H3vY0R0u/iFaq7U+AtqpJ5qSI2SqW51TT9fKnAS2fABO1I=
   - secure: QtTEQi3ElKLNYbKI1lOJ21JKgJB0X8BsdhngMzMZymRVsbEF/vB0dI3wlBogxe8CIHMF0AhaNhO8f9ivV2nkPfHBNIRj4RpNE5NTHoVZwGittAnX0WUsHwnDIMJCgUi4+X/Q/rNlE32KpXL7bGfXu2UJBn2GfPLlpB0NMeaOYP8=
+  - secure: Mtll3lbrIwEPKe/wFnvoPIirgKuHKbgsgajCepO5EG3VJ5NfMGsOlEa4iubJjdHSh9WSslv67fz9u8ug4Jo4totuPfwIC/5mfOwFSiWFXq4aOXmTUMScYoCIaeAj+PI5gWw9kPliTZesj7rJ8Tre8JoeMNO+u7xn6CzejuQAa3E=
 
-before_install:
-- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
-  -in pubring.asc.enc -out pubring.asc -d
-- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
-  -in secring.asc.enc -out secring.asc -d
