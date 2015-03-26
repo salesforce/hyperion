@@ -27,9 +27,9 @@ notifications:
 
 before_install:
 - openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
-  -in pubring.asc.enc -out pubring.asc -d
-- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
   -in secring.asc.enc -out secring.asc -d
+- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
+  -in pubring.asc.enc -out pubring.asc -d
 
 after_success:
 - |
@@ -48,9 +48,7 @@ deploy:
 
 env:
   global:
-  - secure: gxPE96KH5Ku+CZlmzM5i4qvQ0UUs+ftshhnvP5d9dbwC3fKdK3SWbCSuBoOCyjzW9wtjHCPJv/72JbPPoP0NLyW4J+LEiakFroXOhF3blPlu35BdqSrNbMprQt3afP+/0+r7rGvc4k2H5VdnYUvs2IgI8SIn/HCUNTKChvu75T0=
-  - secure: OEITQtulUhEqXTM8lDf9wQCbFp9Rq8uft2En3Q4pri90mb9+GlnCwNeygfdIYZtUri7DMfLjjm6d5gx+soyicX0yg4HCD2wCPtrtqq2wGmWa6uagn9yKZxls+sH723O6/OgQ8U80vDkVhZhXdthV2tXewFb+fUqE8gJhP4V5Mmc=
-  - secure: AgcMDBdt4c+3W5yUFoeKBy0o4cc0oPsCJB5phuzmXaVOjvtQL2QPzJSjd+peZ3muNgEHbWEAXDllQYWCv9Rz1A6/2vmSUYRzOjBAP+rcrjii/oXv7KZJbdVGc76U1H3vY0R0u/iFaq7U+AtqpJ5qSI2SqW51TT9fKnAS2fABO1I=
-  - secure: QtTEQi3ElKLNYbKI1lOJ21JKgJB0X8BsdhngMzMZymRVsbEF/vB0dI3wlBogxe8CIHMF0AhaNhO8f9ivV2nkPfHBNIRj4RpNE5NTHoVZwGittAnX0WUsHwnDIMJCgUi4+X/Q/rNlE32KpXL7bGfXu2UJBn2GfPLlpB0NMeaOYP8=
-  - secure: Mtll3lbrIwEPKe/wFnvoPIirgKuHKbgsgajCepO5EG3VJ5NfMGsOlEa4iubJjdHSh9WSslv67fz9u8ug4Jo4totuPfwIC/5mfOwFSiWFXq4aOXmTUMScYoCIaeAj+PI5gWw9kPliTZesj7rJ8Tre8JoeMNO+u7xn6CzejuQAa3E=
+  - secure: P0hN/qmlzFkcVZ63zQHQymkFpcIpaWCGs7vbXiVHyvc5xqswtCQuy1C2jQDQc2r9J4/VkUgbXNAIYAraRmyGix7+27f314Nuk44k5s7xsuXvs3NN3RqK0r6Mkirn4oV/ZOhiHUseFWw3KP91ifFUUbE0b1f+xOtRN8uPhT4It8k=
+  - secure: b/XcN+JB6b+ajlIjnRGGFzArJRTKXkxuUE+NjUOLsjd9O9EP3Ap4E3PObYW5iUd+8AE2nBwql8BJYFgLJv1xvy0r+jbtRCL15pmeQtcNyfPVSWsZlpJIF1DNeRF+TzMTpYSbldMQM4YyQVv8/gzkEZ3MQ8+tWNXCFPa35VP6bUY=
+  - secure: GDEME7KE6jFcp6Ktv5gJY0rUbDVzz7uV5JhR2hk+aBy1F0HnWDLXk5d/6an4RjIJ2cOGcPs8YEApo6viuc12dHcwhFTRWQH1DZqUI9F1mi1TZ4HGHQclpGhJud2Jr0Inwcm2D8lhe7FHbspAzeVkUBRhW7qiNsM9iQfgZ8qZQAE=
 
