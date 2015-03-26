@@ -36,14 +36,7 @@ after_success:
   if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
       sbt ++$TRAVIS_SCALA_VERSION 'set pgpPassphrase := Some(System.getenv("PGP_PASSPHRASE").toCharArray)' 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publishSigned
   fi
-
-deploy:
-  provider: releases
-  api_key:
-    secure: I4pATNVFCtmETltcJ/uDw5sEgoU0qsooQPmyJ19orqb6ZhuWHqEMflQLkF9+YniXqTCMXvlMLmFpoY9kYXYtqnQwCK9g3v9h3uhNqLiI1iERPbABUtNxWXmKvSvL9YMaJrQOhTyZmfyZ4aktD+zzFVCx4DLYdkQJDhM4985D7v0=
-  file: target/scala-2.11/hyperion
-  on:
-    repo: krux/hyperion
+  rm -f secring.asc pubring.asc
 
 env:
   global:
