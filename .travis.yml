@@ -26,15 +26,16 @@ notifications:
   - ysalomon@krux.com
 
 before_install:
-- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
-  -in secring.asc.enc -out secring.asc -d
-- openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv
-  -in pubring.asc.enc -out pubring.asc -d
+- |
+  if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+    openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv -in secring.asc.enc -out secring.asc -d
+    openssl aes-256-cbc -K $encrypted_eb2e0c1b1c49_key -iv $encrypted_eb2e0c1b1c49_iv -in pubring.asc.enc -out pubring.asc -d
+  fi
 
 after_success:
 - |
   if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-      sbt ++$TRAVIS_SCALA_VERSION 'set pgpPassphrase := Some(System.getenv("PGP_PASSPHRASE").toCharArray)' 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publishSigned
+    sbt ++$TRAVIS_SCALA_VERSION 'set pgpPassphrase := Some(System.getenv("PGP_PASSPHRASE").toCharArray)' 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publishSigned
   fi
   rm -f secring.asc pubring.asc
 
