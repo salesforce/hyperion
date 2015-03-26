@@ -35,7 +35,6 @@ after_success:
 - |
   if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
       sbt ++$TRAVIS_SCALA_VERSION 'set pgpPassphrase := Some(System.getenv("PGP_PASSPHRASE").toCharArray)' 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' publishSigned
-      sbt ghpagesPushSite
   fi
 
 deploy:
