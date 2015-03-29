@@ -6,7 +6,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - TODO
 
-## 1.0.3-SNAPSHOT
+## 1.0.5
+### Added
+- #13 Support SQL related databases and the relevant data nodes
+
+## 1.0.4
+### Added
+- #20 Support Actions
+
+## 1.0.3
 ### Added
 - #9 - Additional activity types (PigActivity, HiveActivity, HiveCopyActivity, CopyActivity)
 
