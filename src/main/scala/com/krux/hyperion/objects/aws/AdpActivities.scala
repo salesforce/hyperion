@@ -252,7 +252,7 @@ case class AdpHiveCopyActivity (
  * @param scriptUri The location of the Pig script to run. For example, s3://script location. You must specify either scriptUri or script.
  * @param scriptVariable The arguments to pass to the Pig script. You can use scriptVariable with script or scriptUri.
  * @param stage Determines whether staging is enabled and allows your Pig script to have access to the
- *              staged-data tables, such as ${INPUT1} and ${OUTPUT1}.
+ *              staged-data tables, such as {{{\$\{INPUT1\}}}} and {{{\$\{OUTPUT1\}}}}.
  *
  */
 case class AdpPigActivity (
