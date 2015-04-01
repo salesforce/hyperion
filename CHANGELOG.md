@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - TODO
 
+## 1.3.0 - 2014-04-01
+### Added
+- #5 - Support parameters
+
 ## 1.2.0 - 2015-03-31
 ### Fixed
 - #26 - ShellCommandActivity input and output should actually be a sequence of DataNodes.
