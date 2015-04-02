@@ -3,10 +3,8 @@ package com.krux.hyperion.objects
 import com.github.nscala_time.time.Imports.{DateTime, DateTimeZone}
 import com.krux.hyperion.expressions.DpPeriod
 import com.krux.hyperion.Implicits._
-import com.krux.hyperion.objects.aws.{AdpStartAtSchedule, AdpStartDateTimeSchedule,
-  AdpJsonSerializer}
+import com.krux.hyperion.objects.aws.AdpSchedule
 import com.krux.hyperion.objects.ScheduleType._
-
 
 /**
  * Cron liked schedule that runs at defined period.
@@ -14,15 +12,13 @@ import com.krux.hyperion.objects.ScheduleType._
  * @note If start time given is a past time, data pipeline will perform back fill from the start.
  */
 case class Schedule(
-    id: String = "PipelineSchedule",
-    // if None, will use first activation datetime
-    start: Option[DateTime] = None,
-    period: DpPeriod = 1.day,
-    occurrences: Option[Int] = None,
-    scheduleType: ScheduleType = Cron
-  ) extends PipelineObject {
-
-  val `type` = "Schedule"
+  id: String = "PipelineSchedule",
+  // if None, will use first activation datetime
+  start: Option[DateTime] = None,
+  period: DpPeriod = 1.day,
+  end: Option[Either[Int, DateTime]] = None,
+  scheduleType: ScheduleType = Cron
+) extends PipelineObject {
 
   def startAtActivation = this.copy(start = None)
 
@@ -44,31 +40,55 @@ case class Schedule(
     this.copy(start = Option(startDt))
   }
 
-  def period(p: DpPeriod) = this.copy(period = p)
+  def every(p: DpPeriod) = this.copy(period = p)
+
+  @deprecated("Use 'every' instead of 'period'", "2015-04-01") def period(p: DpPeriod) = this.copy(period = p)
+
+  def until(dt: DateTime) = this.copy(end = Some(Right(dt)))
+  def stopAfter(occurrences: Int) = this.copy(end = Some(Left(occurrences)))
 
   def serialize = start match {
-      case Some(dt) =>
-        AdpStartDateTimeSchedule(
-          id,
-          Some(id),
-          period.toString,
-          dt,
-          occurrences.map(_.toString)
-        )
-      case None =>
-        AdpStartAtSchedule(
-          id,
-          Some(id),
-          period.toString,
-          "FIRST_ACTIVATION_DATE_TIME",
-          occurrences.map(_.toString)
-        )
-    }
+    case Some(dt) =>
+      AdpSchedule(
+        id = id,
+        name = Some(id),
+        period = period.toString,
+        startAt = None,
+        startDateTime = Some(dt),
+        endDateTime = end.flatMap {
+          case Right(dt) => Some(dt)
+          case _ => None
+        },
+        occurrences = end.flatMap {
+          case Left(occurrences) => Some(occurrences.toString)
+          case _ => None
+        }
+      )
+
+    case None =>
+      AdpSchedule(
+        id = id,
+        name = Some(id),
+        period = period.toString,
+        startAt = Some("FIRST_ACTIVATION_DATE_TIME"),
+        startDateTime = None,
+        endDateTime = end.flatMap {
+          case Right(dt) => Some(dt)
+          case _ => None
+        },
+        occurrences = end.flatMap {
+          case Left(occurrences) => Some(occurrences.toString)
+          case _ => None
+        }
+      )
+  }
 
 }
 
 object Schedule {
-  def cron = new Schedule("PipelineSchedule", None, 1.day, None, Cron)
-  def timeSeries = new Schedule("PipelineSchedule", None, 1.day, None, TimeSeries)
-  def onceAtActivation = new Schedule("PipelineSchedule", None, 1.day, Some(1), Cron)
+  def cron = Schedule(scheduleType = Cron)
+
+  def timeSeries = Schedule(scheduleType = TimeSeries)
+
+  def onceAtActivation = Schedule(end = Some(Left(1)), scheduleType = Cron)
 }
