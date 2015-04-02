@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - TODO
 
+## 1.5.0 - 2015-04-02
+### Added
+- #6 - Support remaining schedule aspects
+
 ## 1.4.0 - 2015-04-01
 ### Added
 - #14 - Make datapipelineDef be able to have an CLI and remove the Hyperion executable
