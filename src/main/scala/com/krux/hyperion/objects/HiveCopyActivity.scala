@@ -4,23 +4,25 @@ import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.objects.aws.{AdpHiveCopyActivity, AdpDataNode, AdpRef, AdpEmrCluster, AdpActivity, AdpPrecondition}
 import com.krux.hyperion.objects.aws.AdpSnsAlarm
 
-case class HiveCopyActivity(
-  id: String,
+case class HiveCopyActivity private (
+  id: PipelineObjectId,
   runsOn: EmrCluster,
-  filterSql: Option[String] = None,
-  generatedScriptsPath: Option[String] = None,
-  input: Option[DataNode] = None,
-  output: Option[DataNode] = None,
-  dependsOn: Seq[PipelineActivity] = Seq(),
-  preconditions: Seq[Precondition] = Seq(),
-  onFailAlarms: Seq[SnsAlarm] = Seq(),
-  onSuccessAlarms: Seq[SnsAlarm] = Seq(),
-  onLateActionAlarms: Seq[SnsAlarm] = Seq()
+  filterSql: Option[String],
+  generatedScriptsPath: Option[String],
+  input: Option[DataNode],
+  output: Option[DataNode],
+  dependsOn: Seq[PipelineActivity],
+  preconditions: Seq[Precondition],
+  onFailAlarms: Seq[SnsAlarm],
+  onSuccessAlarms: Seq[SnsAlarm],
+  onLateActionAlarms: Seq[SnsAlarm]
 )(
   implicit val hc: HyperionContext
 ) extends PipelineActivity {
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withFilterSql(filterSql: String) = this.copy(filterSql = Some(filterSql))
   def withGeneratedScriptsPath(generatedScriptsPath: String) = this.copy(generatedScriptsPath = Some(generatedScriptsPath))
@@ -65,4 +67,21 @@ case class HiveCopyActivity(
       case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
     }
   )
+}
+
+object HiveCopyActivity {
+  def apply(runsOn: EmrCluster)(implicit hc: HyperionContext) =
+    new HiveCopyActivity(
+      id = PipelineObjectId("HiveCopyActivity"),
+      runsOn = runsOn,
+      filterSql = None,
+      generatedScriptsPath = None,
+      input = None,
+      output = None,
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
 }

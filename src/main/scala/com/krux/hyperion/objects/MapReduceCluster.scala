@@ -6,14 +6,18 @@ import com.krux.hyperion.HyperionContext
 /**
  * Launch a MapReduce cluster
  */
-case class MapReduceCluster(
-  id: String = "MapReduceCluster",
-  taskInstanceCount: Int = 0
+case class MapReduceCluster private (
+  id: PipelineObjectId,
+  taskInstanceCount: Int
 )(
   implicit val hc: HyperionContext
 ) extends EmrCluster {
 
   assert(taskInstanceCount >= 0)
+
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   val amiVersion = hc.emrAmiVersion
   val coreInstanceCount = 2
@@ -27,48 +31,7 @@ case class MapReduceCluster(
 
   val terminateAfter = hc.emrTerminateAfter
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
-
   def withTaskInstanceCount(n: Int) = this.copy(taskInstanceCount = n)
-
-  def runMapReduce(id: String) =
-    MapReduceActivity(
-      id = id,
-      runsOn = this
-    )
-
-  def runPigScript(id: String) =
-    PigActivity(
-      id = id,
-      runsOn = this
-    )
-
-  def runHiveScript(name: String, hiveScript: Option[String] = None,
-      scriptUri: Option[String] = None, scriptVariable: Option[String] = None,
-      input: Option[DataNode] = None, output: Option[DataNode] = None) =
-    HiveActivity(
-      id = name,
-      runsOn = this,
-      hiveScript = hiveScript,
-      scriptUri = scriptUri,
-      scriptVariable = scriptVariable,
-      input = input,
-      output = output
-    )
-
-  def runHiveCopy(id: String,
-      filterSql: Option[String] = None,
-      generatedScriptsPath: Option[String] = None,
-      input: Option[DataNode] = None,
-      output: Option[DataNode] = None) =
-    HiveCopyActivity(
-      id = id,
-      runsOn = this,
-      filterSql = filterSql,
-      generatedScriptsPath = generatedScriptsPath,
-      input = input,
-      output = output
-    )
 
   def serialize = AdpEmrCluster(
     id = id,
@@ -84,4 +47,12 @@ case class MapReduceCluster(
     keyPair = keyPair
   )
 
+}
+
+object MapReduceCluster {
+  def apply()(implicit hc: HyperionContext) =
+    new MapReduceCluster(
+      id = PipelineObjectId("MapReduceCluster"),
+      taskInstanceCount = 0
+    )
 }

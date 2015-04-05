@@ -11,22 +11,24 @@ import com.krux.hyperion.objects.aws.AdpSnsAlarm
 /**
  * Activity to recursively delete files in an S3 path.
  */
-case class DeleteS3PathActivity(
-  id: String,
+case class DeleteS3PathActivity private (
+  id: PipelineObjectId,
   s3Path: String,
   runsOn: Ec2Resource,
-  stdout: Option[String] = None,
-  stderr: Option[String] = None,
-  dependsOn: Seq[PipelineActivity] = Seq(),
-  preconditions: Seq[Precondition] = Seq(),
-  onFailAlarms: Seq[SnsAlarm] = Seq(),
-  onSuccessAlarms: Seq[SnsAlarm] = Seq(),
-  onLateActionAlarms: Seq[SnsAlarm] = Seq()
+  stdout: Option[String],
+  stderr: Option[String],
+  dependsOn: Seq[PipelineActivity],
+  preconditions: Seq[Precondition],
+  onFailAlarms: Seq[SnsAlarm],
+  onSuccessAlarms: Seq[SnsAlarm],
+  onLateActionAlarms: Seq[SnsAlarm]
 )(
   implicit val hc: HyperionContext
 ) extends PipelineActivity {
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withStdoutTo(out: String) = this.copy(stdout = Some(out))
   def withStderrTo(err: String) = this.copy(stderr = Some(err))
@@ -73,4 +75,20 @@ case class DeleteS3PathActivity(
     }
   )
 
+}
+
+object DeleteS3PathActivity {
+  def apply(s3Path: String, runsOn: Ec2Resource)(implicit hc: HyperionContext) =
+    new DeleteS3PathActivity(
+      id = PipelineObjectId("DeleteS3PathActivity"),
+      s3Path = s3Path,
+      runsOn = runsOn,
+      stdout = None,
+      stderr = None,
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
 }

@@ -7,8 +7,8 @@ import com.krux.hyperion.objects.aws.AdpSnsAlarm
 /**
  * Redshift copy activity
  */
-case class RedshiftCopyActivity(
-  id: String,
+case class RedshiftCopyActivity private (
+  id: PipelineObjectId,
   input: S3DataNode,
   output: RedshiftDataNode,
   insertMode: RedshiftCopyActivity.InsertMode,
@@ -21,6 +21,10 @@ case class RedshiftCopyActivity(
   onSuccessAlarms: Seq[SnsAlarm] = Seq(),
   onLateActionAlarms: Seq[SnsAlarm] = Seq()
 ) extends PipelineActivity {
+
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withCopyOptions(opts: RedshiftCopyOption*) = this.copy(commandOptions = opts)
 
@@ -77,5 +81,21 @@ object RedshiftCopyActivity extends Enumeration with RunnableObject {
   val KeepExisting = Value("KEEP_EXISTING")
   val OverwriteExisting = Value("OVERWRITE_EXISTING")
   val Truncate = Value("TRUNCATE")
+
+  def apply(input: S3DataNode, output: RedshiftDataNode, insertMode: InsertMode, runsOn: Ec2Resource) =
+    new RedshiftCopyActivity(
+      id = PipelineObjectId("RedshiftCopyActivity"),
+      input = input,
+      output = output,
+      insertMode = insertMode,
+      runsOn = runsOn,
+      transformSql = None,
+      commandOptions = Seq(),
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
 
 }

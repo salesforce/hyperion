@@ -7,21 +7,23 @@ import com.krux.hyperion.objects.aws.AdpSnsAlarm
 /**
  * Defines a MapReduce activity
  */
-case class MapReduceActivity(
-  id: String,
+case class MapReduceActivity private (
+  id: PipelineObjectId,
   runsOn: EmrCluster,
-  steps: Seq[MapReduceStep] = Seq(),
-  dependsOn: Seq[PipelineActivity] = Seq(),
-  preconditions: Seq[Precondition] = Seq(),
-  onFailAlarms: Seq[SnsAlarm] = Seq(),
-  onSuccessAlarms: Seq[SnsAlarm] = Seq(),
-  onLateActionAlarms: Seq[SnsAlarm] = Seq()
+  steps: Seq[MapReduceStep],
+  dependsOn: Seq[PipelineActivity],
+  preconditions: Seq[Precondition],
+  onFailAlarms: Seq[SnsAlarm],
+  onSuccessAlarms: Seq[SnsAlarm],
+  onLateActionAlarms: Seq[SnsAlarm]
 ) extends EmrActivity {
 
   def withStepSeq(steps: Seq[MapReduceStep]) = this.copy(steps = steps)
   def withSteps(steps: MapReduceStep*) = this.copy(steps = steps)
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = activities)
   def whenMet(preconditions: Precondition*) = this.copy(preconditions = preconditions)
@@ -66,4 +68,16 @@ case class MapReduceActivity(
 
 }
 
-object MapReduceActivity extends RunnableObject
+object MapReduceActivity extends RunnableObject {
+  def apply(runsOn: EmrCluster) =
+    new MapReduceActivity(
+      id = PipelineObjectId("MapReduceActivity"),
+      runsOn = runsOn,
+      steps = Seq(),
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
+}

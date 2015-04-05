@@ -23,7 +23,7 @@ object ExampleSpark extends DataPipelineDef {
     .every(1.day)
     .stopAfter(3)
 
-  val location = S3KeyParameter("S3Location", "s3://krux-temp/")
+  val location = S3KeyParameter("S3Location", "s3://your-location/")
   val instanceType = StringParameter("InstanceType", "c3.8xlarge")
   val instanceCount = IntegerParameter("InstanceCount", 8)
   val instanceBid = DoubleParameter("InstanceBid", 3.40)
@@ -33,7 +33,7 @@ object ExampleSpark extends DataPipelineDef {
   override def workflow = {
 
     // Actions
-    val mailAction = SnsAlarm("sns-alarm-1")
+    val mailAction = SnsAlarm()
       .withSubject("Something happened at #{node.@scheduledStartTime}")
       .withMessage(s"Some message ${instanceCount} x ${instanceType} @ ${instanceBid} for ${location}")
       .withTopicArn("arn:aws:sns:us-east-1:28619EXAMPLE:ExampleTopic")
@@ -51,7 +51,8 @@ object ExampleSpark extends DataPipelineDef {
         format(SparkActivity.scheduledStartTime - 3.days, "yyyy-MM-dd")
       )
 
-    val filterActivity = SparkActivity("filterActivity", sparkCluster)
+    val filterActivity = SparkActivity(sparkCluster)
+      .named("filterActivity")
       .withSteps(filterStep)
       .onFail(mailAction)
 
@@ -70,7 +71,8 @@ object ExampleSpark extends DataPipelineDef {
       .withMainClass("com.krux.hyperion.ScoreJob2")
       .withArgs(target, format(SparkActivity.scheduledStartTime - 3.days, "yyyy-MM-dd"))
 
-    val scoreActivity = SparkActivity("scoreActivity", sparkCluster)
+    val scoreActivity = SparkActivity(sparkCluster)
+      .named("scoreActivity")
       .withSteps(scoreStep1, scoreStep2)
       .dependsOn(filterActivity)
       .onSuccess(mailAction)

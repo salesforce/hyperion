@@ -10,22 +10,24 @@ trait GoogleStorageActivity extends PipelineActivity
 /**
  * Google Storage Download activity
  */
-case class GoogleStorageDownloadActivity(
-  id: String,
+case class GoogleStorageDownloadActivity private (
+  id: PipelineObjectId,
   runsOn: Ec2Resource,
-  input: String = "",
-  output: Option[S3DataNode] = None,
-  botoConfigUrl: String = "",
-  dependsOn: Seq[PipelineActivity] = Seq(),
-  preconditions: Seq[Precondition] = Seq(),
-  onFailAlarms: Seq[SnsAlarm] = Seq(),
-  onSuccessAlarms: Seq[SnsAlarm] = Seq(),
-  onLateActionAlarms: Seq[SnsAlarm] = Seq()
+  input: String,
+  output: Option[S3DataNode],
+  botoConfigUrl: String,
+  dependsOn: Seq[PipelineActivity],
+  preconditions: Seq[Precondition],
+  onFailAlarms: Seq[SnsAlarm],
+  onSuccessAlarms: Seq[SnsAlarm],
+  onLateActionAlarms: Seq[SnsAlarm]
 )(
   implicit val hc: HyperionContext
 ) extends GoogleStorageActivity {
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withBotoConfigUrl(url: String) = this.copy(botoConfigUrl = url)
   def withInput(path: String) = this.copy(input = path)
@@ -75,25 +77,43 @@ case class GoogleStorageDownloadActivity(
 
 }
 
+object GoogleStorageDownloadActivity {
+  def apply(runsOn: Ec2Resource)(implicit hc: HyperionContext) =
+    new GoogleStorageDownloadActivity(
+      id = PipelineObjectId("GoogleStorageDownloadActivity"),
+      runsOn = runsOn,
+      input = "",
+      output = None,
+      botoConfigUrl = "",
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
+}
+
 /**
  * Google Storage Upload activity
  */
-case class GoogleStorageUploadActivity(
-  id: String,
+case class GoogleStorageUploadActivity private (
+  id: PipelineObjectId,
   runsOn: Ec2Resource,
-  input: Option[S3DataNode] = None,
-  output: String = "",
-  botoConfigUrl: String = "",
-  dependsOn: Seq[PipelineActivity] = Seq(),
-  preconditions: Seq[Precondition] = Seq(),
-  onFailAlarms: Seq[SnsAlarm] = Seq(),
-  onSuccessAlarms: Seq[SnsAlarm] = Seq(),
-  onLateActionAlarms: Seq[SnsAlarm] = Seq()
+  input: Option[S3DataNode],
+  output: String,
+  botoConfigUrl: String,
+  dependsOn: Seq[PipelineActivity],
+  preconditions: Seq[Precondition],
+  onFailAlarms: Seq[SnsAlarm],
+  onSuccessAlarms: Seq[SnsAlarm],
+  onLateActionAlarms: Seq[SnsAlarm]
 )(
   implicit val hc: HyperionContext
 ) extends GoogleStorageActivity {
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withBotoConfigUrl(url: String) = this.copy(botoConfigUrl = url)
   def withInput(in: S3DataNode) = this.copy(input = Some(in))
@@ -141,4 +161,20 @@ case class GoogleStorageUploadActivity(
     }
   )
 
+}
+
+object GoogleStorageUploadActivity {
+  def apply(runsOn: Ec2Resource)(implicit hc: HyperionContext) =
+    new GoogleStorageUploadActivity(
+      id = PipelineObjectId("GoogleStorageUploadActivity"),
+      runsOn = runsOn,
+      input = None,
+      output = "",
+      botoConfigUrl = "",
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
 }

@@ -8,26 +8,28 @@ import com.krux.hyperion.objects.aws.AdpSnsAlarm
 /**
  * Shell command activity
  */
-case class JarActivity(
-  id: String,
+case class JarActivity private (
+  id: PipelineObjectId,
   runsOn: Ec2Resource,
-  jar: Option[String] = None,
-  mainClass: Option[String] = None,
-  arguments: Seq[String] = Seq(),
-  input: Seq[S3DataNode] = Seq(),
-  output: Seq[S3DataNode] = Seq(),
-  stdout: Option[String] = None,
-  stderr: Option[String] = None,
-  dependsOn: Seq[PipelineActivity] = Seq(),
-  preconditions: Seq[Precondition] = Seq(),
-  onFailAlarms: Seq[SnsAlarm] = Seq(),
-  onSuccessAlarms: Seq[SnsAlarm] = Seq(),
-  onLateActionAlarms: Seq[SnsAlarm] = Seq()
+  jar: Option[String],
+  mainClass: Option[String],
+  arguments: Seq[String],
+  input: Seq[S3DataNode],
+  output: Seq[S3DataNode],
+  stdout: Option[String],
+  stderr: Option[String],
+  dependsOn: Seq[PipelineActivity],
+  preconditions: Seq[Precondition],
+  onFailAlarms: Seq[SnsAlarm],
+  onSuccessAlarms: Seq[SnsAlarm],
+  onLateActionAlarms: Seq[SnsAlarm]
 )(
   implicit val hc: HyperionContext
 ) extends PipelineActivity {
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withJar(jar: String) = this.copy(jar = Some(jar))
   def withMainClass(mainClass: String) = this.copy(mainClass = Some(mainClass))
@@ -87,4 +89,24 @@ case class JarActivity(
     }
   )
 
+}
+
+object JarActivity {
+  def apply(runsOn: Ec2Resource)(implicit hc: HyperionContext) =
+    new JarActivity(
+      id = PipelineObjectId("JarActivity"),
+      runsOn = runsOn,
+      jar = None,
+      mainClass = None,
+      arguments = Seq(),
+      input = Seq(),
+      output = Seq(),
+      stdout = None,
+      stderr = None,
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
 }

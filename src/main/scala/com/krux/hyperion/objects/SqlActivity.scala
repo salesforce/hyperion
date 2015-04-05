@@ -3,21 +3,23 @@ package com.krux.hyperion.objects
 import com.krux.hyperion.objects.aws.{AdpSqlActivity, AdpEc2Resource, AdpRef, AdpDatabase,
   AdpActivity, AdpSnsAlarm, AdpPrecondition}
 
-case class SqlActivity (
-  id: String,
+case class SqlActivity private (
+  id: PipelineObjectId,
   runsOn: Ec2Resource,
   database: Database,
   script: String,
-  scriptArgument: Seq[String] = Seq(),
-  queue: Option[String] = None,
-  dependsOn: Seq[PipelineActivity] = Seq(),
-  preconditions: Seq[Precondition] = Seq(),
-  onFailAlarms: Seq[SnsAlarm] = Seq(),
-  onSuccessAlarms: Seq[SnsAlarm] = Seq(),
-  onLateActionAlarms: Seq[SnsAlarm] = Seq()
+  scriptArgument: Seq[String],
+  queue: Option[String],
+  dependsOn: Seq[PipelineActivity],
+  preconditions: Seq[Precondition],
+  onFailAlarms: Seq[SnsAlarm],
+  onSuccessAlarms: Seq[SnsAlarm],
+  onLateActionAlarms: Seq[SnsAlarm]
 ) extends PipelineActivity {
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withQueue(queue: String) = this.copy(queue = Option(queue))
 
@@ -62,4 +64,21 @@ case class SqlActivity (
       case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
     }
   )
+}
+
+object SqlActivity {
+  def apply(runsOn: Ec2Resource, database: Database, script: String) =
+    new SqlActivity(
+      id = PipelineObjectId("SqlActivity"),
+      runsOn = runsOn,
+      database = database,
+      script = script,
+      scriptArgument = Seq(),
+      queue = None,
+      dependsOn = Seq(),
+      preconditions = Seq(),
+      onFailAlarms = Seq(),
+      onSuccessAlarms = Seq(),
+      onLateActionAlarms = Seq()
+    )
 }

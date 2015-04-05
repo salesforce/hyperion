@@ -6,8 +6,8 @@ import com.krux.hyperion.HyperionContext
 /**
  * Launch a Spark cluster
  */
-case class SparkCluster (
-  id: String,
+case class SparkCluster private (
+  id: PipelineObjectId,
   taskInstanceCount: Int,
   coreInstanceCount: Int,
   instanceType: String,
@@ -20,55 +20,16 @@ case class SparkCluster (
 
   assert(taskInstanceCount >= 0)
 
+  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
+
+  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
+
   def instanceCount = 1 + coreInstanceCount + taskInstanceCount
 
   val bootstrapAction = s"s3://support.elasticmapreduce/spark/install-spark,-v,$sparkVersion,-x" ::
       hc.emrEnvironmentUri.map(env => s"${hc.scriptUri}deploy-hyperion-emr-env.sh,$env").toList
 
-  def forClient(client: String) = this.copy(id = s"${id}_${client}")
   def withTaskInstanceCount(n: Int) = this.copy(taskInstanceCount = n)
-
-  def runSpark(id: String) = SparkActivity(
-    id = id,
-    runsOn = this
-  )
-
-  def runMapReduce(id: String) = MapReduceActivity(
-    id = id,
-    runsOn = this
-  )
-
-  def runPigScript(id: String) = PigActivity(
-    id = id,
-    runsOn = this
-  )
-
-  def runHiveScript(id: String, hiveScript: Option[String] = None,
-      scriptUri: Option[String] = None, scriptVariable: Option[String] = None,
-      input: Option[DataNode] = None, output: Option[DataNode] = None) =
-    HiveActivity(
-      id = id,
-      runsOn = this,
-      hiveScript = hiveScript,
-      scriptUri = scriptUri,
-      scriptVariable = scriptVariable,
-      input = input,
-      output = output
-    )
-
-  def runHiveCopy(id: String,
-      filterSql: Option[String] = None,
-      generatedScriptsPath: Option[String] = None,
-      input: Option[DataNode] = None,
-      output: Option[DataNode] = None) =
-    HiveCopyActivity(
-      id = id,
-      runsOn = this,
-      filterSql = filterSql,
-      generatedScriptsPath = generatedScriptsPath,
-      input = input,
-      output = output
-    )
 
   def serialize = AdpEmrCluster(
     id = id,
@@ -90,7 +51,7 @@ object SparkCluster {
 
   def apply()(implicit hc: HyperionContext) = {
     new SparkCluster(
-      id = "SparkCluster",
+      id = PipelineObjectId("SparkCluster"),
       taskInstanceCount = 0,
       coreInstanceCount = 2,
       instanceType = hc.emrInstanceType,
