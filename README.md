@@ -26,7 +26,7 @@ Add hyperion as a dependency in your `build.sbt` or `Build.scala` as appropriate
 ```scala
 libraryDependencies ++= Seq(
   // Other dependencies ...
-  "com.krux" %% "hyperion" % "1.0.0" % "compile"
+  "com.krux" %% "hyperion" % "1.6.0"
 )
 ```
 
@@ -54,7 +54,7 @@ $ sbt assembly
 Then, run hyperion with the class name (specify the external jar location if it's not in the
 classpath):
 ```shell
-$ ./hyperion [-jar your-jar-implementing-pipelines.jar] generate your.piplines.ThePipeline > ThePipeline.json
+$ ./hyperion [-jar your-jar-implementing-pipelines.jar] your.piplines.ThePipeline generate > ThePipeline.json
 ```
 
 Then you can go to the [AWS Data Pipeline Management Console](https://console.aws.amazon.com/datapipeline/),
@@ -70,7 +70,7 @@ $ sbt assembly
 
 Then, run hyperion with `create` and the class name:
 ```shell
-$ ./hyperion [-jar your-jar-implementing-pipelines.jar] create your.pipeline.ThePipeline
+$ ./hyperion [-jar your-jar-implementing-pipelines.jar] your.pipeline.ThePipeline create
 ```
 
 This will use the DataPipeline API to create the pipeline and put the pipeline definition.
