@@ -18,7 +18,7 @@ case class ExistsPrecondition private (
 
   def withRole(role: String) = this.copy(role = Option(role))
 
-  def serialize = AdpExistsPrecondition(
+  lazy val serialize = AdpExistsPrecondition(
     id = id,
     name = Some(id),
     preconditionTimeout = preconditionTimeout,

@@ -1,7 +1,7 @@
 package com.krux.hyperion.objects
 
 import com.krux.hyperion.HyperionContext
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
+import com.krux.hyperion.objects.aws.{AdpSnsAlarm, AdpRef}
 
 case class SnsAlarm private (
   id: PipelineObjectId,
@@ -18,7 +18,7 @@ case class SnsAlarm private (
   def withTopicArn(topicArn: String) = this.copy(topicArn = Some(topicArn))
   def withRole(role: String) = this.copy(role = Some(role))
 
-  def serialize = new AdpSnsAlarm(
+  lazy val serialize = new AdpSnsAlarm(
     id = id,
     name = Some(id),
     subject = subject,
@@ -26,6 +26,8 @@ case class SnsAlarm private (
     topicArn = topicArn.getOrElse(hc.snsTopic),
     role = role.getOrElse(hc.snsRole)
   )
+
+  def ref: AdpRef[AdpSnsAlarm] = AdpRef(serialize)
 
 }
 

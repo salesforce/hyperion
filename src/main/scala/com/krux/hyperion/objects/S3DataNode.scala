@@ -1,6 +1,6 @@
 package com.krux.hyperion.objects
 
-import aws.{AdpS3FileDataNode, AdpS3DirectoryDataNode, AdpJsonSerializer, AdpRef, AdpPrecondition, AdpSnsAlarm}
+import aws.{AdpS3FileDataNode, AdpS3DirectoryDataNode}
 
 trait S3DataNode extends Copyable {
 
@@ -46,25 +46,16 @@ case class S3File(
 
   override def objects: Iterable[PipelineObject] = dataFormat
 
-  def serialize = AdpS3FileDataNode(
+  lazy val serialize = AdpS3FileDataNode(
     id = id,
     name = Some(id),
     compression = None,
-    dataFormat = dataFormat.map(f => AdpRef(f.id)),
+    dataFormat = dataFormat.map(_.ref),
     filePath = filePath,
     manifestFilePath = None,
-    precondition = preconditions match {
-      case Seq() => None
-      case conditions => Some(conditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    precondition = seqToOption(preconditions)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref)
   )
 
 }
@@ -104,25 +95,16 @@ case class S3Folder(
 
   override def objects: Iterable[PipelineObject] = dataFormat
 
-  def serialize = AdpS3DirectoryDataNode(
+  lazy val serialize = AdpS3DirectoryDataNode(
     id = id,
     name = Some(id),
     compression = None,
-    dataFormat = dataFormat.map(f => AdpRef(f.id)),
+    dataFormat = dataFormat.map(_.ref),
     directoryPath = directoryPath,
     manifestFilePath = None,
-    precondition = preconditions match {
-      case Seq() => None
-      case conditions => Some(conditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    precondition = seqToOption(preconditions)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref)
   )
 }
 

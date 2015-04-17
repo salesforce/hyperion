@@ -1,6 +1,6 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.AdpRedshiftDatabase
+import com.krux.hyperion.objects.aws.{AdpRedshiftDatabase, AdpRef}
 
 /**
  * Redshift Database Trait, to use this please extend with an object.
@@ -15,8 +15,10 @@ trait RedshiftDatabase extends Database {
 
   def databaseName: String
 
-  def serialize = AdpRedshiftDatabase(
+  lazy val serialize = AdpRedshiftDatabase(
       id, Some(id), clusterId, None, Some(databaseName), None, `*password`, username
     )
+
+  override def ref: AdpRef[AdpRedshiftDatabase] = AdpRef(serialize)
 
 }

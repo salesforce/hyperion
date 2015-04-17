@@ -1,8 +1,6 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.{AdpEmrActivity, AdpJsonSerializer, AdpRef, AdpEmrCluster,
-  AdpActivity, AdpPrecondition}
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
+import com.krux.hyperion.objects.aws.AdpEmrActivity
 
 /**
  * Defines a MapReduce activity
@@ -33,7 +31,7 @@ case class MapReduceActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpEmrActivity(
+  lazy val serialize = AdpEmrActivity(
     id = id,
     name = Some(id),
     input = None,
@@ -43,27 +41,12 @@ case class MapReduceActivity private (
     actionOnResourceFailure = None,
     actionOnTaskFailure = None,
     step = steps.map(_.toStepString),
-    runsOn = AdpRef[AdpEmrCluster](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(d => AdpRef[AdpActivity](d.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 
 }

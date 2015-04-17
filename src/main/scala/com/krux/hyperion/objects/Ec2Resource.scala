@@ -1,6 +1,6 @@
 package com.krux.hyperion.objects
 
-import aws.{AdpEc2Resource, AdpJsonSerializer}
+import com.krux.hyperion.objects.aws.{AdpEc2Resource, AdpRef}
 import com.krux.hyperion.HyperionContext
 
 /**
@@ -35,7 +35,7 @@ case class Ec2Resource private (
   def withSecurityGroupIds(securityGroupIds: String*) = this.copy(securityGroupIds = securityGroupIds)
   def withPublicIp() = this.copy(associatePublicIpAddress = true)
 
-  def serialize = AdpEc2Resource(
+  lazy val serialize = AdpEc2Resource(
     id = id,
     name =Some(id),
     terminateAfter = terminateAfter,
@@ -48,13 +48,12 @@ case class Ec2Resource private (
       case Seq() => Some(Seq(hc.ec2SecurityGroup))
       case groups => Some(groups)
     },
-    securityGroupIds = securityGroupIds match {
-      case Seq() => None
-      case groups => Some(groups)
-    },
+    securityGroupIds = securityGroupIds,
     associatePublicIpAddress = Some(associatePublicIpAddress.toString()),
     keyPair = keyPair
   )
+
+  def ref: AdpRef[AdpEc2Resource] = AdpRef(serialize)
 }
 
 object Ec2Resource {

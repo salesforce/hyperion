@@ -2,11 +2,6 @@ package com.krux.hyperion.objects
 
 import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.objects.aws.AdpShellCommandActivity
-import com.krux.hyperion.objects.aws.AdpRef
-import com.krux.hyperion.objects.aws.AdpEc2Resource
-import com.krux.hyperion.objects.aws.AdpActivity
-import com.krux.hyperion.objects.aws.AdpPrecondition
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
 
 /**
  * Activity to recursively delete files in an S3 path.
@@ -41,7 +36,7 @@ case class DeleteS3PathActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpShellCommandActivity(
+  lazy val serialize = AdpShellCommandActivity(
     id = id,
     name = Some(id),
     command = Some(s"aws s3 rm --recursive $s3Path"),
@@ -52,27 +47,12 @@ case class DeleteS3PathActivity private (
     stage = "false",
     stdout = stdout,
     stderr = stderr,
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(act => AdpRef[AdpActivity](act.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 
 }

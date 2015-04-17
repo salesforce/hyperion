@@ -1,7 +1,6 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.{AdpSqlActivity, AdpEc2Resource, AdpRef, AdpDatabase,
-  AdpActivity, AdpSnsAlarm, AdpPrecondition}
+import com.krux.hyperion.objects.aws.AdpSqlActivity
 
 case class SqlActivity private (
   id: PipelineObjectId,
@@ -32,37 +31,19 @@ case class SqlActivity private (
   override def objects: Iterable[PipelineObject] =
     Seq(runsOn, database) ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpSqlActivity(
+  lazy val serialize = AdpSqlActivity(
     id = id,
     name = Some(id),
-    database = AdpRef[AdpDatabase](database.id),
+    database = database.ref,
     script = script,
-    scriptArgument = scriptArgument match {
-      case Seq() => None
-      case other => Some(other)
-    },
+    scriptArgument = scriptArgument,
     queue = queue,
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case other => Some(other.map(a => AdpRef[AdpActivity](a.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 }
 

@@ -1,6 +1,6 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.{AdpEmrCluster, AdpJsonSerializer}
+import com.krux.hyperion.objects.aws.AdpEmrCluster
 import com.krux.hyperion.HyperionContext
 
 /**
@@ -31,7 +31,7 @@ case class SparkCluster private (
 
   def withTaskInstanceCount(n: Int) = this.copy(taskInstanceCount = n)
 
-  def serialize = AdpEmrCluster(
+  lazy val serialize = AdpEmrCluster(
     id = id,
     name = Some(id),
     bootstrapAction = bootstrapAction,

@@ -12,13 +12,10 @@ case class DynamoDBExportDataFormat private (
 
   def withColumns(cols: Seq[String]) = this.copy(column = cols)
 
-  def serialize = AdpDynamoDBExportDataFormat(
+  lazy val serialize = AdpDynamoDBExportDataFormat(
     id = id,
     name = Some(id),
-    column = column match {
-      case Seq() => None
-      case columns => Some(columns)
-    }
+    column = column
   )
 
 }
