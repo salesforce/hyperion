@@ -58,7 +58,7 @@ class AdpDataNodesSpec extends WordSpec {
         id = "redshiftTable",
         name = None,
         createTableSql = None,
-        database = AdpRef[AdpRedshiftDatabase]("myRedshift"),
+        database = AdpRef.withRefObjId[AdpRedshiftDatabase]("myRedshift"),
         schemaName = Some("public"),
         tableName = "myTable",
         primaryKeys = None,

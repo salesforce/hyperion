@@ -17,7 +17,7 @@ case class S3KeyExistsPrecondition private (
   implicit val hc: HyperionContext
 ) extends Precondition {
 
-  def serialize = AdpS3KeyExistsPrecondition(
+  lazy val serialize = AdpS3KeyExistsPrecondition(
     id = id,
     name = Some(id),
     s3Key = s3Key,

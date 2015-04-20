@@ -21,7 +21,7 @@ case class StringParameter(
   encrypted: Boolean = false
 ) extends Parameter {
 
-  def serialize = AdpParameter(
+  lazy val serialize = AdpParameter(
     id = name,
     `type` = "String",
     description = description,
@@ -44,7 +44,7 @@ case class IntegerParameter(
   encrypted: Boolean = false
 ) extends Parameter {
 
-  def serialize = AdpParameter(
+  lazy val serialize = AdpParameter(
     id = name,
     `type` = "Integer",
     description = description,
@@ -67,7 +67,7 @@ case class DoubleParameter(
   encrypted: Boolean = false
 ) extends Parameter {
 
-  def serialize = AdpParameter(
+  lazy val serialize = AdpParameter(
     id = name,
     `type` = "Double",
     description = description,
@@ -89,7 +89,7 @@ case class S3KeyParameter(
   encrypted: Boolean = false
 ) extends Parameter {
 
-  def serialize = AdpParameter(
+  lazy val serialize = AdpParameter(
     id = name,
     `type` = "AWS::S3::ObjectKey",
     description = description,

@@ -1,9 +1,7 @@
 package com.krux.hyperion.objects
 
-import aws.{AdpJsonSerializer, AdpShellCommandActivity, AdpRef,
-  AdpDataNode, AdpActivity, AdpEc2Resource, AdpPrecondition}
+import com.krux.hyperion.objects.aws.AdpShellCommandActivity
 import com.krux.hyperion.HyperionContext
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
 
 /**
  * Shell command activity
@@ -49,44 +47,23 @@ case class JarActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ input ++ output ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpShellCommandActivity(
+  lazy val serialize = AdpShellCommandActivity(
     id = id,
     name = Some(id),
     command = None,
     scriptUri = Some(s"${hc.scriptUri}run-jar.sh"),
     scriptArgument = Some(jar.toSeq ++ mainClass.toSeq ++ arguments),
-    input = input match {
-      case Seq() => None
-      case inputs => Some(inputs.map(in => AdpRef[AdpDataNode](in.id)))
-    },
-    output = output match {
-      case Seq() => None
-      case outputs => Some(outputs.map(out => AdpRef[AdpDataNode](out.id)))
-    },
+    input = seqToOption(input)(_.ref),
+    output = seqToOption(output)(_.ref),
     stage = "true",
     stdout = stdout,
     stderr = stderr,
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(act => AdpRef[AdpActivity](act.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 
 }

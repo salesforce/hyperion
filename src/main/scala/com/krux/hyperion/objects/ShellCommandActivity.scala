@@ -1,8 +1,6 @@
 package com.krux.hyperion.objects
 
-import aws.{AdpJsonSerializer, AdpShellCommandActivity, AdpRef,
-  AdpDataNode, AdpActivity, AdpEc2Resource, AdpPrecondition}
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
+import com.krux.hyperion.objects.aws.AdpShellCommandActivity
 
 /**
  * Shell command activity
@@ -50,47 +48,23 @@ case class ShellCommandActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ preconditions ++ input ++ output ++ dependsOn ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpShellCommandActivity(
+  lazy val serialize = AdpShellCommandActivity(
     id = id,
     name = Some(id),
     command = command,
     scriptUri = scriptUri,
-    scriptArgument = scriptArguments match {
-      case Seq() => None
-      case arguments => Some(arguments)
-    },
-    input = input match {
-      case Seq() => None
-      case inputs => Some(inputs.map(in => AdpRef[AdpDataNode](in.id)))
-    },
-    output = output match {
-      case Seq() => None
-      case outputs => Some(outputs.map(out => AdpRef[AdpDataNode](out.id)))
-    },
+    scriptArgument = scriptArguments,
+    input = seqToOption(input)(_.ref),
+    output = seqToOption(output)(_.ref),
     stage = stage.toString(),
     stdout = stdout,
     stderr = stderr,
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(act => AdpRef[AdpActivity](act.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 }
 

@@ -1,8 +1,6 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.{AdpRedshiftCopyActivity, AdpRef, AdpJsonSerializer,
-  AdpActivity, AdpS3DataNode, AdpRedshiftDataNode, AdpEc2Resource, AdpPrecondition}
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
+import com.krux.hyperion.objects.aws.AdpRedshiftCopyActivity
 
 /**
  * Redshift copy activity
@@ -38,39 +36,21 @@ case class RedshiftCopyActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(input, runsOn, output) ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpRedshiftCopyActivity(
+  lazy val serialize = AdpRedshiftCopyActivity(
     id = id,
     name = Some(id),
-    input = AdpRef[AdpS3DataNode](input.id),
+    input = input.ref,
     insertMode = insertMode.toString,
-    output = AdpRef[AdpRedshiftDataNode](output.id),
+    output = output.ref,
     transformSql = transformSql,
-    commandOptions = commandOptions match {
-      case Seq() => None
-      case opts => Some(opts.map(_.repr).flatten)
-    },
+    commandOptions = seqToOption(commandOptions)(_.repr).map(_.flatten),
     queue = None,
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(act => AdpRef[AdpActivity](act.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 
 }

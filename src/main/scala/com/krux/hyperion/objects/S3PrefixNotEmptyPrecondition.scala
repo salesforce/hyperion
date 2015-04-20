@@ -17,7 +17,7 @@ case class S3PrefixNotEmptyPrecondition private (
   implicit val hc: HyperionContext
 ) extends Precondition {
 
-  def serialize = AdpS3PrefixNotEmptyPrecondition(
+  lazy val serialize = AdpS3PrefixNotEmptyPrecondition(
     id = id,
     name = Some(id),
     s3Prefix = s3Prefix,

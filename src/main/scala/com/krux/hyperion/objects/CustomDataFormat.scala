@@ -16,13 +16,10 @@ case class CustomDataFormat private (
   def withColumnSeparator(columnSeparator: String) = this.copy(columnSeparator = columnSeparator)
   def withRecordSeparator(recordSeparator: String) = this.copy(recordSeparator = recordSeparator)
 
-  def serialize = AdpCustomDataFormat(
+  lazy val serialize = AdpCustomDataFormat(
     id = id,
     name = Some(id),
-    column = column match {
-      case Seq() => None
-      case columns => Some(columns)
-    },
+    column = column,
     columnSeparator = columnSeparator,
     recordSeparator = recordSeparator
   )

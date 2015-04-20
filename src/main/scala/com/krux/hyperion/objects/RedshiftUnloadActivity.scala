@@ -1,9 +1,7 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.{AdpJsonSerializer, AdpSqlActivity, AdpRef,
-  AdpRedshiftDatabase, AdpEc2Resource, AdpActivity, AdpPrecondition}
+import com.krux.hyperion.objects.aws.AdpSqlActivity
 import com.krux.hyperion.HyperionContext
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
 
 /**
  * Redshift unload activity
@@ -46,34 +44,19 @@ case class RedshiftUnloadActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(database, runsOn) ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpSqlActivity(
+  lazy val serialize = AdpSqlActivity(
     id = id,
     name = Some(id),
-    database = AdpRef[AdpRedshiftDatabase](database.id),
+    database = database.ref,
     script = unloadScript,
     scriptArgument = None,
     queue = None,
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(act => AdpRef[AdpActivity](act.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 
 }

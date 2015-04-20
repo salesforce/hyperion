@@ -6,9 +6,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - TODO
 
-## 1.6.0 - 2015-04-15
+## 1.6.1 - 2015-04-15
 ### Changed
-- #17 - Make pipline id transaprent
+- #41 - Refactor Option to Option[Seq] functions
+
+## 1.6.0 - 2015-04-05
+### Changed
+- #17 - Make pipline id transparent
 - #35 - Use immutable Map for objects building
 
 ## 1.5.1 - 2015-04-02

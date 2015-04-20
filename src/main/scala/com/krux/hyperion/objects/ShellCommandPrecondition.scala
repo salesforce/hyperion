@@ -26,14 +26,11 @@ case class ShellCommandPrecondition private (
   implicit val hc: HyperionContext
 ) extends Precondition {
 
-  def serialize = AdpShellCommandPrecondition(
+  lazy val serialize = AdpShellCommandPrecondition(
     id = id,
     name = Some(id),
     command = command,
-    scriptArgument = scriptArgument match {
-      case Seq() => None
-      case arguments => Some(arguments)
-    },
+    scriptArgument = scriptArgument,
     scriptUri = scriptUri,
     stdout = stdout,
     stderr = stderr,

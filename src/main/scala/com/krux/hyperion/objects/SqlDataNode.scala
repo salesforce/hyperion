@@ -1,6 +1,6 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.{AdpSqlDataNode, AdpPrecondition, AdpSnsAlarm, AdpRef}
+import com.krux.hyperion.objects.aws.AdpSqlDataNode
 import com.krux.hyperion.objects.sql.{TableQuery, SelectTableQuery, InsertTableQuery}
 
 /**
@@ -25,7 +25,7 @@ case class SqlDataNode (
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = alarms)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = alarms)
 
-  def serialize = AdpSqlDataNode(
+  lazy val serialize = AdpSqlDataNode(
     id = id,
     name = Some(id),
     table = tableQuery.table,
@@ -40,18 +40,9 @@ case class SqlDataNode (
       case q: InsertTableQuery => Some(q.sql)
       case _ => None
     },
-    precondition = preconditions match {
-      case Seq() => None
-      case conditions => Some(conditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    precondition = seqToOption(preconditions)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref)
   )
 
 }

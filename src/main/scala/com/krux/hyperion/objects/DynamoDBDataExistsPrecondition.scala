@@ -17,7 +17,7 @@ case class DynamoDBDataExistsPrecondition private (
   implicit val hc: HyperionContext
 ) extends Precondition {
 
-  def serialize = AdpDynamoDBDataExistsPrecondition(
+  lazy val serialize = AdpDynamoDBDataExistsPrecondition(
     id = id,
     name = Some(id),
     preconditionTimeout = preconditionTimeout,

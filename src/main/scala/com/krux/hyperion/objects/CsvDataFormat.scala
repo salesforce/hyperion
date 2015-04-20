@@ -15,13 +15,10 @@ case class CsvDataFormat private (
 
   def withEscapeChar(escapeChar: String) = this.copy(escapeChar = Option(escapeChar))
 
-  def serialize = AdpCsvDataFormat(
+  lazy val serialize = AdpCsvDataFormat(
     id = id,
     name = Some(id),
-    column = column match {
-      case Seq() => None
-      case columns => Some(columns)
-    },
+    column = column,
     escapeChar = None
   )
 

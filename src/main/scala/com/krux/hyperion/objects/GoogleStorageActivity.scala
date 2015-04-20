@@ -1,9 +1,7 @@
 package com.krux.hyperion.objects
 
-import aws.{AdpJsonSerializer, AdpShellCommandActivity, AdpRef,
-  AdpDataNode, AdpActivity, AdpEc2Resource, AdpPrecondition}
+import com.krux.hyperion.objects.aws.AdpShellCommandActivity
 import com.krux.hyperion.HyperionContext
-import com.krux.hyperion.objects.aws.AdpSnsAlarm
 
 trait GoogleStorageActivity extends PipelineActivity
 
@@ -41,38 +39,23 @@ case class GoogleStorageDownloadActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ output ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 
-  def serialize = AdpShellCommandActivity(
+  lazy val serialize = AdpShellCommandActivity(
     id = id,
     name = Some(id),
     command = None,
     scriptUri = Some(s"${hc.scriptUri}gsutil/gsutil_download.sh"),
     scriptArgument = Some(Seq(botoConfigUrl, input)),
     input = None,
-    output = output.map(out => Seq(AdpRef[AdpDataNode](out.id))),
+    output = output.map(out => Seq(out.ref)),
     stage = "true",
     stdout = None,
     stderr = None,
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(act => AdpRef[AdpActivity](act.id)))
-    },
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    runsOn = runsOn.ref,
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 
 }
@@ -127,38 +110,23 @@ case class GoogleStorageUploadActivity private (
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ input ++ dependsOn
 
-  def serialize = AdpShellCommandActivity(
+  lazy val serialize = AdpShellCommandActivity(
     id = id,
     name = Some(id),
     command = None,
     scriptUri = Some(s"${hc.scriptUri}gsutil/gsutil_upload.sh"),
     scriptArgument = Some(Seq(botoConfigUrl, output)),
-    input = input.map(in => Seq(AdpRef[AdpDataNode](in.id))),
+    input = input.map(in => Seq(in.ref)),
     output = None,
     stage = "true",
     stdout = None,
     stderr = None,
-    dependsOn = dependsOn match {
-      case Seq() => None
-      case deps => Some(deps.map(act => AdpRef[AdpActivity](act.id)))
-    },
-    runsOn = AdpRef[AdpEc2Resource](runsOn.id),
-    precondition = preconditions match {
-      case Seq() => None
-      case preconditions => Some(preconditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onLateAction = onLateActionAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    dependsOn = seqToOption(dependsOn)(_.ref),
+    runsOn = runsOn.ref,
+    precondition = seqToOption(preconditions)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onLateAction = seqToOption(onLateActionAlarms)(_.ref)
   )
 
 }

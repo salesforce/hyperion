@@ -1,3 +1,8 @@
 package com.krux.hyperion.objects
 
-trait Database extends PipelineObject
+import com.krux.hyperion.objects.aws.{AdpDatabase, AdpRef}
+
+trait Database extends PipelineObject {
+  def serialize: AdpDatabase
+  def ref: AdpRef[AdpDatabase] = AdpRef(serialize)
+}

@@ -1,6 +1,6 @@
 package com.krux.hyperion.objects
 
-import com.krux.hyperion.objects.aws.{AdpRedshiftDataNode, AdpJsonSerializer, AdpRef, AdpPrecondition, AdpSnsAlarm}
+import com.krux.hyperion.objects.aws.AdpRedshiftDataNode
 
 /**
  * The abstracted RedshiftDataNode
@@ -29,26 +29,17 @@ case class RedshiftDataNode private (
 
   override def objects: Iterable[PipelineObject] = Some(database)
 
-  def serialize = AdpRedshiftDataNode(
+  lazy val serialize = AdpRedshiftDataNode(
     id = id,
     name = Some(id),
     createTableSql = createTableSql,
-    database = AdpRef(database.id),
+    database = database.ref,
     schemaName = schemaName,
     tableName = tableName,
     primaryKeys = primaryKeys,
-    precondition = preconditions match {
-      case Seq() => None
-      case conditions => Some(conditions.map(precondition => AdpRef[AdpPrecondition](precondition.id)))
-    },
-    onSuccess = onSuccessAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    },
-    onFail = onFailAlarms match {
-      case Seq() => None
-      case alarms => Some(alarms.map(alarm => AdpRef[AdpSnsAlarm](alarm.id)))
-    }
+    precondition = seqToOption(preconditions)(_.ref),
+    onSuccess = seqToOption(onSuccessAlarms)(_.ref),
+    onFail = seqToOption(onFailAlarms)(_.ref)
   )
 
 }

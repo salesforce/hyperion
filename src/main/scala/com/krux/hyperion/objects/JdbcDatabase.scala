@@ -18,16 +18,13 @@ trait JdbcDatabase extends Database {
 
   def jdbcProperties: Seq[String] = Seq()
 
-  def serialize = AdpJdbcDatabase(
+  lazy val serialize = AdpJdbcDatabase(
       id = id,
       name = Some(id),
       connectionString = connectionString,
       jdbcDriverClass = jdbcDriverClass,
       databaseName = databaseName,
-      jdbcProperties = jdbcProperties match {
-        case Seq() => None
-        case other => Some(other)
-      },
+      jdbcProperties = jdbcProperties,
       `*password` = `*password`,
       username = username
     )
