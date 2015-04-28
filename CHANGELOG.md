@@ -2,10 +2,6 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
-### Added
-- TODO
-
 ## 1.7.2 - 2015-04-28
 ### Fixed
 - #50 - In ShellCommandActivity, make command and scriptUri Either
