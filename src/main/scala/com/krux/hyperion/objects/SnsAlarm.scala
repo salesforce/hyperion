@@ -7,24 +7,24 @@ case class SnsAlarm private (
   id: PipelineObjectId,
   subject: String,
   message: String,
-  topicArn: String,
-  role: String
+  topicArn: Option[String],
+  role: Option[String]
 )(
   implicit val hc: HyperionContext
 ) extends PipelineObject {
 
   def withSubject(subject: String) = this.copy(subject = subject)
   def withMessage(message: String) = this.copy(message = message)
-  def withTopicArn(topicArn: String) = this.copy(topicArn = topicArn)
-  def withRole(role: String) = this.copy(role = role)
+  def withTopicArn(topicArn: String) = this.copy(topicArn = Some(topicArn))
+  def withRole(role: String) = this.copy(role = Some(role))
 
   lazy val serialize = new AdpSnsAlarm(
     id = id,
     name = id.toOption,
     subject = subject,
     message = message,
-    topicArn = topicArn,
-    role = role
+    topicArn = topicArn.get,
+    role = role.get
   )
 
   def ref: AdpRef[AdpSnsAlarm] = AdpRef(serialize)

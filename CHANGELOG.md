@@ -6,7 +6,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - TODO
 
-## 1.7.0 - Unreleased
+## 1.7.1 - Unreleased
+### Fixed
+- #48 - Pipeline blows up if sns.topic is not set
+
+## 1.7.0 - 2015-04-28
 ### Changed
 - #46 - Support remaining properties on resources
 - #45 - Support VPC by adding subnetId

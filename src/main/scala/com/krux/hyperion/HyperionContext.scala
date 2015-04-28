@@ -35,7 +35,7 @@ class HyperionContext(config: Config) {
   lazy val emrTerminateAfter = config.getString("hyperion.aws.emr.terminate")
   lazy val sparkVersion = config.getString("hyperion.aws.emr.spark.version")
 
-  lazy val snsRole = config.getString("hyperion.aws.sns.role")
-  lazy val snsTopic = config.getString("hyperion.aws.sns.topic")
+  lazy val snsRole = Try(config.getString("hyperion.aws.sns.role")).toOption
+  lazy val snsTopic = Try(config.getString("hyperion.aws.sns.topic")).toOption
 
 }
