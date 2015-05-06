@@ -22,17 +22,16 @@ case class DeleteS3PathActivity private (
 ) extends PipelineActivity {
 
   def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
-
   def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withStdoutTo(out: String) = this.copy(stdout = Option(out))
   def withStderrTo(err: String) = this.copy(stderr = Option(err))
 
-  def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = activities)
-  def whenMet(preconditions: Precondition*) = this.copy(preconditions = preconditions)
-  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = alarms)
-  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = alarms)
-  def onLateAction(alarms: SnsAlarm*) = this.copy(onLateActionAlarms = alarms)
+  def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
+  def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
+  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
+  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
+  def onLateAction(alarms: SnsAlarm*) = this.copy(onLateActionAlarms = onLateActionAlarms ++ alarms)
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 

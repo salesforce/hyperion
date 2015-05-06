@@ -21,11 +21,12 @@ case class RedshiftDataNode private (
   def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withCreateTableSql(createSql: String) = this.copy(createTableSql = Option(createSql))
-  def withSchema(theSchemaName: String) = this.copy(schemaName = Option(theSchemaName))
+  def withSchema(name: String) = this.copy(schemaName = Option(name))
   def withPrimaryKeys(pks: String*) = this.copy(primaryKeys = Option(pks))
-  def whenMet(preconditions: Precondition*) = this.copy(preconditions = preconditions)
-  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = alarms)
-  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = alarms)
+
+  def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
+  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
+  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
 
   override def objects: Iterable[PipelineObject] = Option(database)
 

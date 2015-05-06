@@ -22,7 +22,6 @@ case class HiveActivity private (
 ) extends PipelineActivity {
 
   def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
-
   def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
   def withHiveScript(hiveScript: String) = this.copy(hiveScript = Option(hiveScript))
@@ -32,11 +31,11 @@ case class HiveActivity private (
   def withInput(in: DataNode) = this.copy(input = Option(in))
   def withOutput(out: DataNode) = this.copy(output = Option(out))
 
-  def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = activities)
-  def whenMet(preconditions: Precondition*) = this.copy(preconditions = preconditions)
-  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = alarms)
-  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = alarms)
-  def onLateAction(alarms: SnsAlarm*) = this.copy(onLateActionAlarms = alarms)
+  def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
+  def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
+  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
+  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
+  def onLateAction(alarms: SnsAlarm*) = this.copy(onLateActionAlarms = onLateActionAlarms ++ alarms)
 
   override def objects: Iterable[PipelineObject] = Seq(runsOn) ++ input ++ output ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
 

@@ -9,15 +9,15 @@ case class RegExDataFormat private (
   id: PipelineObjectId,
   inputRegEx: String,
   outputFormat: String,
-  column: Seq[String]
+  columns: Seq[String]
 ) extends DataFormat {
 
-  def withColumns(cols: Seq[String]) = this.copy(column = cols)
+  def withColumns(col: String*) = this.copy(columns = columns ++ col)
 
   lazy val serialize = AdpRegExDataFormat(
     id = id,
     name = id.toOption,
-    column = column,
+    column = columns,
     inputRegEx = inputRegEx,
     outputFormat = outputFormat
   )
@@ -29,6 +29,6 @@ object RegExDataFormat {
     id = PipelineObjectId("RegExDataFormat"),
     inputRegEx = inputRegEx,
     outputFormat = outputFormat,
-    column = Seq()
+    columns = Seq()
   )
 }
