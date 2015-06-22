@@ -2,10 +2,10 @@ package com.krux.hyperion.resource
 
 trait ActionOnTaskFailure
 
-case object ContinueOnTaskFailure {
+case object ContinueOnTaskFailure extends ActionOnTaskFailure {
   override def toString: String = "continue"
 }
 
-case object TerminateOnTaskFailure {
+case object TerminateOnTaskFailure extends ActionOnTaskFailure {
   override def toString: String = "terminate"
 }
