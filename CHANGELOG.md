@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.13.0 - 2015-07-06
+### Changed
+- #68 - No longer specify AWS keys in configuration for RedshiftUnloadActivity - now must specify as arguments to activity
+
 ## 1.12.1 - 2015-07-03
 ### Fixed
 - #74 - DataNode should return path using toString
