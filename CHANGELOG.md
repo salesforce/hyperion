@@ -2,10 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.12.1 - 2015-07-03
+### Fixed
+- #74 - DataNode should return path using toString
+
 ## 1.12.0 - 2015-07-02
 ### Added
 - #64 - Supports non-default region
-### Fixes
+### Fixed
 - #69 - Role and ResourceRole were not getting properly defaulted on resources
 
 ## 1.11.0 - 2015-07-01
