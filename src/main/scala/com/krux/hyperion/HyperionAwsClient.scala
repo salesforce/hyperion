@@ -8,7 +8,7 @@ import com.krux.hyperion.DataPipelineDef._
 import scala.collection.JavaConversions._
 
 class HyperionAwsClient(regionId: Option[String] = None, roleArn: Option[String] = None) {
-  lazy val region: Region = regionId.map(r => Region.getRegion(Regions.fromName(r))).getOrElse(Regions.getCurrentRegion)
+  lazy val region: Region = Region.getRegion(regionId.map(r => Regions.fromName(r)).getOrElse(Regions.US_EAST_1))
   lazy val defaultProvider = new DefaultAWSCredentialsProviderChain()
   lazy val stsProvider = roleArn.map(new STSAssumeRoleSessionCredentialsProvider(defaultProvider, _, "hyperion"))
   lazy val client: DataPipelineClient = new DataPipelineClient(stsProvider.getOrElse(defaultProvider)).withRegion(region)
