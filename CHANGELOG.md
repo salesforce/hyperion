@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.18.0 - 2015-07-19
+## Added
+- #25 - Added a run-python runner script and PythonActivity
+- #89 - Added an activity to email input staging folders
+- #90 - Added an activity to merge input staging folders and upload to output staging folders
+
 ## 1.17.0 - 2015-07-15
 ### Changed
 - #80 - Change jar-based activities/steps to require a jar
