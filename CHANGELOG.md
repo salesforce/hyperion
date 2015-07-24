@@ -2,12 +2,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.19.0
+## 1.19.1 - 2015-07-23
+### Fixed
+- #99 - Hyperion CLI driver should exit with appropriate error codes
+
+## 1.19.0 - 2015-07-23
 ### Fixed
 - #91 - workflow dsl broken when the right hand side of andThen have dependencies. Note that
   `act1 + act2` is no longer the same as `Seq(act1, act2)` any more.
 ### Added
-- #101 - Allow workflow DLS to have duplicated activities.
+- #101 - Allow workflow DSL to have duplicated activities.
 
 ## 1.18.0 - 2015-07-19
 ### Added
