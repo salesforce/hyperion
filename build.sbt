@@ -14,11 +14,6 @@ val smtpArtifact            = "com.sun.mail"           %  "smtp"                
 
 val hyperionVersion = "2.0.0"
 
-// Import default settings. This changes `publishTo` settings to use the Sonatype repository and add several commands for publishing.
-import SonatypeKeys._
-
-sonatypeSettings
-
 licenses += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
 
 // Scaladoc publishing stuff
@@ -31,6 +26,7 @@ git.remoteRepo := "git@github.com:krux/hyperion.git"
 site.includeScaladoc()
 
 lazy val publishSettings = Seq(
+  sonatypeProfileName := "com.krux",
   publishMavenStyle := true,
   pomIncludeRepository := { _ => false },
   pgpSecretRing := file("secring.asc"),
