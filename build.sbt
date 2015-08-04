@@ -14,8 +14,6 @@ val smtpArtifact            = "com.sun.mail"           %  "smtp"                
 
 val hyperionVersion = "2.0.0"
 
-licenses += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
-
 // Scaladoc publishing stuff
 site.settings
 
@@ -43,6 +41,12 @@ lazy val publishSettings = Seq(
        <url>git@github.com:krux/hyperion.git</url>
        <connection>scm:git:git@github.com:krux/hyperion.git</connection>
     </scm>
+    <licenses>
+      <license>
+        <name>Apache-2.0</name>
+        <url>http://opensource.org/licenses/Apache-2.0</url>
+      </license>
+    </licenses>
     <developers>
        <developer>
          <id>realstraw</id>
