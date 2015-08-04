@@ -144,7 +144,7 @@ object SftpUploadActivity extends RunnableObject {
     new SftpUploadActivity(
       id = PipelineObjectId(SftpUploadActivity.getClass),
       scriptUri = Option(s"${hc.scriptUri}activities/run-jar.sh"),
-      jarUri = s"${hc.scriptUri}activities/hyperion-contrib-activity-sftp-assembly-current.jar",
+      jarUri = s"${hc.scriptUri}activities/hyperion-sftp-activity-current-assembly.jar",
       mainClass = "com.krux.hyperion.contrib.activity.sftp.SftpActivity",
       host = host,
       port = None,

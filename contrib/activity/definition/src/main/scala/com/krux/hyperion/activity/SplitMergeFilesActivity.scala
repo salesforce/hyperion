@@ -163,7 +163,7 @@ object SplitMergeFilesActivity extends RunnableObject {
     new SplitMergeFilesActivity(
       id = PipelineObjectId(SplitMergeFilesActivity.getClass),
       scriptUri = Option(s"${hc.scriptUri}activities/run-jar.sh"),
-      jarUri = s"${hc.scriptUri}activities/hyperion-contrib-activity-file-assembly-current.jar",
+      jarUri = s"${hc.scriptUri}activities/hyperion-file-activity-current-assembly.jar",
       mainClass = "com.krux.hyperion.contrib.activity.file.RepartitionFile",
       filename = filename,
       header = None,

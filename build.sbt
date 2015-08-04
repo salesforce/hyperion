@@ -21,41 +21,6 @@ sonatypeSettings
 
 licenses += ("Apache-2.0", url("http://opensource.org/licenses/Apache-2.0"))
 
-// Publishing stuff for Sonatype
-publishMavenStyle := true
-
-pomIncludeRepository := { _ => false }
-
-publishTo <<= version { _.endsWith("SNAPSHOT") match {
-    case true  => Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
-    case false => Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
-  }
-}
-
-pgpSecretRing := file("secring.asc")
-
-pgpPublicRing := file("pubring.asc")
-
-pomExtra := (
-<url>https://github.com/krux/hyperion</url>
-<scm>
-   <url>git@github.com:krux/hyperion.git</url>
-   <connection>scm:git:git@github.com:krux/hyperion.git</connection>
-</scm>
-<developers>
-   <developer>
-     <id>realstraw</id>
-     <name>Kexin Xie</name>
-     <url>http://github.com/realstraw</url>
-   </developer>
-   <developer>
-     <id>sethyates</id>
-     <name>Seth Yates</name>
-     <url>http://github.com/sethyates</url>
-   </developer>
-</developers>
-)
-
 // Scaladoc publishing stuff
 site.settings
 
@@ -64,6 +29,44 @@ ghpages.settings
 git.remoteRepo := "git@github.com:krux/hyperion.git"
 
 site.includeScaladoc()
+
+lazy val publishSettings = Seq(
+  publishMavenStyle := true,
+  pomIncludeRepository := { _ => false },
+  pgpSecretRing := file("secring.asc"),
+  pgpPublicRing := file("pubring.asc"),
+  publishTo := {
+    if (isSnapshot.value)
+      Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
+    else
+      Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+  },
+  pomExtra := (
+    <url>https://github.com/krux/hyperion</url>
+    <scm>
+       <url>git@github.com:krux/hyperion.git</url>
+       <connection>scm:git:git@github.com:krux/hyperion.git</connection>
+    </scm>
+    <developers>
+       <developer>
+         <id>realstraw</id>
+         <name>Kexin Xie</name>
+         <url>http://github.com/realstraw</url>
+       </developer>
+       <developer>
+         <id>sethyates</id>
+         <name>Seth Yates</name>
+         <url>http://github.com/sethyates</url>
+       </developer>
+    </developers>
+  )
+)
+
+lazy val noPublishSettings = Seq(
+  publishArtifact := false,
+  publish := (),
+  publishLocal := ()
+)
 
 lazy val commonSettings = Seq(
   organization := "com.krux",
@@ -99,6 +102,7 @@ lazy val artifactSettings = commonSettings ++ Seq(
 
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).
+  settings(publishSettings: _*).
   settings(name := "hyperion").
   dependsOn(
     core,
@@ -114,6 +118,7 @@ lazy val root = (project in file(".")).
 
 lazy val core = (project in file("core")).
   settings(commonSettings: _*).
+  settings(publishSettings: _*).
   settings(
     name := "hyperion-core",
     libraryDependencies ++= Seq(
@@ -129,9 +134,9 @@ lazy val core = (project in file("core")).
 
 lazy val examples = (project in file("examples")).
   settings(commonSettings: _*).
+  settings(noPublishSettings: _*).
   settings(
     name := "hyperion-examples",
-    publishArtifact := false,
     libraryDependencies ++= Seq(
       scalatestArtifact
     )
@@ -140,6 +145,7 @@ lazy val examples = (project in file("examples")).
 
 lazy val contribActivityDefinition = (project in file("contrib/activity/definition")).
   settings(commonSettings: _*).
+  settings(publishSettings: _*).
   settings(
     name := "hyperion-activities"
   ).
@@ -147,6 +153,7 @@ lazy val contribActivityDefinition = (project in file("contrib/activity/definiti
 
 lazy val contribActivitySftp = (project in file("contrib/activity/sftp")).
   settings(artifactSettings: _*).
+  settings(publishSettings: _*).
   settings(
     name := "hyperion-sftp-activity",
     libraryDependencies ++= Seq(
@@ -157,6 +164,7 @@ lazy val contribActivitySftp = (project in file("contrib/activity/sftp")).
 
 lazy val contribActivityFile = (project in file("contrib/activity/file")).
   settings(artifactSettings: _*).
+  settings(publishSettings: _*).
   settings(
     name := "hyperion-file-activity",
     libraryDependencies ++= Seq(
@@ -167,6 +175,7 @@ lazy val contribActivityFile = (project in file("contrib/activity/file")).
 
 lazy val contribActivityEmail = (project in file("contrib/activity/email")).
   settings(artifactSettings: _*).
+  settings(publishSettings: _*).
   settings(
     name := "hyperion-email-activity",
     libraryDependencies ++= Seq(
