@@ -28,7 +28,7 @@ case class SqlDataNode (
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
 
-  def objects: Iterable[PipelineObject] = None
+  def objects: Iterable[PipelineObject] = Some(database)
 
   lazy val serialize = AdpSqlDataNode(
     id = id,
