@@ -13,7 +13,7 @@ trait Parameter[T] {
   def isEncrypted: Boolean
   def value: T
 
-  def name = if (isEncrypted) s"*my$id" else s"my$id"
+  def name = if (isEncrypted) s"*my_$id" else s"my_$id"
 
   def serialize: Option[AdpParameter]
 
