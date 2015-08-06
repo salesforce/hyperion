@@ -68,7 +68,7 @@ class ExampleSparkSpec extends WordSpec {
         ("id" -> snsAlarmId) ~
         ("name" -> snsAlarmId) ~
         ("subject" -> "Something happened at #{node.@scheduledStartTime}") ~
-        ("message" -> "Some message #{myInstanceCount} x #{myInstanceType} @ #{myInstanceBid} for #{myS3Location}") ~
+        ("message" -> "Some message #{my_InstanceCount} x #{my_InstanceType} @ #{my_InstanceBid} for #{my_S3Location}") ~
         ("topicArn" -> "arn:aws:sns:us-east-1:28619EXAMPLE:ExampleTopic") ~
         ("role" -> "DataPipelineDefaultResourceRole") ~
         ("type" -> "SnsAlarm")
