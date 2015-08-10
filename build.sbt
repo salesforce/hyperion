@@ -13,7 +13,7 @@ val scalatestArtifact       = "org.scalatest"          %% "scalatest"           
 val mailArtifact            = "com.sun.mail"           %  "mailapi"                   % "1.5.4"
 val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % "1.5.4"
 
-val hyperionVersion = "2.0.5"
+val hyperionVersion = "2.0.6"
 
 // Scaladoc publishing stuff
 site.settings

@@ -37,4 +37,4 @@ aws s3 cp ${REMOTE_JAR} ${LOCAL_JAR}
 
 # Run the jar itself.
 echo "Running jar ${LOCAL_JAR} $@"
-echo java -cp ${LOCAL_JAR} $@ | exec sh
+java -cp ${LOCAL_JAR} "$@"

@@ -28,6 +28,7 @@ object S3DataNode {
   def apply(s3Path: S3Uri): S3DataNode =
     if (s3Path.ref.endsWith("/")) S3Folder(s3Path)
     else S3File(s3Path)
+
 }
 
 /**
