@@ -107,8 +107,7 @@ class SftpUploadActivity private (
     password.map(p => Seq("--password", p.toString)),
     identity.map(i => Seq("--identity", i.toString)),
     pattern.map(p => Seq("--pattern", p)),
-    input.map(in => Seq("--source", in.asInput(1))),
-    output.map(out => Seq("--destination", out))
+    output.map(out => Seq(out))
   ).flatten.flatten
 
   lazy val serialize = AdpShellCommandActivity(

@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.6 - 2015-08-10
+### Fixed
+- [#142](https://github.com/krux/hyperion/issues/142) - Arguments to SFTP activity are incorrect
+
 ## 2.0.5 - 2015-08-07
 ### Fixed
 - [#140](https://github.com/krux/hyperion/issues/140) - SendEmailActivity runner isnt being published
