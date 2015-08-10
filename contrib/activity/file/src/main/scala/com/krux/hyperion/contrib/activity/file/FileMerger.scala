@@ -1,13 +1,16 @@
 package com.krux.hyperion.contrib.activity.file
 
 import java.io._
-import java.util.zip.GZIPInputStream
+import java.util.zip.{GZIPOutputStream, GZIPInputStream}
 
 import org.apache.commons.io.IOUtils
 
 case class FileMerger(destination: File, skipFirstLine: Boolean = false) {
   def merge(sources: File*): File = {
-    val output: OutputStream = new BufferedOutputStream(new FileOutputStream(destination, true))
+    val output: OutputStream = new BufferedOutputStream({
+      val s = new FileOutputStream(destination, true)
+      if (destination.getName.endsWith(".gz")) new GZIPOutputStream(s) else s
+    })
     try {
       sources.foldLeft(output)(appendFile)
       destination

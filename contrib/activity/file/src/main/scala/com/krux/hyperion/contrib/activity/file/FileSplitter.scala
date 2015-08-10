@@ -1,7 +1,7 @@
 package com.krux.hyperion.contrib.activity.file
 
 import java.io._
-import java.util.zip.GZIPOutputStream
+import java.util.zip.{GZIPInputStream, GZIPOutputStream}
 import org.apache.commons.io.IOUtils
 
 import scala.collection.mutable.ListBuffer
@@ -34,7 +34,10 @@ class FileSplitter(
 
   def split(source: File): Seq[File] = try {
     val splits = ListBuffer[File]()
-    val input = new BufferedInputStream(new FileInputStream(source), bufferSize.toInt)
+    val input = new BufferedInputStream({
+      val s = new FileInputStream(source)
+      if (source.getName.endsWith(".gz")) new GZIPInputStream(s) else s
+    }, bufferSize.toInt)
     var needFile = true
 
     var read = input.read()

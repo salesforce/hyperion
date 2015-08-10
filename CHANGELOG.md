@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.7 - 2015-08-10
+### Fixed
+- [#144](https://github.com/krux/hyperion/issues/144) - SplitMergeFileActivity isnt properly compressing final merged output
+
 ## 2.0.6 - 2015-08-10
 ### Fixed
 - [#142](https://github.com/krux/hyperion/issues/142) - Arguments to SFTP activity are incorrect

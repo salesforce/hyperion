@@ -74,6 +74,13 @@ object RepartitionFile {
       options
     }
 
+  def applyDefaultCompression(options: Options): Options =
+    if (options.compressed && !options.output.endsWith(".gz")) {
+      options.copy(output = s"${options.output}.gz")
+    } else {
+      options
+    }
+
   def applyDefaults(options: Options): Options =
     Seq(
       applyDefaultTemporaryDirectory _,
@@ -81,7 +88,8 @@ object RepartitionFile {
       applyDefaultDirectory _,
       applyDefaultNumberOfFiles _,
       applyDefaultFileChecks _,
-      applyDefaultNumberOfFilesCalculation _
+      applyDefaultNumberOfFilesCalculation _,
+      applyDefaultCompression _
     ).foldLeft(options)((acc, handler) => handler(acc))
 
   def checkOptions(options: Options): Option[Options] = if (options.inputs.isEmpty) {
