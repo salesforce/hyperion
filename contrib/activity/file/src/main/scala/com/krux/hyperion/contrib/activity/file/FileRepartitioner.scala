@@ -13,7 +13,14 @@ case class FileRepartitioner(options: Options) {
     case files =>
       val destination: File = File.createTempFile("merge-", ".tmp", options.temporaryDirectory.get)
       destination.deleteOnExit()
-      FileMerger(destination, options.skipFirstLine).merge(options.inputs: _*)
+
+      // If we are simply merging files then the merge step needs to add the header.
+      val headers = options.numberOfFiles match {
+        case Some(1) => options.header
+        case _ => None
+      }
+
+      FileMerger(destination, options.skipFirstLine, headers).merge(options.inputs: _*)
   }
 
   private def split(file: File): Seq[File] = options.numberOfFiles match {

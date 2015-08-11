@@ -5,13 +5,15 @@ import java.util.zip.{GZIPOutputStream, GZIPInputStream}
 
 import org.apache.commons.io.IOUtils
 
-case class FileMerger(destination: File, skipFirstLine: Boolean = false) {
+case class FileMerger(destination: File, skipFirstLine: Boolean = false, headers: Option[String] = None) {
   def merge(sources: File*): File = {
     val output: OutputStream = new BufferedOutputStream({
       val s = new FileOutputStream(destination, true)
       if (destination.getName.endsWith(".gz")) new GZIPOutputStream(s) else s
     })
+
     try {
+      headers.map(_.getBytes).foreach(output.write)
       sources.foldLeft(output)(appendFile)
       destination
     } finally {
