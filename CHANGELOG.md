@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.8 - 2015-08-11
+### Fixed
+- [#146](https://github.com/krux/hyperion/issues/146) - RepartitionFile doesnt properly add header if creating a single merged file
+
 ## 2.0.7 - 2015-08-10
 ### Fixed
 - [#144](https://github.com/krux/hyperion/issues/144) - SplitMergeFileActivity isnt properly compressing final merged output
