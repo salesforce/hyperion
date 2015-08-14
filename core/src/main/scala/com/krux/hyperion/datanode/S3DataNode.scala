@@ -16,11 +16,16 @@ sealed trait S3DataNode extends Copyable {
   def asOutput(): String = asOutput(1)
   def asOutput(n: Integer): String = "${" + s"OUTPUT${n}_STAGING_DIR}"
 
-  def withDataFormat(fmt: DataFormat): S3DataNode
-
   def named(name: String): S3DataNode
   def groupedBy(client: String): S3DataNode
 
+  def withDataFormat(fmt: DataFormat): S3DataNode
+  def withManifestFilePath(path: Parameter[S3Uri]): S3DataNode
+  def compressed: S3DataNode
+  def unencrypted: S3DataNode
+  def whenMet(conditions: Precondition*): S3DataNode
+  def onFail(alarms: SnsAlarm*): S3DataNode
+  def onSuccess(alarms: SnsAlarm*): S3DataNode
 }
 
 object S3DataNode {
