@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.9 - 2015-08-14
+### Fixed
+- [#149](https://github.com/krux/hyperion/issues/149) - Preconditions are not returned in objects for DataNodes
+- [#150](https://github.com/krux/hyperion/issues/150) - The whenMet method returns DataNode instead of S3DataNode
+
 ## 2.0.8 - 2015-08-11
 ### Fixed
 - [#146](https://github.com/krux/hyperion/issues/146) - RepartitionFile doesnt properly add header if creating a single merged file

@@ -50,7 +50,7 @@ case class RandomizedObjectId(seed: String) extends PipelineObjectId {
 }
 
 case class FixedObjectId(seed: String) extends PipelineObjectId {
-  override def toString = seed
+  override val toString = seed
 }
 
 object ScheduleObjectId extends PipelineObjectId {

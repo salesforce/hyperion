@@ -3,7 +3,7 @@ package com.krux.hyperion.activity
 import scala.language.implicitConversions
 
 class MainClass private (name: String) {
-  override def toString: String = name
+  override val toString = name
 }
 
 object MainClass {
