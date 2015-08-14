@@ -15,11 +15,11 @@ object SftpActivity {
   sealed trait Action
 
   case object UploadAction extends Action {
-    override def toString = "upload"
+    override val toString = "upload"
   }
 
   case object DownloadAction extends Action {
-    override def toString = "download"
+    override val toString = "download"
   }
 
   case class Options(

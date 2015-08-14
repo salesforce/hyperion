@@ -12,7 +12,7 @@ case class MapReduceStep private (
   def withMainClass(mainClass: MainClass) = this.copy(mainClass = Option(mainClass))
   def withArguments(arg: String*) = this.copy(args = args ++ arg)
 
-  override def toString: String = (Seq(jarUri) ++ mainClass.map(_.toString).toSeq ++ args).mkString(",")
+  override def toString = (Seq(jarUri) ++ mainClass.map(_.toString).toSeq ++ args).mkString(",")
 
 }
 

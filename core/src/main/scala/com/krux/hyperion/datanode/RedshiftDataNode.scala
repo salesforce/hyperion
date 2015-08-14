@@ -22,18 +22,18 @@ case class RedshiftDataNode private (
   onFailAlarms: Seq[SnsAlarm]
 ) extends DataNode {
 
-  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
-  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
+  def named(name: String): RedshiftDataNode = this.copy(id = PipelineObjectId.withName(name, id))
+  def groupedBy(group: String): RedshiftDataNode = this.copy(id = PipelineObjectId.withGroup(group, id))
 
-  def withCreateTableSql(createSql: String) = this.copy(createTableSql = Option(createSql))
-  def withSchema(name: String) = this.copy(schemaName = Option(name))
-  def withPrimaryKeys(pks: String*) = this.copy(primaryKeys = primaryKeys ++ pks)
+  def withCreateTableSql(createSql: String): RedshiftDataNode = this.copy(createTableSql = Option(createSql))
+  def withSchema(name: String): RedshiftDataNode = this.copy(schemaName = Option(name))
+  def withPrimaryKeys(pks: String*): RedshiftDataNode = this.copy(primaryKeys = primaryKeys ++ pks)
 
-  def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
-  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
-  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
+  def whenMet(conditions: Precondition*): RedshiftDataNode = this.copy(preconditions = preconditions ++ conditions)
+  def onFail(alarms: SnsAlarm*): RedshiftDataNode = this.copy(onFailAlarms = onFailAlarms ++ alarms)
+  def onSuccess(alarms: SnsAlarm*): RedshiftDataNode = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
 
-  def objects: Iterable[PipelineObject] = Option(database)
+  def objects: Iterable[PipelineObject] = Option(database) ++ preconditions ++ onSuccessAlarms ++ onFailAlarms
 
   lazy val serialize = AdpRedshiftDataNode(
     id = id,

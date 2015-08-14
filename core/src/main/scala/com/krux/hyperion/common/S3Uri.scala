@@ -12,7 +12,7 @@ case class S3Uri(ref: String) {
 
   def /(next: String) = S3Uri(s"$ref/$next")
 
-  override val toString: String = ref
+  override val toString = ref
 }
 
 trait S3UriHelper {

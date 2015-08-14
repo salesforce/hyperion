@@ -46,20 +46,20 @@ case class S3File private (
   onFailAlarms: Seq[SnsAlarm]
 ) extends S3DataNode {
 
-  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
-  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
+  def named(name: String): S3File = this.copy(id = PipelineObjectId.withName(name, id))
+  def groupedBy(group: String): S3File = this.copy(id = PipelineObjectId.withGroup(group, id))
 
-  def withDataFormat(fmt: DataFormat) = this.copy(dataFormat = Option(fmt))
-  def withManifestFilePath(path: Parameter[S3Uri]) = this.copy(manifestFilePath = Option(path))
-  def compressed = this.copy(isCompressed = true)
-  def unencrypted = this.copy(isEncrypted = false)
-  def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
-  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
-  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
+  def withDataFormat(fmt: DataFormat): S3File = this.copy(dataFormat = Option(fmt))
+  def withManifestFilePath(path: Parameter[S3Uri]): S3File = this.copy(manifestFilePath = Option(path))
+  def compressed: S3File = this.copy(isCompressed = true)
+  def unencrypted: S3File = this.copy(isEncrypted = false)
+  def whenMet(conditions: Precondition*): S3File = this.copy(preconditions = preconditions ++ conditions)
+  def onFail(alarms: SnsAlarm*): S3File = this.copy(onFailAlarms = onFailAlarms ++ alarms)
+  def onSuccess(alarms: SnsAlarm*): S3File = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
 
-  override def toString: String = filePath.toString
+  override def toString = filePath.toString
 
-  def objects: Iterable[PipelineObject] = dataFormat
+  def objects: Iterable[PipelineObject] = dataFormat ++ preconditions ++ onSuccessAlarms ++ onFailAlarms
 
   lazy val serialize = AdpS3DataNode(
     id = id,
@@ -107,20 +107,20 @@ case class S3Folder private(
   onFailAlarms: Seq[SnsAlarm]
 ) extends S3DataNode {
 
-  def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
-  def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
+  def named(name: String): S3Folder = this.copy(id = PipelineObjectId.withName(name, id))
+  def groupedBy(group: String): S3Folder = this.copy(id = PipelineObjectId.withGroup(group, id))
 
-  def withDataFormat(fmt: DataFormat) = this.copy(dataFormat = Option(fmt))
-  def withManifestFilePath(path: Parameter[S3Uri]) = this.copy(manifestFilePath = Option(path))
-  def compressed = this.copy(isCompressed = true)
-  def unencrypted = this.copy(isEncrypted = false)
-  def whenMet(preconditions: Precondition*) = this.copy(preconditions = preconditions ++ preconditions)
-  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
-  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
+  def withDataFormat(fmt: DataFormat): S3Folder = this.copy(dataFormat = Option(fmt))
+  def withManifestFilePath(path: Parameter[S3Uri]): S3Folder = this.copy(manifestFilePath = Option(path))
+  def compressed: S3Folder = this.copy(isCompressed = true)
+  def unencrypted: S3Folder = this.copy(isEncrypted = false)
+  def whenMet(preconditions: Precondition*): S3Folder = this.copy(preconditions = preconditions ++ preconditions)
+  def onFail(alarms: SnsAlarm*): S3Folder = this.copy(onFailAlarms = onFailAlarms ++ alarms)
+  def onSuccess(alarms: SnsAlarm*): S3Folder = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
 
-  override def toString: String = directoryPath.toString
+  override def toString = directoryPath.toString
 
-  def objects: Iterable[PipelineObject] = dataFormat
+  def objects: Iterable[PipelineObject] = dataFormat ++ preconditions ++ onSuccessAlarms ++ onFailAlarms
 
   lazy val serialize = AdpS3DataNode(
     id = id,
