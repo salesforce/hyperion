@@ -1,11 +1,12 @@
 package com.krux.hyperion
 
+import scala.annotation.tailrec
+import scala.collection.JavaConversions._
 import com.amazonaws.auth.{DefaultAWSCredentialsProviderChain, STSAssumeRoleSessionCredentialsProvider}
 import com.amazonaws.regions.{Regions, Region}
 import com.amazonaws.services.datapipeline._
 import com.amazonaws.services.datapipeline.model._
 import com.krux.hyperion.DataPipelineDef._
-import scala.collection.JavaConversions._
 
 class HyperionAwsClient(regionId: Option[String] = None, roleArn: Option[String] = None) {
   lazy val region: Region = Region.getRegion(regionId.map(r => Regions.fromName(r)).getOrElse(Regions.US_EAST_1))
@@ -35,12 +36,23 @@ class HyperionAwsClient(regionId: Option[String] = None, roleArn: Option[String]
     val pipelineName = customName.getOrElse(pipelineDef.pipelineName)
 
     def getPipelineId: Option[String] = {
-      val idNameToIdPartial = Function.unlift((idName: PipelineIdName) =>
-        if (idName.getName == pipelineName) Option(idName.getId) else None
-      )
+      @tailrec
+      def queryPipelines(ids: List[String] = List(), request: ListPipelinesRequest = new ListPipelinesRequest()): List[String] = {
+        val response = client.listPipelines(request)
 
-      client.listPipelines().getPipelineIdList.collect(idNameToIdPartial).toList match {
-        case x :: y :: other =>  // if using hyperion for all DataPipeline management, this should never happen
+        val theseIds: List[String] = response.getPipelineIdList.collect({
+          case idName if idName.getName == pipelineName => idName.getId
+        }).toList
+
+        if (response.getHasMoreResults) {
+          queryPipelines(ids ++ theseIds, new ListPipelinesRequest().withMarker(response.getMarker))
+        } else {
+          ids ++ theseIds
+        }
+      }
+
+      queryPipelines() match {
+        case x :: y :: other =>  // if using Hyperion for all DataPipeline management, this should never happen
           throw new Exception("Duplicated pipeline name")
         case x :: Nil => Option(x)
         case Nil => None
