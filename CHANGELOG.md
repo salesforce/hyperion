@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.12 - 2015-08-17
+### Fixed
+- [#155](https://github.com/krux/hyperion/issues/155) - Workflow breaks when
+    having ArrowDependency on the right hand side.
+
 ## 2.0.11 - 2015-08-17
 ### Fixed
 - [#153](https://github.com/krux/hyperion/issues/153) - The create --force action doesnt detect existing pipelines 
