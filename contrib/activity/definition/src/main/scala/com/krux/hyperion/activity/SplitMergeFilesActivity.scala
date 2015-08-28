@@ -1,15 +1,14 @@
 package com.krux.hyperion.activity
 
+import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws.AdpShellCommandActivity
 import com.krux.hyperion.common.{PipelineObject, PipelineObjectId}
 import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, Ec2Resource}
-import scala.collection.mutable.Buffer
 
 class SplitMergeFilesActivity private (
   val id: PipelineObjectId,
@@ -32,7 +31,7 @@ class SplitMergeFilesActivity private (
   val stdout: Option[String],
   val stderr: Option[String],
   val runsOn: Resource[Ec2Resource],
-  val dependsOn: Buffer[PipelineActivity],
+  val dependsOn: Seq[PipelineActivity],
   val preconditions: Seq[Precondition],
   val onFailAlarms: Seq[SnsAlarm],
   val onSuccessAlarms: Seq[SnsAlarm],
@@ -65,7 +64,7 @@ class SplitMergeFilesActivity private (
     stdout: Option[String] = stdout,
     stderr: Option[String] = stderr,
     runsOn: Resource[Ec2Resource] = runsOn,
-    dependsOn: Buffer[PipelineActivity] = dependsOn,
+    dependsOn: Seq[PipelineActivity] = dependsOn,
     preconditions: Seq[Precondition] = preconditions,
     onFailAlarms: Seq[SnsAlarm] = onFailAlarms,
     onSuccessAlarms: Seq[SnsAlarm] = onSuccessAlarms,
@@ -104,6 +103,7 @@ class SplitMergeFilesActivity private (
   def withStdoutTo(out: String) = this.copy(stdout = Option(out))
   def withStderrTo(err: String) = this.copy(stderr = Option(err))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -181,7 +181,7 @@ object SplitMergeFilesActivity extends RunnableObject {
       stdout = None,
       stderr = None,
       runsOn = runsOn,
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

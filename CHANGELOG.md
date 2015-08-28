@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.2.0 - 2015-08-27
+### Fixed
+- [#157](https://github.com/krux/hyperion/issues/157) - Use a separate workflow/dependency graph to manage dependency building
+
 ## 2.1.1 - 2015-08-23
 ### Added
 - [#162](https://github.com/krux/hyperion/issues/162) - Need way to specify no activity, to allow omitting steps in a workflow expression

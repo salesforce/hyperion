@@ -8,7 +8,6 @@ import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource._
-import scala.collection.mutable.Buffer
 
 /**
  * Runs spark steps on given spark cluster with Amazon EMR
@@ -21,7 +20,7 @@ case class SparkActivity private (
   inputs: Seq[S3DataNode],
   outputs: Seq[S3DataNode],
   runsOn: Resource[SparkCluster],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -44,6 +43,7 @@ case class SparkActivity private (
   def withInput(input: S3DataNode*) = this.copy(inputs = inputs ++ input)
   def withOutput(output: S3DataNode*) = this.copy(outputs = outputs ++ output)
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -95,7 +95,7 @@ object SparkActivity extends RunnableObject {
       inputs = Seq(),
       outputs = Seq(),
       runsOn = runsOn,
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

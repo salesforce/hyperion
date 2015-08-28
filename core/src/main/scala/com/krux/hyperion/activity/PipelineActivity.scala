@@ -4,7 +4,6 @@ import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws.{AdpActivity, AdpRef}
 import com.krux.hyperion.common.PipelineObject
 import com.krux.hyperion.precondition.Precondition
-import scala.collection.mutable.Buffer
 
 /**
  * The activity trait. All activities should mixin this trait.
@@ -14,12 +13,8 @@ trait PipelineActivity extends PipelineObject {
   def groupedBy(client: String): PipelineActivity
   def named(name: String): PipelineActivity
 
-  private[hyperion] def dependsOn(activities: PipelineActivity*): PipelineActivity = {
-    dependsOn ++= activities
-    this
-  }
-
-  def dependsOn: Buffer[PipelineActivity]
+  private[hyperion] def dependsOn(activities: PipelineActivity*): PipelineActivity
+  def dependsOn: Seq[PipelineActivity]
   def whenMet(conditions: Precondition*): PipelineActivity
 
   def onFail(alarms: SnsAlarm*): PipelineActivity

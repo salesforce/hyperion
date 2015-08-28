@@ -1,15 +1,14 @@
 package com.krux.hyperion.activity
 
+import com.krux.hyperion.common.{S3Uri, PipelineObjectId, PipelineObject}
+import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws.AdpHiveCopyActivity
-import com.krux.hyperion.common.{S3Uri, PipelineObjectId, PipelineObject}
 import com.krux.hyperion.datanode.DataNode
 import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, WorkerGroup, EmrCluster}
-import scala.collection.mutable.Buffer
 
 /**
  * Runs a Hive query on an Amazon EMR cluster. HiveCopyActivity makes it easier to copy data between
@@ -26,7 +25,7 @@ case class HiveCopyActivity private (
   preActivityTaskConfig: Option[ShellScriptConfig],
   postActivityTaskConfig: Option[ShellScriptConfig],
   runsOn: Resource[EmrCluster],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -47,6 +46,7 @@ case class HiveCopyActivity private (
   def withPreActivityTaskConfig(script: ShellScriptConfig) = this.copy(preActivityTaskConfig = Option(script))
   def withPostActivityTaskConfig(script: ShellScriptConfig) = this.copy(postActivityTaskConfig = Option(script))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -96,7 +96,7 @@ object HiveCopyActivity extends RunnableObject {
       preActivityTaskConfig = None,
       postActivityTaskConfig = None,
       runsOn = runsOn,
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

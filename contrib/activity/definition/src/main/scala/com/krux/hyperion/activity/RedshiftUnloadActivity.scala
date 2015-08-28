@@ -1,14 +1,13 @@
 package com.krux.hyperion.activity
 
+import com.krux.hyperion.common.{S3Uri, PipelineObjectId, PipelineObject}
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws.AdpSqlActivity
-import com.krux.hyperion.common.{S3Uri, PipelineObjectId, PipelineObject}
 import com.krux.hyperion.database.RedshiftDatabase
 import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.{Parameter, StringParameter}
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, Ec2Resource}
-import scala.collection.mutable.Buffer
 
 /**
  * Unload result of the given sql script from redshift to given s3Path.
@@ -21,7 +20,7 @@ case class RedshiftUnloadActivity private (
   unloadOptions: Seq[RedshiftUnloadOption],
   queue: Option[String],
   runsOn: Resource[Ec2Resource],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -54,6 +53,7 @@ case class RedshiftUnloadActivity private (
 
   def withQueue(queue: String) = this.copy(queue = Option(queue))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -109,7 +109,7 @@ object RedshiftUnloadActivity extends RunnableObject {
       queue = None,
       runsOn = runsOn,
       unloadOptions = Seq(),
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

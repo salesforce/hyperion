@@ -8,7 +8,6 @@ import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, WorkerGroup, Ec2Resource}
-import scala.collection.mutable.Buffer
 
 /**
  * Runs an SQL query on a RedShift cluster. If the query writes out to a table that does not exist,
@@ -21,7 +20,7 @@ case class SqlActivity private (
   database: RedshiftDatabase,
   queue: Option[String],
   runsOn: Resource[Ec2Resource],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -39,6 +38,7 @@ case class SqlActivity private (
   def withArguments(arg: String*) = this.copy(scriptArgument = scriptArgument ++ arg)
   def withQueue(queue: String) = this.copy(queue = Option(queue))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -84,7 +84,7 @@ object SqlActivity extends RunnableObject {
       database = database,
       queue = None,
       runsOn = runsOn,
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

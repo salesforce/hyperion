@@ -8,7 +8,6 @@ import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource._
-import scala.collection.mutable.Buffer
 
 class S3DistCpActivity private (
   val id: PipelineObjectId,
@@ -35,7 +34,7 @@ class S3DistCpActivity private (
   val preStepCommands: Seq[String],
   val postStepCommands: Seq[String],
   val runsOn: Resource[EmrCluster],
-  val dependsOn: Buffer[PipelineActivity],
+  val dependsOn: Seq[PipelineActivity],
   val preconditions: Seq[Precondition],
   val onFailAlarms: Seq[SnsAlarm],
   val onSuccessAlarms: Seq[SnsAlarm],
@@ -74,7 +73,7 @@ class S3DistCpActivity private (
     preStepCommands: Seq[String] = preStepCommands,
     postStepCommands: Seq[String] = postStepCommands,
     runsOn: Resource[EmrCluster] = runsOn,
-    dependsOn: Buffer[PipelineActivity] = dependsOn,
+    dependsOn: Seq[PipelineActivity] = dependsOn,
     preconditions: Seq[Precondition] = preconditions,
     onFailAlarms: Seq[SnsAlarm] = onFailAlarms,
     onSuccessAlarms: Seq[SnsAlarm] = onSuccessAlarms,
@@ -120,6 +119,7 @@ class S3DistCpActivity private (
   def withPreStepCommand(command: String*) = this.copy(preStepCommands = preStepCommands ++ command)
   def withPostStepCommand(command: String*) = this.copy(postStepCommands = postStepCommands ++ command)
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -233,7 +233,7 @@ object S3DistCpActivity extends RunnableObject {
       preStepCommands = Seq(),
       postStepCommands = Seq(),
       runsOn = runsOn,
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

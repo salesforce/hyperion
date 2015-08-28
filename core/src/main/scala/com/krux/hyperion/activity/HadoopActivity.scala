@@ -7,7 +7,6 @@ import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, WorkerGroup, EmrCluster}
-import scala.collection.mutable.Buffer
 
 /**
  * Runs a MapReduce job on a cluster. The cluster can be an EMR cluster managed by AWS Data Pipeline
@@ -25,7 +24,7 @@ case class HadoopActivity private (
   preActivityTaskConfig: Option[ShellScriptConfig],
   postActivityTaskConfig: Option[ShellScriptConfig],
   runsOn: Resource[EmrCluster],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -45,6 +44,7 @@ case class HadoopActivity private (
   def withPreActivityTaskConfig(script: ShellScriptConfig) = this.copy(preActivityTaskConfig = Option(script))
   def withPostActivityTaskConfig(script: ShellScriptConfig) = this.copy(postActivityTaskConfig = Option(script))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -92,7 +92,7 @@ object HadoopActivity extends RunnableObject {
     preActivityTaskConfig = None,
     postActivityTaskConfig = None,
     runsOn = runsOn,
-    dependsOn = Buffer(),
+    dependsOn = Seq(),
     preconditions = Seq(),
     onFailAlarms = Seq(),
     onSuccessAlarms = Seq(),

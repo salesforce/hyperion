@@ -1,15 +1,14 @@
 package com.krux.hyperion.activity
 
+import com.krux.hyperion.common.{S3Uri, PipelineObjectId, PipelineObject}
+import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws.AdpShellCommandActivity
-import com.krux.hyperion.common.{S3Uri, PipelineObjectId, PipelineObject}
 import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, WorkerGroup, Ec2Resource}
-import scala.collection.mutable.Buffer
 
 /**
  * Shell command activity that runs a given Jar
@@ -26,7 +25,7 @@ case class JarActivity private (
   input: Seq[S3DataNode],
   output: Seq[S3DataNode],
   runsOn: Resource[Ec2Resource],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -48,6 +47,7 @@ case class JarActivity private (
   def withInput(inputs: S3DataNode*) = this.copy(input = input ++ inputs, stage = Option(true))
   def withOutput(outputs: S3DataNode*) = this.copy(output = output ++ outputs, stage = Option(true))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -102,7 +102,7 @@ object JarActivity extends RunnableObject {
       input = Seq(),
       output = Seq(),
       runsOn = runsOn,
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

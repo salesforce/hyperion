@@ -3,32 +3,26 @@ package com.krux.hyperion
 import scala.language.implicitConversions
 
 import com.krux.hyperion.activity.PipelineActivity
+import com.krux.hyperion.util.WorkflowGraph
 
 sealed abstract class WorkflowExpression {
 
   def toPipelineObjects: Iterable[PipelineActivity] = {
 
-    def toPipelineObjectsRec(exp: WorkflowExpression): Set[PipelineActivity] = exp match {
-      case WorkflowNoActivityExpression => Set()
-
-      case WorkflowActivityExpression(activity) => Set(activity)
-
-      case WorkflowArrowExpression(left, right) =>
-        val leftDeps = toPipelineObjectsRec(left)
-        val rightDeps = toPipelineObjectsRec(right)
-        // rightDeps now should depend on leftDeps
-        rightDeps.map(_.dependsOn(leftDeps.toSeq.sortBy(_.id): _*)) ++ leftDeps
-
-      case WorkflowPlusExpression(left, right) =>
-        val leftDeps = toPipelineObjectsRec(left)
-        val rightDeps = toPipelineObjectsRec(right)
-        (leftDeps ++ rightDeps).groupBy(_.id)
-          .map { case (id, acts) =>
-            acts.reduceLeft((a, b) => a.dependsOn(b.dependsOn: _*))
-          }.toSet
+    def toWorkflowGraph(exp: WorkflowExpression): WorkflowGraph = {
+      exp match {
+        case WorkflowNoActivityExpression =>
+          new WorkflowGraph()
+        case WorkflowActivityExpression(act) =>
+          new WorkflowGraph(act)
+        case WorkflowArrowExpression(left, right) =>
+          toWorkflowGraph(left) ~> toWorkflowGraph(right)
+        case WorkflowPlusExpression(left, right) =>
+          toWorkflowGraph(left) ++ toWorkflowGraph(right)
+      }
     }
 
-    toPipelineObjectsRec(this)
+    toWorkflowGraph(this).toActivities
   }
 
   def andThen(right: WorkflowExpression): WorkflowExpression = right match {

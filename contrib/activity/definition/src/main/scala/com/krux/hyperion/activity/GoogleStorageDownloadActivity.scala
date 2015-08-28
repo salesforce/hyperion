@@ -1,15 +1,14 @@
 package com.krux.hyperion.activity
 
+import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws.AdpShellCommandActivity
 import com.krux.hyperion.common.{S3Uri, PipelineObject, PipelineObjectId}
 import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, Ec2Resource}
-import scala.collection.mutable.Buffer
 
 /**
  * Google Storage Download activity
@@ -21,7 +20,7 @@ case class GoogleStorageDownloadActivity private (
   output: Option[S3DataNode],
   botoConfigUrl: Parameter[S3Uri],
   runsOn: Resource[Ec2Resource],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -39,6 +38,7 @@ case class GoogleStorageDownloadActivity private (
   def withInput(path: String) = this.copy(input = path)
   def withOutput(out: S3DataNode) = this.copy(output = Option(out))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -88,7 +88,7 @@ object GoogleStorageDownloadActivity extends RunnableObject {
       output = None,
       botoConfigUrl = botoConfigUrl,
       runsOn = runsOn,
-      dependsOn = Buffer(),
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),

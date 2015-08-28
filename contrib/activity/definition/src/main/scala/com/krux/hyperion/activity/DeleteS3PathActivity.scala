@@ -7,7 +7,6 @@ import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource.{Resource, Ec2Resource}
-import scala.collection.mutable.Buffer
 
 /**
  * Activity to recursively delete files in an S3 path.
@@ -18,7 +17,7 @@ case class DeleteS3PathActivity private (
   stdout: Option[String],
   stderr: Option[String],
   runsOn: Resource[Ec2Resource],
-  dependsOn: Buffer[PipelineActivity],
+  dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
@@ -36,6 +35,7 @@ case class DeleteS3PathActivity private (
   def withStdoutTo(out: String) = this.copy(stdout = Option(out))
   def withStderrTo(err: String) = this.copy(stderr = Option(err))
 
+  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
@@ -83,7 +83,7 @@ object DeleteS3PathActivity extends RunnableObject {
       stdout = None,
       stderr = None,
       runsOn = runsOn,
-      dependsOn = Buffer.empty,
+      dependsOn = Seq(),
       preconditions = Seq(),
       onFailAlarms = Seq(),
       onSuccessAlarms = Seq(),
