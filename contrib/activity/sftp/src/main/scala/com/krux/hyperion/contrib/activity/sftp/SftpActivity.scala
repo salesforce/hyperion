@@ -30,7 +30,8 @@ object SftpActivity {
     password: Option[String] = None,
     identity: Option[String] = None,
     path: Option[String] = None,
-    pattern: Option[String] = None
+    pattern: Option[String] = None,
+    skipEmpty: Boolean = false
   )
 
   private def fileToByteArray(file: File): Array[Byte] = {
@@ -141,6 +142,7 @@ object SftpActivity {
           sftp.cd(dir)
           println("done.")
         }
+
         // Change directory to folder where we have permissions to get files
         options.mode match {
           case Some(UploadAction) =>
@@ -148,10 +150,16 @@ object SftpActivity {
             Paths.get(System.getenv("INPUT1_STAGING_DIR")).toFile.listFiles(new FilenameFilter {
               override def accept(dir: File, name: String): Boolean = options.pattern.forall(name.matches)
             }).foreach { file =>
-              print(s"Uploading ${file.getAbsolutePath} -> ${file.getName}...")
-              // Upload the file
-              sftp.put(file.getAbsolutePath, file.getName)
-              println("done.")
+              if (options.skipEmpty && file.length() == 0) {
+                println(s"Skipping ${file.getAbsolutePath} because it is empty.")
+              } else {
+                print(s"Uploading ${file.getAbsolutePath} -> ${file.getName}...")
+
+                // Upload the file
+                sftp.put(file.getAbsolutePath, file.getName)
+
+                println("done.")
+              }
             }
 
           case Some(DownloadAction) =>
@@ -201,6 +209,7 @@ object SftpActivity {
         .text("Provide PASSWORD for the USER\n")
       opt[String]('i', "identity").valueName("IDENTITY").optional().action((x, c) => c.copy(identity = Option(x)))
         .text("Use the IDENTITY instead of a PASSWORD\n")
+      opt[Unit]("skip-empty").optional().action((_, c) => c.copy(skipEmpty = true))
       opt[String]("pattern").valueName("PATTERN").optional().action((x, c) => c.copy(pattern = Option(x)))
         .text("Search for files matching PATTERN to upload/download\n")
 

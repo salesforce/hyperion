@@ -30,7 +30,8 @@ object RepartitionFile {
       k.listFiles(new FilenameFilter {
         val matcher = options.pattern.map(pattern => FileSystems.getDefault.getPathMatcher(s"glob:$pattern"))
 
-        override def accept(dir: File, name: String): Boolean = matcher.forall(_.matches(Paths.get(name)))
+        override def accept(dir: File, name: String): Boolean =
+          !name.startsWith("_") && matcher.forall(_.matches(Paths.get(name)))
       }).toSeq
     } else if (k.isFile) {
       if (k.canRead) {

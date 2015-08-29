@@ -38,7 +38,8 @@ class SftpUploadActivity private (
   val lateAfterTimeout: Option[Parameter[Duration]],
   val maximumRetries: Option[Parameter[Int]],
   val retryDelay: Option[Parameter[Duration]],
-  val failureAndRerunMode: Option[FailureAndRerunMode]
+  val failureAndRerunMode: Option[FailureAndRerunMode],
+  val skipEmpty: Boolean
 ) extends SftpActivity {
 
   def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
@@ -53,6 +54,7 @@ class SftpUploadActivity private (
   def withOutput(output: String) = this.copy(output = Option(output))
   def withStdoutTo(out: String) = this.copy(stdout = Option(out))
   def withStderrTo(err: String) = this.copy(stderr = Option(err))
+  def skippingEmpty() = this.copy(skipEmpty = true)
 
   private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
@@ -90,11 +92,12 @@ class SftpUploadActivity private (
     lateAfterTimeout: Option[Parameter[Duration]] = lateAfterTimeout,
     maximumRetries: Option[Parameter[Int]] = maximumRetries,
     retryDelay: Option[Parameter[Duration]] = retryDelay,
-    failureAndRerunMode: Option[FailureAndRerunMode] = failureAndRerunMode
+    failureAndRerunMode: Option[FailureAndRerunMode] = failureAndRerunMode,
+    skipEmpty: Boolean = skipEmpty
   ) = new SftpUploadActivity(
     id, scriptUri, jarUri, mainClass, host, port, username, password, identity, pattern, input, output, stdout, stderr,
     runsOn, dependsOn, preconditions, onFailAlarms, onSuccessAlarms, onLateActionAlarms, attemptTimeout,
-    lateAfterTimeout, maximumRetries, retryDelay, failureAndRerunMode
+    lateAfterTimeout, maximumRetries, retryDelay, failureAndRerunMode, skipEmpty
   )
 
   def objects: Iterable[PipelineObject] = runsOn.toSeq ++ input ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
@@ -107,6 +110,7 @@ class SftpUploadActivity private (
     password.map(p => Seq("--password", p.toString)),
     identity.map(i => Seq("--identity", i.toString)),
     pattern.map(p => Seq("--pattern", p)),
+    if (skipEmpty) Option(Seq("--skip-empty")) else None,
     output.map(out => Seq(out))
   ).flatten.flatten
 
@@ -165,7 +169,8 @@ object SftpUploadActivity extends RunnableObject {
       lateAfterTimeout = None,
       maximumRetries = None,
       retryDelay = None,
-      failureAndRerunMode = None
+      failureAndRerunMode = None,
+      skipEmpty = false
     )
 
 }

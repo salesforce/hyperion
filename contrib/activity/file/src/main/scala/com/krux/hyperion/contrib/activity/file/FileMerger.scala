@@ -13,8 +13,7 @@ case class FileMerger(destination: File, skipFirstLine: Boolean = false, headers
     })
 
     try {
-      headers.map(_.getBytes).foreach(output.write)
-      sources.foldLeft(output)(appendFile)
+      sources.foldLeft(headers -> output)(appendFile)
       destination
     } finally {
       IOUtils.closeQuietly(output)
@@ -31,13 +30,20 @@ case class FileMerger(destination: File, skipFirstLine: Boolean = false, headers
     input
   }
 
-  private def appendFile(output: OutputStream, source: File): OutputStream = {
+  private def appendFile(state: (Option[String], OutputStream), source: File): (Option[String], OutputStream) = {
+    val (headers, output) = state
+
     if (source.getName == "-") {
       print("Merging stdin...")
+      headers.map(_.getBytes).foreach(output.write)
       IOUtils.copy(doSkipFirstLine(System.in), output)
       println("done")
-    } else {
+
+      None -> output
+    } else if (source.length() > 0) {
       print(s"Merging ${source.getAbsolutePath}...")
+
+      headers.map(_.getBytes).foreach(output.write)
 
       val input = new BufferedInputStream({
         val s = new FileInputStream(source)
@@ -50,7 +56,10 @@ case class FileMerger(destination: File, skipFirstLine: Boolean = false, headers
         IOUtils.closeQuietly(input)
         println("done")
       }
+
+      None -> output
+    } else {
+      headers -> output
     }
-    output
   }
 }
