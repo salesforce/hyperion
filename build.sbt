@@ -1,7 +1,8 @@
-val hyperionVersion = "2.2.0"
+val hyperionVersion = "2.3.0"
 val scala210Version = "2.10.5"
 val scala211Version = "2.11.7"
-val awsSdkVersion = "1.9.35"
+val awsSdkVersion   = "1.9.35"
+val mailVersion     = "1.5.4"
 
 val nscalaTimeArtifact      = "com.github.nscala-time" %% "nscala-time"               % "1.8.0"
 val json4sJacksonArtifact   = "org.json4s"             %% "json4s-jackson"            % "3.2.10"
@@ -12,9 +13,9 @@ val commonsIoArtifact       = "commons-io"             %  "commons-io"          
 val awsDatapipelineArtifact = "com.amazonaws"          %  "aws-java-sdk-datapipeline" % awsSdkVersion
 val awsStsArtifact          = "com.amazonaws"          %  "aws-java-sdk-sts"          % awsSdkVersion
 val awsS3Artifact           = "com.amazonaws"          %  "aws-java-sdk-s3"           % awsSdkVersion
+val mailArtifact            = "com.sun.mail"           %  "mailapi"                   % mailVersion
+val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % mailVersion
 val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "2.2.4"  % "test"
-val mailArtifact            = "com.sun.mail"           %  "mailapi"                   % "1.5.4"
-val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % "1.5.4"
 
 lazy val publishSettings = Seq(
   sonatypeProfileName := "com.krux",
