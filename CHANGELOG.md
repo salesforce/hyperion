@@ -2,9 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.4.0 - 2015-08-29
+## 2.4.0 - 2015-08-30
 ### Added
 - [#164](https://github.com/krux/hyperion/issues/164) - Add support for rdsInstanceId to RdsDatabase
+- [#170](https://github.com/krux/hyperion/issues/170) - Output a count of pipeline objects
 
 ## 2.3.0 - 2015-08-29
 ### Fixed
