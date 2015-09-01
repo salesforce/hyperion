@@ -1,4 +1,4 @@
-val hyperionVersion = "2.6.1"
+val hyperionVersion = "2.7.0"
 val scala210Version = "2.10.5"
 val scala211Version = "2.11.7"
 val awsSdkVersion   = "1.9.35"
@@ -14,6 +14,8 @@ val commonsIoArtifact       = "commons-io"             %  "commons-io"          
 val awsDatapipelineArtifact = "com.amazonaws"          %  "aws-java-sdk-datapipeline" % awsSdkVersion
 val awsStsArtifact          = "com.amazonaws"          %  "aws-java-sdk-sts"          % awsSdkVersion
 val awsS3Artifact           = "com.amazonaws"          %  "aws-java-sdk-s3"           % awsSdkVersion
+val awsSqsArtifact          = "com.amazonaws"          %  "aws-java-sdk-sqs"          % awsSdkVersion
+val awsSnsArtifact          = "com.amazonaws"          %  "aws-java-sdk-sns"          % awsSdkVersion
 val mailArtifact            = "com.sun.mail"           %  "mailapi"                   % mailVersion
 val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % mailVersion
 val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "2.2.4"  % "test"
@@ -115,6 +117,7 @@ lazy val root = (project in file(".")).
     contribActivityDefinition,
     contribActivitySftp,
     contribActivityEmail,
+    contribActivityNotification,
     contribActivityFile
   )
 
@@ -185,6 +188,20 @@ lazy val contribActivityEmail = (project in file("contrib/activity/email")).
     libraryDependencies ++= Seq(
       scoptArtifact,
       mailArtifact,
+      smtpArtifact
+    )
+  )
+
+lazy val contribActivityNotification = (project in file("contrib/activity/notification")).
+  settings(artifactSettings: _*).
+  settings(publishSettings: _*).
+  settings(
+    name := "hyperion-notification-activity",
+    libraryDependencies ++= Seq(
+      scoptArtifact,
+      json4sJacksonArtifact,
+      awsSnsArtifact,
+      awsSqsArtifact,
       smtpArtifact
     )
   )
