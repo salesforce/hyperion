@@ -14,7 +14,11 @@ case class SendFlowdockMessageActivity private (
   scriptUri: Option[S3Uri],
   jarUri: String,
   mainClass: String,
-  arguments: Seq[String],
+  flowApiToken: String,
+  message: String,
+  user: String,
+  continueOnError: Boolean,
+  tags: Seq[String],
   runsOn: Resource[Ec2Resource],
   dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
@@ -31,6 +35,10 @@ case class SendFlowdockMessageActivity private (
   def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
   def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
+  def continuingOnError = this.copy(continueOnError = true)
+  def withUser(user: String) = this.copy(user = user)
+  def withTags(tag: String*) = this.copy(tags = this.tags ++ tag)
+
   private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
@@ -43,6 +51,14 @@ case class SendFlowdockMessageActivity private (
   def withFailureAndRerunMode(mode: FailureAndRerunMode) = this.copy(failureAndRerunMode = Option(mode))
 
   def objects: Iterable[PipelineObject] = runsOn.toSeq ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
+
+  private def arguments: Seq[String] = Seq(
+    if (continueOnError) Seq.empty else Seq("--fail-on-error"),
+    Seq("--api-key", flowApiToken),
+    Seq("--user", user),
+    if (tags.isEmpty) Seq.empty else Seq("--tags", tags.mkString(",")),
+    Seq(message)
+  ).flatten
 
   lazy val serialize = AdpShellCommandActivity(
     id = id,
@@ -71,13 +87,17 @@ case class SendFlowdockMessageActivity private (
 }
 
 object SendFlowdockMessageActivity extends RunnableObject {
-  def apply()(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SendFlowdockMessageActivity =
+  def apply(flowApiToken: String, message: String)(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SendFlowdockMessageActivity =
     new SendFlowdockMessageActivity(
       id = PipelineObjectId(SendFlowdockMessageActivity.getClass),
       scriptUri = Option(S3Uri(s"${hc.scriptUri}activities/run-jar.sh")),
       jarUri = s"${hc.scriptUri}activities/hyperion-notification-activity-current-assembly.jar",
       mainClass = "com.krux.hyperion.contrib.activity.notification.SendFlowdockMessageActivity",
-      arguments = Seq(),
+      flowApiToken = flowApiToken,
+      message = message,
+      user = "hyperion",
+      continueOnError = false,
+      tags = Seq(),
       runsOn = runsOn,
       dependsOn = Seq(),
       preconditions = Seq(),

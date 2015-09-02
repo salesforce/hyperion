@@ -14,7 +14,12 @@ case class SendSnsMessageActivity private (
   scriptUri: Option[S3Uri],
   jarUri: String,
   mainClass: String,
-  arguments: Seq[String],
+  topicArn: String,
+  message: String,
+  subject: Option[String],
+  region: Option[String],
+  structuredMessage: Boolean,
+  attributes: Map[String, (String, String)],
   runsOn: Resource[Ec2Resource],
   dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
@@ -31,6 +36,14 @@ case class SendSnsMessageActivity private (
   def named(name: String) = this.copy(id = PipelineObjectId.withName(name, id))
   def groupedBy(group: String) = this.copy(id = PipelineObjectId.withGroup(group, id))
 
+  def withSubject(subject: String) = this.copy(subject = Option(subject))
+  def withRegion(region: String) = this.copy(region = Option(region))
+  def withStructuredMessage = this.copy(structuredMessage = true)
+  def withAttribute(key: String, value: String, dataType: String = "String") = {
+    val attribute = (key, (dataType, value))
+    this.copy(attributes = attributes + attribute)
+  }
+
   private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
@@ -43,6 +56,15 @@ case class SendSnsMessageActivity private (
   def withFailureAndRerunMode(mode: FailureAndRerunMode) = this.copy(failureAndRerunMode = Option(mode))
 
   def objects: Iterable[PipelineObject] = runsOn.toSeq ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
+
+  private def arguments: Seq[String] = Seq(
+    Option(Seq("--topic-arn", topicArn)),
+    region.map(Seq("--region", _)),
+    if (attributes.nonEmpty) Option(Seq("--attributes", attributes.toSeq.map { case (k, (t, v)) => s"$k:$t=$v"}.mkString(","))) else None,
+    subject.map(Seq("--subject", _)),
+    if (structuredMessage) Option(Seq("--json")) else None,
+    Option(Seq("--message", message))
+  ).flatten.flatten
 
   lazy val serialize = AdpShellCommandActivity(
     id = id,
@@ -71,13 +93,18 @@ case class SendSnsMessageActivity private (
 }
 
 object SendSnsMessageActivity extends RunnableObject {
-  def apply()(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SendSnsMessageActivity =
+  def apply(topicArn: String, message: String)(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SendSnsMessageActivity =
     new SendSnsMessageActivity(
       id = PipelineObjectId(SendSnsMessageActivity.getClass),
       scriptUri = Option(S3Uri(s"${hc.scriptUri}activities/run-jar.sh")),
       jarUri = s"${hc.scriptUri}activities/hyperion-notification-activity-current-assembly.jar",
       mainClass = "com.krux.hyperion.contrib.activity.notification.SendSnsMessageActivity",
-      arguments = Seq(),
+      topicArn = topicArn,
+      message = message,
+      subject = None,
+      region = None,
+      structuredMessage = false,
+      attributes = Map.empty,
       runsOn = runsOn,
       dependsOn = Seq(),
       preconditions = Seq(),

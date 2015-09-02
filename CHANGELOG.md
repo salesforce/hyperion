@@ -2,8 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.7.2 - 2015-09-03
+### Fixed
+- [#184](https://github.com/krux/hyperion/issues/184) - Properties for new notification activities are not properly exposed in the Activity definition
+
 ## 2.7.1 - 2015-09-02
-- [#181](https://github.com/krux/hyperion/issues/181) - Remove `spark.yarn.user.classpath.first` conf for running spark
+### Changed
+- [#181](https://github.com/krux/hyperion/issues/181) - Remove `spark.yarn.user.classpath.first` conf for running Spark
 
 ## 2.7.0 - 2015-09-02
 ### Added
