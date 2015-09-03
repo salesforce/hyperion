@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.7.3 - 2015-09-03
+### Changed
+- [#186](https://github.com/krux/hyperion/issues/186) - Change collection constructors to use `.empty`
+- [#188](https://github.com/krux/hyperion/issues/188) - SftpDownloadActivity should obey skip-empty as well and it needs to properly handle empty compressed files
+- [#189](https://github.com/krux/hyperion/issues/189) - SftpUploadActivity, SftpDownloadActivity and SplitMergeFilesActivity should be able to write a _SUCCESS file
+
 ## 2.7.2 - 2015-09-03
 ### Fixed
 - [#184](https://github.com/krux/hyperion/issues/184) - Properties for new notification activities are not properly exposed in the Activity definition
