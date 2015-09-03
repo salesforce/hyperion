@@ -47,9 +47,12 @@ case class FileMerger(destination: File, skipFirstLine: Boolean = false, headers
         if (source.getName.endsWith(".gz")) new GZIPInputStream(s) else s
       })
 
-      // If the input doesn't have at least 2 bytes available then it is most likely empty
       try {
-        if (input.available() > 1) {
+        input.mark(2)
+
+        if (input.read() != -1) {
+          input.reset()
+
           headers.map(_.getBytes).foreach(output.write)
 
           IOUtils.copy(doSkipFirstLine(input), output)
