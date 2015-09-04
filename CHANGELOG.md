@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.9.0 - 2015-09-03
+### Added
+- [#191](https://github.com/krux/hyperion/issues/191) - Create a SparkActivity-type step that runs a single step using HadoopActivity instead of MapReduceActivity
+- [#160](https://github.com/krux/hyperion/issues/160) - Better SNS alarm format support
+### Changed
+- [#197](https://github.com/krux/hyperion/issues/197) - Update the default EMR AMI version to 3.7 and Spark version to 1.4.0
+
 ## 2.8.1 - 2015-09-03
 ### Fixed
 - [#195](https://github.com/krux/hyperion/issues/195) - RepartitionFile emitting empty files
