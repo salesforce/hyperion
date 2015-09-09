@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - [#191](https://github.com/krux/hyperion/issues/191) - Create a SparkActivity-type step that runs a single step using HadoopActivity instead of MapReduceActivity
 - [#160](https://github.com/krux/hyperion/issues/160) - Better SNS alarm format support
+
 ### Changed
 - [#197](https://github.com/krux/hyperion/issues/197) - Update the default EMR AMI version to 3.7 and Spark version to 1.4.0
 
@@ -57,6 +58,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 2.3.0 - 2015-08-29
 ### Fixed
 - [#166](https://github.com/krux/hyperion/issues/166) - If the input is empty, split-merge should not create an empty file with headers
+
 ### Added
 - [#167](https://github.com/krux/hyperion/issues/167) - SftpActivity needs an option to not upload empty files
 
@@ -138,6 +140,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#116](https://github.com/krux/hyperion/issues/116) - Add HadoopActivity
 - [#125](https://github.com/krux/hyperion/issues/125) - Support collections on WorkflowExpression
 - [#127](https://github.com/krux/hyperion/issues/127) - Better type safety for MainClass
+
 ### Changed
 - [#106](https://github.com/krux/hyperion/issues/106) - Upgrade to Scala 2.11.7
 - [#113](https://github.com/krux/hyperion/issues/113) - Reorder parameters for consistency
@@ -161,6 +164,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - [#91](https://github.com/krux/hyperion/issues/91) - workflow dsl broken when the right hand side of andThen have dependencies. Note that
   `act1 + act2` is no longer the same as `Seq(act1, act2)` any more.
+
 ### Added
 - [#101](https://github.com/krux/hyperion/issues/101) - Allow workflow DSL to have duplicated activities.
 
@@ -199,6 +203,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 1.12.0 - 2015-07-02
 ### Added
 - [#64](https://github.com/krux/hyperion/issues/64) - Supports non-default region
+
 ### Fixed
 - [#69](https://github.com/krux/hyperion/issues/69) - Role and ResourceRole were not getting properly defaulted on resources
 
