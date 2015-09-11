@@ -58,6 +58,8 @@ class SendEmailActivity private (
   def withBcc(bcc: String) = this.copy(bcc = this.bcc :+ bcc)
   def withSubject(subject: String) = this.copy(subject = Option(subject))
   def withBody(body: String) = this.copy(body = Option(body))
+  def withStartTls = this.copy(starttls = true)
+  def withDebug = this.copy(debug = true)
   def withInput(inputs: S3DataNode*) = this.copy(input = input ++ inputs)
   def withStdoutTo(out: String) = this.copy(stdout = Option(out))
   def withStderrTo(err: String) = this.copy(stderr = Option(err))
