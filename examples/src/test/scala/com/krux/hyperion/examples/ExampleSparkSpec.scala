@@ -13,13 +13,13 @@ class ExampleSparkSpec extends WordSpec {
     "produce correct pipeline JSON" in {
 
       val pipelineJson: JValue = ExampleSpark
-      val objectsField = pipelineJson.children(0).children.sortBy(o => (o \ "id").toString)
+      val objectsField = pipelineJson.children.head.children.sortBy(o => (o \ "id").toString)
 
       // have the correct number of objects
-      assert(objectsField.size === 6)
+      assert(objectsField.size === 7)
 
       // the first object should be Default
-      val defaultObj = objectsField(0)
+      val defaultObj = objectsField.head
       val defaultObjShouldBe = ("id" -> "Default") ~
         ("name" -> "Default") ~
         ("scheduleType" -> "cron") ~
@@ -40,7 +40,30 @@ class ExampleSparkSpec extends WordSpec {
         ("type" -> "Schedule")
       assert(pipelineSchedule === pipelineScheduleShouldBe)
 
-      val sparkCluster = objectsField(3)
+      val dataNode = objectsField(2)
+      val dataNodeId = (dataNode \ "id").values.toString
+      assert(dataNodeId.startsWith("S3Folder_"))
+      val dataNodeShouldBe =
+        ("id" -> dataNodeId) ~
+        ("name" -> dataNodeId) ~
+        ("directoryPath" -> "s3://some-bucket/some-path/") ~
+        ("type" -> "S3DataNode")
+      assert(dataNode == dataNodeShouldBe)
+
+      val snsAlarm = objectsField(3)
+      val snsAlarmId = (snsAlarm \ "id").values.toString
+      assert(snsAlarmId.startsWith("SnsAlarm"))
+      val snsAlarmShouldBe =
+        ("id" -> snsAlarmId) ~
+          ("name" -> snsAlarmId) ~
+          ("subject" -> "Something happened at #{node.@scheduledStartTime}") ~
+          ("message" -> "Some message #{my_InstanceCount} x #{my_InstanceType} @ #{my_InstanceBid} for #{my_S3Location}") ~
+          ("topicArn" -> "arn:aws:sns:us-east-1:28619EXAMPLE:ExampleTopic") ~
+          ("role" -> "DataPipelineDefaultResourceRole") ~
+          ("type" -> "SnsAlarm")
+      assert(snsAlarm === snsAlarmShouldBe)
+
+      val sparkCluster = objectsField(4)
       val sparkClusterId = (sparkCluster \ "id").values.toString
       assert(sparkClusterId.startsWith("SparkCluster_"))
       val sparkClusterShouldBe =
@@ -61,33 +84,25 @@ class ExampleSparkSpec extends WordSpec {
         ("resourceRole" -> "DataPipelineDefaultResourceRole")
       assert(sparkCluster === sparkClusterShouldBe)
 
-      val snsAlarm = objectsField(2)
-      val snsAlarmId = (snsAlarm \ "id").values.toString
-      assert(snsAlarmId.startsWith("SnsAlarm"))
-      val snsAlarmShouldBe =
-        ("id" -> snsAlarmId) ~
-        ("name" -> snsAlarmId) ~
-        ("subject" -> "Something happened at #{node.@scheduledStartTime}") ~
-        ("message" -> "Some message #{my_InstanceCount} x #{my_InstanceType} @ #{my_InstanceBid} for #{my_S3Location}") ~
-        ("topicArn" -> "arn:aws:sns:us-east-1:28619EXAMPLE:ExampleTopic") ~
-        ("role" -> "DataPipelineDefaultResourceRole") ~
-        ("type" -> "SnsAlarm")
-      assert(snsAlarm === snsAlarmShouldBe)
-
-      val filterActivity = objectsField(4)
+      val filterActivity = objectsField(5)
       val filterActivityId = (filterActivity \ "id").values.toString
       assert(filterActivityId.startsWith("filterActivity_"))
       val filterActivityShouldBe =
         ("id" -> filterActivityId) ~
         ("name" -> filterActivityId) ~
+        ("jarUri" -> "s3://elasticmapreduce/libs/script-runner/script-runner.jar") ~
         ("runsOn" -> ("ref" -> sparkClusterId)) ~
-        ("step" ->
-          List("s3://elasticmapreduce/libs/script-runner/script-runner.jar,s3://your-bucket/datapipeline/scripts/run-spark-step.sh,s3://sample-jars/sample-jar-assembly-current.jar,com.krux.hyperion.FilterJob,the-target,#{format(minusDays(@scheduledStartTime,3),'yyyy-MM-dd')}")) ~
+        ("argument" -> List("s3://your-bucket/datapipeline/scripts/run-spark-step.sh",
+          "s3://sample-jars/sample-jar-assembly-current.jar",
+          "com.krux.hyperion.FilterJob",
+          "the-target",
+          "#{format(minusDays(@scheduledStartTime,3),'yyyy-MM-dd')}")) ~
+        ("input" -> List("ref" -> dataNodeId)) ~
         ("onFail" -> List("ref" -> snsAlarmId)) ~
-        ("type" -> "EmrActivity")
+        ("type" -> "HadoopActivity")
       assert(filterActivity === filterActivityShouldBe)
 
-      val scoreActivity = objectsField(5)
+      val scoreActivity = objectsField(6)
       val scoreActivityId = (scoreActivity \ "id").values.toString
       assert(scoreActivityId.startsWith("scoreActivity_"))
       val scoreActivityShouldBe =

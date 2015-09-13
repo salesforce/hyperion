@@ -3,6 +3,7 @@ package com.krux.hyperion.activity
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws._
 import com.krux.hyperion.common.{PipelineObject, PipelineObjectId}
+import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.Parameter
 import com.krux.hyperion.precondition.Precondition
@@ -23,6 +24,8 @@ case class HadoopActivity private (
   hadoopQueue: Option[String],
   preActivityTaskConfig: Option[ShellScriptConfig],
   postActivityTaskConfig: Option[ShellScriptConfig],
+  inputs: Seq[S3DataNode],
+  outputs: Seq[S3DataNode],
   runsOn: Resource[EmrCluster],
   dependsOn: Seq[PipelineActivity],
   preconditions: Seq[Precondition],
@@ -43,6 +46,8 @@ case class HadoopActivity private (
   def withHadoopQueue(queue: String) = this.copy(hadoopQueue = Option(queue))
   def withPreActivityTaskConfig(script: ShellScriptConfig) = this.copy(preActivityTaskConfig = Option(script))
   def withPostActivityTaskConfig(script: ShellScriptConfig) = this.copy(postActivityTaskConfig = Option(script))
+  def withInput(input: S3DataNode*) = this.copy(inputs = inputs ++ input)
+  def withOutput(output: S3DataNode*) = this.copy(outputs = outputs ++ output)
 
   private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
@@ -55,7 +60,7 @@ case class HadoopActivity private (
   def withRetryDelay(delay: Parameter[Duration]) = this.copy(retryDelay = Option(delay))
   def withFailureAndRerunMode(mode: FailureAndRerunMode) = this.copy(failureAndRerunMode = Option(mode))
 
-  def objects: Iterable[PipelineObject] = runsOn.toSeq ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms ++ preActivityTaskConfig.toSeq ++ postActivityTaskConfig.toSeq
+  def objects: Iterable[PipelineObject] = inputs ++ outputs ++ runsOn.toSeq ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms ++ preActivityTaskConfig.toSeq ++ postActivityTaskConfig.toSeq
 
   lazy val serialize = AdpHadoopActivity(
     id = id,
@@ -66,6 +71,8 @@ case class HadoopActivity private (
     hadoopQueue = hadoopQueue,
     preActivityTaskConfig = preActivityTaskConfig.map(_.ref),
     postActivityTaskConfig = postActivityTaskConfig.map(_.ref),
+    input = seqToOption(inputs)(_.ref),
+    output = seqToOption(outputs)(_.ref),
     workerGroup = runsOn.asWorkerGroup.map(_.ref),
     runsOn = runsOn.asManagedResource.map(_.ref),
     dependsOn = seqToOption(dependsOn)(_.ref),
@@ -93,6 +100,8 @@ object HadoopActivity extends RunnableObject {
     hadoopQueue = None,
     preActivityTaskConfig = None,
     postActivityTaskConfig = None,
+    inputs = Seq.empty,
+    outputs = Seq.empty,
     runsOn = runsOn,
     dependsOn = Seq.empty,
     preconditions = Seq.empty,
