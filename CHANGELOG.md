@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.9.2 - 2015-09-13
+### Fixed
+- [#202](https://github.com/krux/hyperion/issues/202) - WorkflowGraph fails with assertion if not using named
+
 ## 2.9.1 - 2015-09-11
 ### Fixed
 - [#200](https://github.com/krux/hyperion/issues/200) - SendEmailActivity must allow setting of debug and starttls
