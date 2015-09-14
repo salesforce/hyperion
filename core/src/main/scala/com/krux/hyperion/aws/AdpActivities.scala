@@ -240,6 +240,8 @@ case class AdpHadoopActivity (
   hadoopQueue: Option[String],
   preActivityTaskConfig: Option[AdpRef[AdpShellScriptConfig]],
   postActivityTaskConfig: Option[AdpRef[AdpShellScriptConfig]],
+  input: Option[Seq[AdpRef[AdpDataNode]]],
+  output: Option[Seq[AdpRef[AdpDataNode]]],
   workerGroup: Option[String],
   runsOn: Option[AdpRef[AdpEmrCluster]],
   dependsOn: Option[Seq[AdpRef[AdpActivity]]],

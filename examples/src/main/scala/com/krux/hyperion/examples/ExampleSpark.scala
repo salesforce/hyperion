@@ -1,9 +1,10 @@
 package com.krux.hyperion.examples
 
+import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.{Schedule, DataPipelineDef, HyperionContext}
 import com.krux.hyperion.Implicits._
 import com.krux.hyperion.action.SnsAlarm
-import com.krux.hyperion.activity.{SparkActivity, SparkStep}
+import com.krux.hyperion.activity.{SparkJobActivity, SparkActivity, SparkStep}
 import com.krux.hyperion.expression.DateTimeFunctions.format
 import com.krux.hyperion.expression.RuntimeNode
 import com.krux.hyperion.parameter._
@@ -32,6 +33,8 @@ object ExampleSpark extends DataPipelineDef {
 
   override def parameters: Iterable[Parameter[_]] = Seq(location, instanceType, instanceCount, instanceBid)
 
+  val dataNode = S3DataNode(s3 / "some-bucket" / "some-path/")
+
   // Actions
   val mailAction = SnsAlarm()
     .withSubject(s"Something happened at ${RuntimeNode.scheduledStartTime}")
@@ -45,17 +48,14 @@ object ExampleSpark extends DataPipelineDef {
     .withTaskInstanceType(instanceType)
 
   // First activity
-  val filterStep = SparkStep(jar)
-    .withMainClass("com.krux.hyperion.FilterJob")
+  val filterActivity = SparkJobActivity(jar.toString, "com.krux.hyperion.FilterJob")(sparkCluster)
+    .named("filterActivity")
+    .onFail(mailAction)
+    .withInput(dataNode)
     .withArguments(
       target,
       format(SparkActivity.scheduledStartTime - 3.days, "yyyy-MM-dd")
     )
-
-  val filterActivity = SparkActivity(sparkCluster)
-    .named("filterActivity")
-    .withSteps(filterStep)
-    .onFail(mailAction)
 
   // Second activity
   val scoreStep1 = SparkStep(jar)
