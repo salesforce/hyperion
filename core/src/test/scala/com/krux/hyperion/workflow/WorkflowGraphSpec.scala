@@ -1,4 +1,4 @@
-package com.krux.hyperion.util
+package com.krux.hyperion.workflow
 
 import com.krux.hyperion.activity.ShellCommandActivity
 import com.krux.hyperion.HyperionContext
