@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.11.2 - 2015-10-08
+## Fixed
+- [#217](https://github.com/krux/hyperion/issues/217) - DateTimeExpression methods returns the wrong expression.
+
 ## 2.11.1 - 2015-09-29
 ## Fixed
 - [#211](https://github.com/krux/hyperion/issues/211) - RedhishiftUnloadActivity fail when containing expressions with `'`
