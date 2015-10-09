@@ -66,17 +66,17 @@ case class DateTimeExp(content: String) extends Expression {
   }
 
   def year: NumericExp = DateTimeFunctions.year(this)
-  def month: NumericExp = DateTimeFunctions.year(this)
-  def day: NumericExp = DateTimeFunctions.year(this)
-  def dayOfYear: NumericExp = DateTimeFunctions.year(this)
-  def hour: NumericExp = DateTimeFunctions.year(this)
-  def minute: NumericExp = DateTimeFunctions.year(this)
+  def month: NumericExp = DateTimeFunctions.month(this)
+  def day: NumericExp = DateTimeFunctions.day(this)
+  def dayOfYear: NumericExp = DateTimeFunctions.dayOfYear(this)
+  def hour: NumericExp = DateTimeFunctions.hour(this)
+  def minute: NumericExp = DateTimeFunctions.minute(this)
 
-  def firstOfMonth: NumericExp = DateTimeFunctions.year(this)
-  def midnight: NumericExp = DateTimeFunctions.year(this)
-  def sunday: NumericExp = DateTimeFunctions.year(this)
-  def yesterday: NumericExp = DateTimeFunctions.year(this)
-  def inTimeZone(zone: String) = DateTimeFunctions.inTimeZone(this, zone)
+  def firstOfMonth: DateTimeExp = DateTimeFunctions.firstOfMonth(this)
+  def midnight: DateTimeExp = DateTimeFunctions.midnight(this)
+  def sunday: DateTimeExp = DateTimeFunctions.sunday(this)
+  def yesterday: DateTimeExp = DateTimeFunctions.yesterday(this)
+  def inTimeZone(zone: String): DateTimeExp = DateTimeFunctions.inTimeZone(this, zone)
 
 }
 
