@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.11.3 - 2015-10-12
+## Fixed
+- [#220](https://github.com/krux/hyperion/issues/220) - Make spark activity download jar to different directory to avoid race condition of jobs running in parallel.
+
 ## 2.11.2 - 2015-10-08
 ## Fixed
 - [#217](https://github.com/krux/hyperion/issues/217) - DateTimeExpression methods returns the wrong expression.
