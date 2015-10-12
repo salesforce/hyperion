@@ -22,15 +22,16 @@ ENV_FILE="${EMR_HOME}/hyperion_env.sh"
 EMR_SPARK_HOME="${EMR_HOME}/spark"
 HYPERION_HOME="${EMR_HOME}/hyperion"
 
-JAR_LOCATION=$1; shift
+mkdir -p ${HYPERION_HOME}
+
+REMOTE_JAR_LOCATION=$1; shift
 JOB_CLASS=$1; shift
 
-JAR_NAME="${JAR_LOCATION##*/}"
-LOCAL_JAR="${HYPERION_HOME}/${JAR_NAME}"
+LOCAL_JAR_DIR="$(mktemp -p $HYPERION_HOME -d -t jars_XXXXXX)"
+JAR_NAME="${REMOTE_JAR_LOCATION##*/}"
+LOCAL_JAR="${LOCAL_JAR_DIR}/${JAR_NAME}"
 
 # Download JAR file from S3 to local
-mkdir -p ${HYPERION_HOME}
-rm -f ${LOCAL_JAR}
-hadoop fs -get ${JAR_LOCATION} ${LOCAL_JAR}
+hadoop fs -get ${REMOTE_JAR_LOCATION} ${LOCAL_JAR}
 
 exec ${EMR_SPARK_HOME}/bin/spark-submit --master yarn-client --driver-memory 9g --class ${JOB_CLASS} ${LOCAL_JAR} $@
