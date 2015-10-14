@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.12.1 - 2015-10-14
+## Fixed
+- [#226](https://github.com/krux/hyperion/issues/226) - Improves SetS3AclActivity with canned acl enum and more flexible apply
+
 ## 2.12.0 - 2015-10-14
 ## Added
 - [#223](https://github.com/krux/hyperion/issues/223) - Contrib activity that sets S3 ACL

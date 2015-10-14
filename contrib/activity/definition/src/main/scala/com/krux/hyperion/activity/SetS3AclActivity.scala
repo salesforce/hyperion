@@ -14,7 +14,7 @@ case class SetS3AclActivity private (
     scriptUri: Option[S3Uri],
     jarUri: String,
     mainClass: String,
-    cannedAcls: Seq[String],
+    cannedAcls: Seq[CannedAccessControlList.Value],
     grants: Seq[String],
     recursive: Boolean,
     s3Uri: Parameter[S3Uri],
@@ -87,7 +87,12 @@ case class SetS3AclActivity private (
 }
 
 object SetS3AclActivity extends RunnableObject {
-  def apply(s3Uri: S3Uri, acls: Seq[String], grants: Seq[String])(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SetS3AclActivity =
+  def apply(
+      s3Uri: S3Uri,
+      acls: Seq[CannedAccessControlList.Value] = Seq.empty,
+      grants: Seq[String] = Seq.empty
+    )(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SetS3AclActivity = {
+
     new SetS3AclActivity(
         id = PipelineObjectId(SetS3AclActivity.getClass),
         scriptUri = Option(S3Uri(s"${hc.scriptUri}activities/run-jar.sh")),
@@ -110,4 +115,5 @@ object SetS3AclActivity extends RunnableObject {
         failureAndRerunMode = None,
         runsOn = runsOn
       )
+  }
 }
