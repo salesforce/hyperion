@@ -17,29 +17,31 @@ import com.krux.hyperion.resource.{SparkCluster, Resource}
  * negotiator in Hadoop 1. If you would like to run work sequentially using the Amazon EMR Step action,
  * you can still use SparkActivity.
  */
-case class SparkJobActivity private (
-  id: PipelineObjectId,
-  scriptRunner: String,
-  jobRunner: String,
-  jarUri: String,
-  mainClass: MainClass,
-  args: Seq[String],
-  hadoopQueue: Option[String],
-  preActivityTaskConfig: Option[ShellScriptConfig],
-  postActivityTaskConfig: Option[ShellScriptConfig],
-  inputs: Seq[S3DataNode],
-  outputs: Seq[S3DataNode],
-  runsOn: Resource[SparkCluster],
-  dependsOn: Seq[PipelineActivity],
-  preconditions: Seq[Precondition],
-  onFailAlarms: Seq[SnsAlarm],
-  onSuccessAlarms: Seq[SnsAlarm],
-  onLateActionAlarms: Seq[SnsAlarm],
-  attemptTimeout: Option[Parameter[Duration]],
-  lateAfterTimeout: Option[Parameter[Duration]],
-  maximumRetries: Option[Parameter[Int]],
-  retryDelay: Option[Parameter[Duration]],
-  failureAndRerunMode: Option[FailureAndRerunMode]
+class SparkJobActivity private (
+  val id: PipelineObjectId,
+  val scriptRunner: String,
+  val jobRunner: String,
+  val jarUri: String,
+  val mainClass: MainClass,
+  val args: Seq[String],
+  val hadoopQueue: Option[String],
+  val preActivityTaskConfig: Option[ShellScriptConfig],
+  val postActivityTaskConfig: Option[ShellScriptConfig],
+  val inputs: Seq[S3DataNode],
+  val outputs: Seq[S3DataNode],
+  val runsOn: Resource[SparkCluster],
+  val dependsOn: Seq[PipelineActivity],
+  val preconditions: Seq[Precondition],
+  val onFailAlarms: Seq[SnsAlarm],
+  val onSuccessAlarms: Seq[SnsAlarm],
+  val onLateActionAlarms: Seq[SnsAlarm],
+  val attemptTimeout: Option[Parameter[Duration]],
+  val lateAfterTimeout: Option[Parameter[Duration]],
+  val maximumRetries: Option[Parameter[Int]],
+  val retryDelay: Option[Parameter[Duration]],
+  val failureAndRerunMode: Option[FailureAndRerunMode],
+  val sparkOptions: Seq[String],
+  val sparkConfig: Map[String, String]
 ) extends EmrActivity {
 
   def named(name: String) = this.copy(id = id.named(name))
@@ -51,6 +53,8 @@ case class SparkJobActivity private (
   def withPostActivityTaskConfig(script: ShellScriptConfig) = this.copy(postActivityTaskConfig = Option(script))
   def withInput(input: S3DataNode*) = this.copy(inputs = inputs ++ input)
   def withOutput(output: S3DataNode*) = this.copy(outputs = outputs ++ output)
+  def withSparkOption(option: String*) = this.copy(sparkOptions = sparkOptions ++ option)
+  def withSparkConfig(key: String, value: String) = this.copy(sparkConfig = sparkConfig + (key -> value))
 
   private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
@@ -63,14 +67,45 @@ case class SparkJobActivity private (
   def withRetryDelay(delay: Parameter[Duration]) = this.copy(retryDelay = Option(delay))
   def withFailureAndRerunMode(mode: FailureAndRerunMode) = this.copy(failureAndRerunMode = Option(mode))
 
+  def copy(id: PipelineObjectId = id,
+    scriptRunner: String = scriptRunner,
+    jobRunner: String = jobRunner,
+    jarUri: String = jarUri,
+    mainClass: MainClass = mainClass,
+    args: Seq[String] = args,
+    hadoopQueue: Option[String] = hadoopQueue,
+    preActivityTaskConfig: Option[ShellScriptConfig] = preActivityTaskConfig,
+    postActivityTaskConfig: Option[ShellScriptConfig] = postActivityTaskConfig,
+    inputs: Seq[S3DataNode] = inputs,
+    outputs: Seq[S3DataNode] = outputs,
+    runsOn: Resource[SparkCluster] = runsOn,
+    dependsOn: Seq[PipelineActivity] = dependsOn,
+    preconditions: Seq[Precondition] = preconditions,
+    onFailAlarms: Seq[SnsAlarm] = onFailAlarms,
+    onSuccessAlarms: Seq[SnsAlarm] = onSuccessAlarms,
+    onLateActionAlarms: Seq[SnsAlarm] = onLateActionAlarms,
+    attemptTimeout: Option[Parameter[Duration]] = attemptTimeout,
+    lateAfterTimeout: Option[Parameter[Duration]] = lateAfterTimeout,
+    maximumRetries: Option[Parameter[Int]] = maximumRetries,
+    retryDelay: Option[Parameter[Duration]] = retryDelay,
+    failureAndRerunMode: Option[FailureAndRerunMode] = failureAndRerunMode,
+    sparkOptions: Seq[String] = sparkOptions,
+    sparkConfig: Map[String, String] = sparkConfig
+  ): SparkJobActivity = new SparkJobActivity(id, scriptRunner, jobRunner, jarUri, mainClass, args,
+    hadoopQueue, preActivityTaskConfig, postActivityTaskConfig, inputs, outputs, runsOn, dependsOn,
+    preconditions, onFailAlarms, onSuccessAlarms, onLateActionAlarms, attemptTimeout, lateAfterTimeout,
+    maximumRetries, retryDelay, failureAndRerunMode, sparkOptions, sparkConfig)
+
   def objects: Iterable[PipelineObject] = inputs ++ outputs ++ runsOn.toSeq ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms ++ preActivityTaskConfig.toSeq ++ postActivityTaskConfig.toSeq
+
+  private def sparkSettings: Seq[String] = sparkOptions ++ sparkConfig.flatMap { case (k, v) => Seq("--conf", s"$k=$v") }
 
   lazy val serialize = AdpHadoopActivity(
     id = id,
     name = id.toOption,
     jarUri = scriptRunner,
     mainClass = None,
-    argument = Seq(jobRunner, jarUri.toString, mainClass.toString) ++ args,
+    argument = Seq(jobRunner) ++ sparkSettings ++ Seq(jarUri.toString, mainClass.toString) ++ args,
     hadoopQueue = hadoopQueue,
     preActivityTaskConfig = preActivityTaskConfig.map(_.ref),
     postActivityTaskConfig = postActivityTaskConfig.map(_.ref),
@@ -115,6 +150,8 @@ object SparkJobActivity extends RunnableObject {
     lateAfterTimeout = None,
     maximumRetries = None,
     retryDelay = None,
-    failureAndRerunMode = None
+    failureAndRerunMode = None,
+    sparkOptions = Seq.empty,
+    sparkConfig = Map.empty
   )
 }
