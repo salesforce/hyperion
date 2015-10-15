@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.12.3 - 2015-10-14
+### Reverted
+ - [#229](https://github.com/krux/hyperion/issues/229) - Convert S3DistCpActivity to a HadoopActivity instead of EmrActivity
+
 ## 2.12.2 - 2015-10-14
 ### Added
 - [#229](https://github.com/krux/hyperion/issues/229) - Convert S3DistCpActivity to a HadoopActivity instead of EmrActivity
