@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.13.1 - 2015-10-26
+### Added
+- [#234](https://github.com/krux/hyperion/issues/234) - SplitMergeFiles should allow ignoring cases where there is no input files
+
 ## 2.13.0 - 2015-10-15
 ### Added
 - [#224](https://github.com/krux/hyperion/issues/224) - Spark*Activity should allow setting parameters for spark jobs
