@@ -1,13 +1,13 @@
 package com.krux.hyperion.activity
 
 import com.krux.hyperion.action.SnsAlarm
+import com.krux.hyperion.adt.{HInt, HDuration, HString, HBoolean}
 import com.krux.hyperion.aws.AdpShellCommandActivity
-import com.krux.hyperion.common.{S3Uri, PipelineObjectId, PipelineObject}
+import com.krux.hyperion.common.{PipelineObjectId, PipelineObject}
 import com.krux.hyperion.datanode.S3DataNode
-import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.parameter.Parameter
+import com.krux.hyperion.expression.RunnableObject
 import com.krux.hyperion.precondition.Precondition
-import com.krux.hyperion.resource.{Resource, WorkerGroup, Ec2Resource}
+import com.krux.hyperion.resource.{Resource, Ec2Resource}
 
 /**
  * Runs a command or script
@@ -15,10 +15,10 @@ import com.krux.hyperion.resource.{Resource, WorkerGroup, Ec2Resource}
 case class ShellCommandActivity private (
   id: PipelineObjectId,
   script: Script,
-  scriptArguments: Seq[String],
-  stdout: Option[String],
-  stderr: Option[String],
-  stage: Option[Boolean],
+  scriptArguments: Seq[HString],
+  stdout: Option[HString],
+  stderr: Option[HString],
+  stage: Option[HBoolean],
   input: Seq[S3DataNode],
   output: Seq[S3DataNode],
   runsOn: Resource[Ec2Resource],
@@ -27,21 +27,21 @@ case class ShellCommandActivity private (
   onFailAlarms: Seq[SnsAlarm],
   onSuccessAlarms: Seq[SnsAlarm],
   onLateActionAlarms: Seq[SnsAlarm],
-  attemptTimeout: Option[Parameter[Duration]],
-  lateAfterTimeout: Option[Parameter[Duration]],
-  maximumRetries: Option[Parameter[Int]],
-  retryDelay: Option[Parameter[Duration]],
+  attemptTimeout: Option[HDuration],
+  lateAfterTimeout: Option[HDuration],
+  maximumRetries: Option[HInt],
+  retryDelay: Option[HDuration],
   failureAndRerunMode: Option[FailureAndRerunMode]
 ) extends PipelineActivity {
 
   def named(name: String) = this.copy(id = id.named(name))
   def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
 
-  def withArguments(args: String*) = this.copy(scriptArguments = scriptArguments ++ args)
-  def withStdoutTo(out: String) = this.copy(stdout = Option(out))
-  def withStderrTo(err: String) = this.copy(stderr = Option(err))
-  def withInput(inputs: S3DataNode*) = this.copy(input = input ++ inputs, stage = Option(true))
-  def withOutput(outputs: S3DataNode*) = this.copy(output = output ++ outputs, stage = Option(true))
+  def withArguments(args: HString*) = this.copy(scriptArguments = scriptArguments ++ args)
+  def withStdoutTo(out: HString) = this.copy(stdout = Option(out))
+  def withStderrTo(err: HString) = this.copy(stderr = Option(err))
+  def withInput(inputs: S3DataNode*) = this.copy(input = input ++ inputs, stage = Option(HBoolean.True))
+  def withOutput(outputs: S3DataNode*) = this.copy(output = output ++ outputs, stage = Option(HBoolean.True))
 
   private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
 
@@ -49,10 +49,10 @@ case class ShellCommandActivity private (
   def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
   def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
   def onLateAction(alarms: SnsAlarm*) = this.copy(onLateActionAlarms = onLateActionAlarms ++ alarms)
-  def withAttemptTimeout(timeout: Parameter[Duration]) = this.copy(attemptTimeout = Option(timeout))
-  def withLateAfterTimeout(timeout: Parameter[Duration]) = this.copy(lateAfterTimeout = Option(timeout))
-  def withMaximumRetries(retries: Parameter[Int]) = this.copy(maximumRetries = Option(retries))
-  def withRetryDelay(delay: Parameter[Duration]) = this.copy(retryDelay = Option(delay))
+  def withAttemptTimeout(timeout: HDuration) = this.copy(attemptTimeout = Option(timeout))
+  def withLateAfterTimeout(timeout: HDuration) = this.copy(lateAfterTimeout = Option(timeout))
+  def withMaximumRetries(retries: HInt) = this.copy(maximumRetries = Option(retries))
+  def withRetryDelay(delay: HDuration) = this.copy(retryDelay = Option(delay))
   def withFailureAndRerunMode(mode: FailureAndRerunMode) = this.copy(failureAndRerunMode = Option(mode))
 
   def objects: Iterable[PipelineObject] = runsOn.toSeq ++ preconditions ++ input ++ output ++ dependsOn ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
@@ -60,12 +60,12 @@ case class ShellCommandActivity private (
   lazy val serialize = AdpShellCommandActivity(
     id = id,
     name = id.toOption,
-    command = script.content,
-    scriptUri = script.uri.map(_.ref),
-    scriptArgument = scriptArguments,
-    stdout = stdout,
-    stderr = stderr,
-    stage = stage.map(_.toString),
+    command = script.content.map(_.serialize),
+    scriptUri = script.uri.map(_.serialize),
+    scriptArgument = scriptArguments.map(_.serialize),
+    stdout = stdout.map(_.serialize),
+    stderr = stderr.map(_.serialize),
+    stage = stage.map(_.serialize),
     input = seqToOption(input)(_.ref),
     output = seqToOption(output)(_.ref),
     workerGroup = runsOn.asWorkerGroup.map(_.ref),
@@ -75,11 +75,11 @@ case class ShellCommandActivity private (
     onFail = seqToOption(onFailAlarms)(_.ref),
     onSuccess = seqToOption(onSuccessAlarms)(_.ref),
     onLateAction = seqToOption(onLateActionAlarms)(_.ref),
-    attemptTimeout = attemptTimeout.map(_.toString),
-    lateAfterTimeout = lateAfterTimeout.map(_.toString),
-    maximumRetries = maximumRetries.map(_.toString),
-    retryDelay = retryDelay.map(_.toString),
-    failureAndRerunMode = failureAndRerunMode.map(_.toString)
+    attemptTimeout = attemptTimeout.map(_.serialize),
+    lateAfterTimeout = lateAfterTimeout.map(_.serialize),
+    maximumRetries = maximumRetries.map(_.serialize),
+    retryDelay = retryDelay.map(_.serialize),
+    failureAndRerunMode = failureAndRerunMode.map(_.serialize)
   )
 }
 

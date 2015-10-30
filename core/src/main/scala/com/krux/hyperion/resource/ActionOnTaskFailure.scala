@@ -1,11 +1,14 @@
 package com.krux.hyperion.resource
 
-trait ActionOnTaskFailure
+trait ActionOnTaskFailure {
+  def serialize: String
+  override def toString = serialize
+}
 
 case object ContinueOnTaskFailure extends ActionOnTaskFailure {
-  override val toString = "continue"
+  val serialize: String = "continue"
 }
 
 case object TerminateOnTaskFailure extends ActionOnTaskFailure {
-  override val toString = "terminate"
+  val serialize: String = "terminate"
 }

@@ -1,11 +1,14 @@
 package com.krux.hyperion.resource
 
-trait ActionOnResourceFailure
+trait ActionOnResourceFailure {
+  def serialize: String
+  override def toString = serialize
+}
 
 case object RetryAllOnResourceFailure extends ActionOnResourceFailure {
-  override val toString = "retryall"
+  val serialize: String = "retryall"
 }
 
 case object RetryNoneOnResourceFailure extends ActionOnResourceFailure {
-  override val toString = "retrynone"
+  val serialize: String = "retrynone"
 }
