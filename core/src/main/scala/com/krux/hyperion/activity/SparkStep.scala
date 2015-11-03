@@ -1,7 +1,8 @@
 package com.krux.hyperion.activity
 
+import com.krux.hyperion.adt.{HS3Uri, HString, HInt}
+import com.krux.hyperion.common.Memory
 import com.krux.hyperion.HyperionContext
-import com.krux.hyperion.adt.{HS3Uri, HString}
 
 /**
  * A Spark step that runs on Spark Cluster
@@ -20,6 +21,17 @@ case class SparkStep private (
   def withArguments(arg: HString*) = this.copy(args = args ++ arg)
   def withSparkOption(option: HString*) = this.copy(sparkOptions = sparkOptions ++ option)
   def withSparkConfig(key: HString, value: HString) = this.copy(sparkConfig = sparkConfig + (key -> value))
+
+  def withDriverCores(n: HInt) = this.withSparkOption("--driver-cores", n.toString)
+  def withDriverMemory(memory: Memory) = this.withSparkOption("--driver-memory", memory.toString)
+
+  def withExecutorCores(n: HInt) = this.withSparkOption("--executor-cores", n.toString)
+  def withExecutorMemory(memory: Memory) = this.withSparkOption("--executor-memory", memory.toString)
+  def withNumExecutors(n: HInt) = this.withSparkOption("--num-executors", n.toString)
+  def withTotalExecutorCores(n: HInt) = this.withSparkOption("--total-executor-cores", n.toString)
+
+  def withFiles(files: HString*) = this.withSparkOption(files.flatMap(file => Seq("--files": HString, file)): _*)
+  def withMaster(master: HString) = this.withSparkOption("--master", master)
 
   def serialize: String = Seq(
     Seq(scriptRunner, jobRunner),

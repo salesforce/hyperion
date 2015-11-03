@@ -9,6 +9,8 @@ import com.krux.hyperion.precondition.Precondition
 
 sealed trait S3DataNode extends Copyable {
 
+  def dataFormat: Option[DataFormat]
+
   def asInput(): String = asInput(1)
   def asInput(n: Integer): String = "${" + s"INPUT${n}_STAGING_DIR}"
 

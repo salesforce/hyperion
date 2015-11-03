@@ -19,6 +19,7 @@ class SplitMergeFilesActivity private (
   val header: Option[HString],
   val compressedOutput: HBoolean,
   val skipFirstInputLine: HBoolean,
+  val ignoreEmptyInput: HBoolean,
   val linkOutputs: HBoolean,
   val suffixLength: Option[HInt],
   val numberOfFiles: Option[HInt],
@@ -53,6 +54,7 @@ class SplitMergeFilesActivity private (
     header: Option[HString] = header,
     compressedOutput: HBoolean = compressedOutput,
     skipFirstInputLine: HBoolean = skipFirstInputLine,
+    ignoreEmptyInput: HBoolean = ignoreEmptyInput,
     linkOutputs: HBoolean = linkOutputs,
     suffixLength: Option[HInt] = suffixLength,
     numberOfFiles: Option[HInt] = numberOfFiles,
@@ -78,7 +80,7 @@ class SplitMergeFilesActivity private (
     failureAndRerunMode: Option[FailureAndRerunMode] = failureAndRerunMode
   ) = new SplitMergeFilesActivity(id,
     scriptUri, jarUri, mainClass,
-    filename, header, compressedOutput, skipFirstInputLine, linkOutputs,
+    filename, header, compressedOutput, skipFirstInputLine, ignoreEmptyInput, linkOutputs,
     suffixLength, numberOfFiles, linesPerFile, bytesPerFile, bufferSize,
     pattern, markSuccessfulJobs, input, output, stdout, stderr, runsOn, dependsOn,
     preconditions, onFailAlarms, onSuccessAlarms, onLateActionAlarms,
@@ -88,9 +90,9 @@ class SplitMergeFilesActivity private (
   def named(name: String) = this.copy(id = id.named(name))
   def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
 
-  def withCompressedOutput() = this.copy(compressedOutput = true)
-  def withSkipFirstInputLine() = this.copy(skipFirstInputLine = true)
-  def withLinkOutputs() = this.copy(linkOutputs = true)
+  def withCompressedOutput() = this.copy(compressedOutput = HBoolean.True)
+  def withSkipFirstInputLine() = this.copy(skipFirstInputLine = HBoolean.True)
+  def withLinkOutputs() = this.copy(linkOutputs = HBoolean.True)
   def withHeader(header: HString*) = this.copy(header = Option(header.mkString(","): HString))
   def withSuffixLength(suffixLength: HInt) = this.copy(suffixLength = Option(suffixLength))
   def withNumberOfFiles(numberOfFiles: HInt) = this.copy(numberOfFiles = Option(numberOfFiles))
@@ -98,7 +100,8 @@ class SplitMergeFilesActivity private (
   def withNumberOfBytesPerFile(bytesPerFile: HString) = this.copy(bytesPerFile = Option(bytesPerFile))
   def withBufferSize(bufferSize: HString) = this.copy(bufferSize = Option(bufferSize))
   def withInputPattern(pattern: HString) = this.copy(pattern = Option(pattern))
-  def markingSuccessfulJobs() = this.copy(markSuccessfulJobs = true)
+  def markingSuccessfulJobs() = this.copy(markSuccessfulJobs = HBoolean.True)
+  def ignoringEmptyInput() = this.copy(ignoreEmptyInput = HBoolean.True)
 
   def withInput(inputs: S3DataNode*) = this.copy(input = input ++ inputs)
   def withOutput(outputs: S3DataNode*) = this.copy(output = output ++ outputs)
@@ -124,6 +127,7 @@ class SplitMergeFilesActivity private (
     if (skipFirstInputLine) Option(Seq[HString]("--skip-first-line")) else None,
     if (linkOutputs) Option(Seq[HString]("--link")) else None,
     if (markSuccessfulJobs) Option(Seq[HString]("--mark-successful-jobs")) else None,
+    if (ignoreEmptyInput) Option(Seq[HString]("--ignore-empty-input")) else None,
     header.map(h => Seq[HString]("--header", h)),
     suffixLength.map(s => Seq[HType]("--suffix-length", s)),
     numberOfFiles.map(n => Seq[HType]("-n", n)),
@@ -173,6 +177,7 @@ object SplitMergeFilesActivity extends RunnableObject {
       header = None,
       compressedOutput = false,
       skipFirstInputLine = false,
+      ignoreEmptyInput = false,
       linkOutputs = false,
       suffixLength = None,
       numberOfFiles = None,

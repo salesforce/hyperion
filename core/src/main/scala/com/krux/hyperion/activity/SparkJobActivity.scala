@@ -2,7 +2,7 @@ package com.krux.hyperion.activity
 
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws._
-import com.krux.hyperion.common.{PipelineObject, PipelineObjectId}
+import com.krux.hyperion.common.{Memory, PipelineObject, PipelineObjectId}
 import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.RunnableObject
 import com.krux.hyperion.adt.{HInt, HDuration, HString}
@@ -55,6 +55,17 @@ class SparkJobActivity private (
   def withOutput(output: S3DataNode*) = this.copy(outputs = outputs ++ output)
   def withSparkOption(option: HString*) = this.copy(sparkOptions = sparkOptions ++ option)
   def withSparkConfig(key: HString, value: HString) = this.copy(sparkConfig = sparkConfig + (key -> value))
+
+  def withDriverCores(n: HInt) = this.withSparkOption("--driver-cores", n.toString)
+  def withDriverMemory(memory: Memory) = this.withSparkOption("--driver-memory", memory.toString)
+
+  def withExecutorCores(n: HInt) = this.withSparkOption("--executor-cores", n.toString)
+  def withExecutorMemory(memory: Memory) = this.withSparkOption("--executor-memory", memory.toString)
+  def withNumExecutors(n: HInt) = this.withSparkOption("--num-executors", n.toString)
+  def withTotalExecutorCores(n: HInt) = this.withSparkOption("--total-executor-cores", n.toString)
+
+  def withFiles(files: HString*) = this.withSparkOption(files.flatMap(file => Seq("--files": HString, file)): _*)
+  def withMaster(master: HString) = this.withSparkOption("--master", master)
 
   private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
   def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
