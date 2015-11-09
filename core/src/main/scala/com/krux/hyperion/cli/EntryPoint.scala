@@ -121,7 +121,10 @@ case class EntryPoint(pipeline: DataPipelineDef) {
             """
               |     If specified, the TAG will be added to the tags specified in the pipeline definition.
             """.stripMargin),
-        opt[Schedule]("start").valueName("DATE").action { (x, c) => c.copy(schedule = Option(x)) }
+        opt[DateTime]("start").valueName("DATE")
+          .action { (x, c) =>
+            c.copy(schedule = Option(c.schedule.getOrElse(pipeline.schedule).startDateTime(x)))
+          }
           .text(
             """
               |     If specified, the pipeline will start on DATE, overriding the schedule specified in
@@ -129,17 +132,26 @@ case class EntryPoint(pipeline: DataPipelineDef) {
               |     yesterday, tomorrow, the days of the week and ordinal numbers (e.g., 1st, 2nd) for days
               |     of the month.
             """.stripMargin),
-        opt[Duration]("every").valueName("PERIOD").action { (x, c) => c.copy(schedule = c.schedule.map(_.every(x))) }
+        opt[Duration]("every").valueName("PERIOD")
+          .action { (x, c) =>
+            c.copy(schedule = Option(c.schedule.getOrElse(pipeline.schedule).every(x)))
+          }
           .text(
             """
               |     If specified, the pipeline will execute every PERIOD (ex: "1 day").
             """.stripMargin),
-        opt[DateTime]("until").valueName("DATE").action { (x, c) => c.copy(schedule = c.schedule.map(_.until(x))) }
+        opt[DateTime]("until").valueName("DATE")
+          .action { (x, c) =>
+            c.copy(schedule = Option(c.schedule.getOrElse(pipeline.schedule).until(x)))
+          }
           .text(
             """
               |     If specified, the pipeline will stop on DATE.
             """.stripMargin),
-        opt[Int]("times").valueName("N").action { (x, c) => c.copy(schedule = c.schedule.map(_.stopAfter(x))) }
+        opt[Int]("times").valueName("N")
+          .action { (x, c) =>
+            c.copy(schedule = Option(c.schedule.getOrElse(pipeline.schedule).stopAfter(x)))
+          }
           .text(
             """
               |     If specified, the pipeline will stop after executing N times.

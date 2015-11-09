@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.16.2 - 2015-11-09
+### Fixed
+- [#264](https://github.com/krux/hyperion/issues/264) - CLI schedule override only the explicitly specified part
+
 ## 2.16.1 - 2015-11-09
 ### Added
 - [#262](https://github.com/krux/hyperion/issues/262) - Add slf4j-simple to examples
