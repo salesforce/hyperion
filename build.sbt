@@ -1,8 +1,9 @@
-val hyperionVersion = "2.16.0"
+val hyperionVersion = "2.16.1"
 val scala210Version = "2.10.5"
 val scala211Version = "2.11.7"
 val awsSdkVersion   = "1.9.35"
 val mailVersion     = "1.5.4"
+val slf4jVersion    = "1.7.12"
 
 val nscalaTimeArtifact      = "com.github.nscala-time" %% "nscala-time"               % "1.8.0"
 val jodaConvertArtifact     = "org.joda"               %  "joda-convert"              % "1.7"    % "provided"
@@ -18,8 +19,9 @@ val awsSqsArtifact          = "com.amazonaws"          %  "aws-java-sdk-sqs"    
 val awsSnsArtifact          = "com.amazonaws"          %  "aws-java-sdk-sns"          % awsSdkVersion
 val mailArtifact            = "com.sun.mail"           %  "mailapi"                   % mailVersion
 val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % mailVersion
+val slf4jApiArtifact        = "org.slf4j"              %  "slf4j-api"                 % slf4jVersion
+val slf4jSimpleArtifact     = "org.slf4j"              %  "slf4j-simple"              % slf4jVersion
 val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "2.2.4"  % "test"
-val slf4ApiArtifact         = "org.slf4j"              %  "slf4j-api"                 % "1.7.12"
 
 lazy val publishSettings = Seq(
   sonatypeProfileName := "com.krux",
@@ -139,7 +141,7 @@ lazy val core = (project in file("core")).
       json4sJacksonArtifact,
       scoptArtifact,
       configArtifact,
-      slf4ApiArtifact
+      slf4jApiArtifact
     )
   )
 
@@ -147,7 +149,8 @@ lazy val examples = (project in file("examples")).
   settings(commonSettings: _*).
   settings(noPublishSettings: _*).
   settings(
-    name := "hyperion-examples"
+    name := "hyperion-examples",
+    libraryDependencies += slf4jSimpleArtifact
   ).
   dependsOn(core, contribActivityDefinition)
 
