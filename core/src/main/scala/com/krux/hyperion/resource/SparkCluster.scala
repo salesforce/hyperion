@@ -2,7 +2,7 @@ package com.krux.hyperion.resource
 
 import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.aws.AdpEmrCluster
-import com.krux.hyperion.common.{HttpProxy, PipelineObjectId}
+import com.krux.hyperion.common.{HttpProxy, PipelineObject, PipelineObjectId}
 import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.{DirectValueParameter, Parameter}
 
