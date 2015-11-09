@@ -75,7 +75,10 @@ class AdpResourcesSpec extends WordSpec {
         terminateAfter = Option("8 hours"),
         actionOnResourceFailure = None,
         actionOnTaskFailure = None,
-        httpProxy = None
+        httpProxy = None,
+        releaseLabel = None,
+        applications = None,
+        configuration = None
       )
 
       val objShouldBe = ("id" -> "theId") ~

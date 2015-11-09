@@ -1,8 +1,8 @@
 package com.krux.hyperion.resource
 
 import com.krux.hyperion.HyperionContext
-import com.krux.hyperion.aws.AdpEmrCluster
-import com.krux.hyperion.common.{HttpProxy, PipelineObjectId}
+import com.krux.hyperion.aws.{AdpRef, AdpEmrCluster}
+import com.krux.hyperion.common.{HttpProxy, PipelineObject, PipelineObjectId}
 import com.krux.hyperion.expression.Duration
 import com.krux.hyperion.parameter.{DirectValueParameter, Parameter}
 
@@ -11,7 +11,7 @@ import com.krux.hyperion.parameter.{DirectValueParameter, Parameter}
  */
 class MapReduceCluster private (
   val id: PipelineObjectId,
-  val amiVersion: String,
+  val amiVersion: Option[String],
   val supportedProducts: Option[String],
   val standardBootstrapAction: Seq[String],
   val bootstrapAction: Seq[String],
@@ -41,14 +41,17 @@ class MapReduceCluster private (
   val terminateAfter: Option[Parameter[Duration]],
   val actionOnResourceFailure: Option[ActionOnResourceFailure],
   val actionOnTaskFailure: Option[ActionOnTaskFailure],
-  val httpProxy: Option[HttpProxy]
+  val httpProxy: Option[HttpProxy],
+  val releaseLabel: Option[String],
+  val applications: Seq[String],
+  val configuration: Option[EmrConfiguration]
 ) extends EmrCluster {
 
   assert(taskInstanceCount.value >= 0)
   assert(coreInstanceCount.value >= 1)
 
   def copy(id: PipelineObjectId = id,
-    amiVersion: String = amiVersion,
+    amiVersion: Option[String] = amiVersion,
     supportedProducts: Option[String] = supportedProducts,
     standardBootstrapAction: Seq[String] = standardBootstrapAction,
     bootstrapAction: Seq[String] = bootstrapAction,
@@ -78,19 +81,23 @@ class MapReduceCluster private (
     terminateAfter: Option[Parameter[Duration]] = terminateAfter,
     actionOnResourceFailure: Option[ActionOnResourceFailure] = actionOnResourceFailure,
     actionOnTaskFailure: Option[ActionOnTaskFailure] = actionOnTaskFailure,
-    httpProxy: Option[HttpProxy] = httpProxy
+    httpProxy: Option[HttpProxy] = httpProxy,
+    releaseLabel: Option[String] = releaseLabel,
+    applications: Seq[String] = applications,
+    configuration: Option[EmrConfiguration] = configuration
   ) = new MapReduceCluster(id, amiVersion, supportedProducts, standardBootstrapAction, bootstrapAction, enableDebugging,
     hadoopSchedulerType, keyPair, masterInstanceBidPrice, masterInstanceType,
     coreInstanceBidPrice, coreInstanceCount, coreInstanceType,
     taskInstanceBidPrice, taskInstanceCount, taskInstanceType, region, availabilityZone, resourceRole, role, subnetId,
     masterSecurityGroupId, additionalMasterSecurityGroupIds, slaveSecurityGroupId, additionalSlaveSecurityGroupIds,
     useOnDemandOnLastAttempt, visibleToAllUsers, initTimeout, terminateAfter,
-    actionOnResourceFailure, actionOnTaskFailure, httpProxy)
+    actionOnResourceFailure, actionOnTaskFailure, httpProxy, releaseLabel, applications, configuration
+  )
 
   def named(name: String) = this.copy(id = id.named(name))
   def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
 
-  def withAmiVersion(ver: String) = this.copy(amiVersion = ver)
+  def withAmiVersion(ver: String) = this.copy(amiVersion = Option(ver))
   def withSupportedProducts(products: String) = this.copy(supportedProducts = Option(products))
   def withBootstrapAction(action: String*) = this.copy(bootstrapAction = bootstrapAction ++ action)
   def withDebuggingEnabled() = this.copy(enableDebugging = Option(true))
@@ -120,13 +127,18 @@ class MapReduceCluster private (
   def withActionOnResourceFailure(actionOnResourceFailure: ActionOnResourceFailure) = this.copy(actionOnResourceFailure = Option(actionOnResourceFailure))
   def withActionOnTaskFailure(actionOnTaskFailure: ActionOnTaskFailure) = this.copy(actionOnTaskFailure = Option(actionOnTaskFailure))
   def withHttpProxy(proxy: HttpProxy) = this.copy(httpProxy = Option(proxy))
+  def withReleaseLabel(releaseLabel: String) = this.copy(releaseLabel = Option(releaseLabel), amiVersion = None)
+  def withApplication(application: String*) = this.copy(applications = this.applications ++ application)
+  def withConfiguration(configuration: EmrConfiguration) = this.copy(configuration = Option(configuration))
+
+  override def objects: Iterable[PipelineObject] = configuration.toList ++ httpProxy.toList
 
   lazy val instanceCount = 1 + coreInstanceCount.value + taskInstanceCount.value
 
   lazy val serialize = new AdpEmrCluster(
     id = id,
     name = id.toOption,
-    amiVersion = Option(amiVersion),
+    amiVersion = amiVersion,
     supportedProducts = supportedProducts,
     bootstrapAction = standardBootstrapAction ++ bootstrapAction,
     enableDebugging = enableDebugging.map(_.toString),
@@ -170,13 +182,20 @@ class MapReduceCluster private (
     terminateAfter = terminateAfter.map(_.toString),
     actionOnResourceFailure = actionOnResourceFailure.map(_.toString),
     actionOnTaskFailure = actionOnTaskFailure.map(_.toString),
-    httpProxy = httpProxy.map(_.ref)
+    httpProxy = httpProxy.map(_.ref),
+    releaseLabel = releaseLabel,
+    applications = applications,
+    configuration = configuration.map(_.ref)
   )
 
 }
 
 object MapReduceCluster {
-  def apply()(implicit hc: HyperionContext) = new MapReduceCluster(
+  def apply()(implicit hc: HyperionContext): MapReduceCluster = apply(None)
+
+  def apply(configuration: EmrConfiguration)(implicit hc: HyperionContext): MapReduceCluster = apply(Option(configuration))
+
+  private def apply(configuration: Option[EmrConfiguration])(implicit hc: HyperionContext): MapReduceCluster = new MapReduceCluster(
     id = PipelineObjectId(MapReduceCluster.getClass),
     amiVersion = hc.emrAmiVersion,
     supportedProducts = None,
@@ -208,6 +227,9 @@ object MapReduceCluster {
     terminateAfter = hc.emrTerminateAfter.map(DirectValueParameter[Duration]),
     actionOnResourceFailure = None,
     actionOnTaskFailure = None,
-    httpProxy = None
+    httpProxy = None,
+    releaseLabel = hc.emrReleaseLabel,
+    applications = Seq.empty,
+    configuration = configuration
   )
 }
