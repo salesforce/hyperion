@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.16.0 - 2015-11-08
+### Added
+- [#240](https://github.com/krux/hyperion/issues/240) - Support EmrConfiguration and Property
+- [#241](https://github.com/krux/hyperion/issues/241) - Support HttpProxy
+- [#255](https://github.com/krux/hyperion/issues/255) - Provide explanations for CLI options 
+- [#256](https://github.com/krux/hyperion/issues/256) - Use a logging framework instead of println
+
 ## 2.15.0 - 2015-11-06
 ### Added
 - [#209](https://github.com/krux/hyperion/issues/209) - Override start activation time on command line
