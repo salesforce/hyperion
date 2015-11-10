@@ -25,6 +25,8 @@ sealed abstract class HType {
 object HType {
 
   implicit def string2HString(value: String): HString = HString(Left(value))
+  implicit def stringOption2HStringOption(value: Option[String]): Option[HString] =
+    value.map(v => HString(Left(v)))
   implicit def stringExp2HString(value: StringExp): HString = HString(Right(value))
 
   implicit def int2HInt(value: Int): HInt = HInt(Left(value))

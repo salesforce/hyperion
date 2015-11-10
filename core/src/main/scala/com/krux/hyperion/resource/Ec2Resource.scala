@@ -2,8 +2,8 @@ package com.krux.hyperion.resource
 
 import com.krux.hyperion.adt.HType._
 import com.krux.hyperion.adt.{HDuration, HDouble, HBoolean, HString}
-import com.krux.hyperion.aws.{AdpRef, AdpEc2Resource}
-import com.krux.hyperion.common.PipelineObjectId
+import com.krux.hyperion.aws.{AdpHttpProxy, AdpRef, AdpEc2Resource}
+import com.krux.hyperion.common.{HttpProxy, PipelineObjectId}
 import com.krux.hyperion.HyperionContext
 
 /**
@@ -28,7 +28,8 @@ case class Ec2Resource private (
   initTimeout: Option[HDuration],
   terminateAfter: Option[HDuration],
   actionOnResourceFailure: Option[ActionOnResourceFailure],
-  actionOnTaskFailure: Option[ActionOnTaskFailure]
+  actionOnTaskFailure: Option[ActionOnTaskFailure],
+  httpProxy: Option[HttpProxy]
 ) extends ResourceObject {
 
   def named(name: String) = this.copy(id = id.named(name))
@@ -51,6 +52,7 @@ case class Ec2Resource private (
   def withSpotBidPrice(spotBidPrice: HDouble) = this.copy(spotBidPrice = Option(spotBidPrice))
   def withUseOnDemandOnLastAttempt(useOnDemandOnLastAttempt: HBoolean) = this.copy(useOnDemandOnLastAttempt = Option(useOnDemandOnLastAttempt))
   def withInitTimeout(timeout: HDuration) = this.copy(initTimeout = Option(timeout))
+  def withHttpProxy(proxy: HttpProxy) = this.copy(httpProxy = Option(proxy))
 
   lazy val serialize = AdpEc2Resource(
     id = id,
@@ -72,7 +74,8 @@ case class Ec2Resource private (
     initTimeout = initTimeout.map(_.serialize),
     terminateAfter = terminateAfter.map(_.serialize),
     actionOnResourceFailure = actionOnResourceFailure.map(_.serialize),
-    actionOnTaskFailure = actionOnTaskFailure.map(_.serialize)
+    actionOnTaskFailure = actionOnTaskFailure.map(_.serialize),
+    httpProxy = httpProxy.map(_.ref)
   )
 
   def ref: AdpRef[AdpEc2Resource] = AdpRef(serialize)
@@ -99,7 +102,8 @@ object Ec2Resource {
     initTimeout = None,
     terminateAfter = hc.ec2TerminateAfter.map(duration2HDuration),
     actionOnResourceFailure = None,
-    actionOnTaskFailure = None
+    actionOnTaskFailure = None,
+    httpProxy = None
   )
 
 }

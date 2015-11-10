@@ -6,6 +6,25 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - [#215](https://github.com/krux/hyperion/issues/215) - Revisit and refactor expression and parameter
 
+## 2.16.2 - 2015-11-09
+### Fixed
+- [#264](https://github.com/krux/hyperion/issues/264) - CLI schedule override only the explicitly specified part
+
+## 2.16.1 - 2015-11-09
+### Added
+- [#262](https://github.com/krux/hyperion/issues/262) - Add slf4j-simple to examples
+
+## 2.16.0 - 2015-11-08
+### Added
+- [#240](https://github.com/krux/hyperion/issues/240) - Support EmrConfiguration and Property
+- [#241](https://github.com/krux/hyperion/issues/241) - Support HttpProxy
+- [#255](https://github.com/krux/hyperion/issues/255) - Provide explanations for CLI options
+- [#256](https://github.com/krux/hyperion/issues/256) - Use a logging framework instead of println
+
+## 2.15.0 - 2015-11-06
+### Added
+- [#209](https://github.com/krux/hyperion/issues/209) - Override start activation time on command line
+
 ## 2.14.2 - 2015-10-30
 ### Added
 - [#249](https://github.com/krux/hyperion/issues/249) - Implement a simpleName value on MainClass to get just the class name itself

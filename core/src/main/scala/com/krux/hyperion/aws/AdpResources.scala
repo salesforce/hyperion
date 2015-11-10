@@ -71,7 +71,8 @@ case class AdpEc2Resource(
   initTimeout: Option[String],
   terminateAfter: Option[String],
   actionOnResourceFailure: Option[String],
-  actionOnTaskFailure: Option[String]
+  actionOnTaskFailure: Option[String],
+  httpProxy: Option[AdpRef[AdpHttpProxy]]
 ) extends AdpResource {
 
   val `type` = "Ec2Resource"
@@ -134,9 +135,36 @@ class AdpEmrCluster(
   val initTimeout: Option[String],
   val terminateAfter: Option[String],
   val actionOnResourceFailure: Option[String],
-  val actionOnTaskFailure: Option[String]
+  val actionOnTaskFailure: Option[String],
+  val httpProxy: Option[AdpRef[AdpHttpProxy]],
+  val releaseLabel: Option[String],
+  val applications: Option[Seq[String]],
+  val configuration: Option[AdpRef[AdpEmrConfiguration]]
 ) extends AdpResource {
 
   val `type` = "EmrCluster"
+
+}
+
+case class AdpProperty(
+  id: String,
+  name: Option[String],
+  key: Option[String],
+  value: Option[String]
+) extends AdpDataPipelineObject {
+
+  val `type` = "Property"
+
+}
+
+case class AdpEmrConfiguration(
+  id: String,
+  name: Option[String],
+  classification: Option[String],
+  property: Option[Seq[AdpRef[AdpProperty]]],
+  configuration: Option[Seq[AdpRef[AdpEmrConfiguration]]]
+) extends AdpDataPipelineObject {
+
+  val `type` = "EmrConfiguration"
 
 }
