@@ -1,5 +1,7 @@
 package com.krux.hyperion.examples
 
+import com.typesafe.config.ConfigFactory
+
 import com.krux.hyperion.activity.RedshiftCopyActivity
 import com.krux.hyperion.common.PipelineObjectId
 import com.krux.hyperion.database.RedshiftDatabase
@@ -8,13 +10,12 @@ import com.krux.hyperion.datanode.{S3DataNode, RedshiftDataNode}
 import com.krux.hyperion.Implicits._
 import com.krux.hyperion.resource.Ec2Resource
 import com.krux.hyperion.WorkflowExpression
-import com.krux.hyperion.{Schedule, DataPipelineDef, HyperionContext}
-import com.typesafe.config.ConfigFactory
+import com.krux.hyperion.{Schedule, DataPipelineDef, HyperionContext, HyperionCli}
 
 /**
  * An example redshift loader object
  */
-object ExampleRedshiftLoad extends DataPipelineDef {
+object ExampleRedshiftLoad extends DataPipelineDef with HyperionCli {
 
   object MockRedshift extends RedshiftDatabase {
     val id = PipelineObjectId.fixed("_MockRedshift")

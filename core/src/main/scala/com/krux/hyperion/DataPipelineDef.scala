@@ -17,7 +17,7 @@ import com.krux.hyperion.expression.Parameter
 /**
  * Base trait of all data pipeline definitions. All data pipelines needs to implement this trait
  */
-trait DataPipelineDef extends HyperionCli with S3UriHelper with WorkflowExpressionImplicits {
+trait DataPipelineDef extends S3UriHelper with WorkflowExpressionImplicits {
 
   private lazy val context = new HyperionContext()
 

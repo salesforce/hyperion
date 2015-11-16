@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 3.0.0-SNAPSHOT
 ### Changed
 - [#215](https://github.com/krux/hyperion/issues/215) - Revisit and refactor expression and parameter
+- [#271](https://github.com/krux/hyperion/issues/271) - Separate CLI with DataPipelineDef
 
 ## 2.16.2 - 2015-11-09
 ### Fixed
