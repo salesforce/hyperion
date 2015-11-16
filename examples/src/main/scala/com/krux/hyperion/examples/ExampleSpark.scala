@@ -1,6 +1,9 @@
 package com.krux.hyperion.examples
 
 import scala.language.postfixOps
+
+import com.typesafe.config.ConfigFactory
+
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.activity.{SparkJobActivity, SparkActivity, SparkStep}
 import com.krux.hyperion.common.S3Uri
@@ -10,11 +13,9 @@ import com.krux.hyperion.expression.{Format, RuntimeNode, Parameter}
 import com.krux.hyperion.Implicits._
 import com.krux.hyperion.resource.SparkCluster
 import com.krux.hyperion.WorkflowExpression
-import com.krux.hyperion.{Schedule, DataPipelineDef, HyperionContext}
-import com.typesafe.config.ConfigFactory
+import com.krux.hyperion.{Schedule, DataPipelineDef, HyperionContext, HyperionCli}
 
-
-object ExampleSpark extends DataPipelineDef {
+object ExampleSpark extends DataPipelineDef with HyperionCli {
 
   val target = "the-target"
   val jar = s3 / "sample-jars" / "sample-jar-assembly-current.jar"
