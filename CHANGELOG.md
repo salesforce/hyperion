@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.16.6 - 2015-12-14
+### Fixed
+- [#277](https://github.com/krux/hyperion/issues/277) - InsertTableQuery actually needs the values placeholders
+
 ## 2.16.5 - 2015-12-11
 ### Fixed
 - [#275](https://github.com/krux/hyperion/issues/275) - Schedule is not honouring settings in non-application.conf config
