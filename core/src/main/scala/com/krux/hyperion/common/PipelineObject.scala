@@ -1,6 +1,6 @@
 package com.krux.hyperion.common
 
-import com.krux.hyperion.aws.{AdpDataPipelineAbstractObject, AdpRef}
+import com.krux.hyperion.aws.{ AdpDataPipelineAbstractObject, AdpRef }
 import scala.language.implicitConversions
 
 /**
@@ -8,11 +8,15 @@ import scala.language.implicitConversions
  */
 trait PipelineObject extends Ordered[PipelineObject] {
 
+  type Self <: PipelineObject
+
   implicit def uniquePipelineId2String(id: PipelineObjectId): String = id.toString
   implicit def seq2Option[A](anySeq: Seq[A]): Option[Seq[A]] = seqToOption(anySeq)(x => x)
 
   def id: PipelineObjectId
+
   def objects: Iterable[PipelineObject]
+
   def serialize: AdpDataPipelineAbstractObject
   def ref: AdpRef[AdpDataPipelineAbstractObject]
 
@@ -23,6 +27,6 @@ trait PipelineObject extends Ordered[PipelineObject] {
     }
   }
 
-  def compare(that: PipelineObject): Int =  this.id.compare(that.id)
+  def compare(that: PipelineObject): Int = id.compare(that.id)
 
 }

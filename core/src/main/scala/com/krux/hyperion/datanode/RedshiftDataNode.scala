@@ -1,40 +1,33 @@
 package com.krux.hyperion.datanode
 
-import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.adt.HString
 import com.krux.hyperion.aws.AdpRedshiftDataNode
-import com.krux.hyperion.common.{PipelineObjectId, PipelineObject}
 import com.krux.hyperion.database.RedshiftDatabase
-import com.krux.hyperion.precondition.Precondition
-import com.krux.hyperion.resource.WorkerGroup
+import com.krux.hyperion.common.{ BaseFields, PipelineObjectId }
 
 /**
  * The abstracted RedshiftDataNode
  */
 case class RedshiftDataNode private (
-  id: PipelineObjectId,
+  baseFields: BaseFields,
+  dataNodeFields: DataNodeFields,
   database: RedshiftDatabase,
   tableName: HString,
   createTableSql: Option[HString],
   schemaName: Option[HString],
-  primaryKeys: Seq[HString],
-  preconditions: Seq[Precondition],
-  onSuccessAlarms: Seq[SnsAlarm],
-  onFailAlarms: Seq[SnsAlarm]
+  primaryKeys: Seq[HString]
 ) extends DataNode {
 
-  def named(name: String): RedshiftDataNode = this.copy(id = id.named(name))
-  def groupedBy(group: String): RedshiftDataNode = this.copy(id = id.groupedBy(group))
+  type Self = RedshiftDataNode
 
-  def withCreateTableSql(createSql: HString): RedshiftDataNode = this.copy(createTableSql = Option(createSql))
-  def withSchema(name: HString): RedshiftDataNode = this.copy(schemaName = Option(name))
-  def withPrimaryKeys(pks: HString*): RedshiftDataNode = this.copy(primaryKeys = primaryKeys ++ pks)
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+  def updateDataNodeFields(fields: DataNodeFields) = copy(dataNodeFields = fields)
 
-  def whenMet(conditions: Precondition*): RedshiftDataNode = this.copy(preconditions = preconditions ++ conditions)
-  def onFail(alarms: SnsAlarm*): RedshiftDataNode = this.copy(onFailAlarms = onFailAlarms ++ alarms)
-  def onSuccess(alarms: SnsAlarm*): RedshiftDataNode = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
+  def withCreateTableSql(createSql: HString): RedshiftDataNode = copy(createTableSql = Option(createSql))
+  def withSchema(name: HString): RedshiftDataNode = copy(schemaName = Option(name))
+  def withPrimaryKeys(pks: HString*): RedshiftDataNode = copy(primaryKeys = primaryKeys ++ pks)
 
-  def objects: Iterable[PipelineObject] = Option(database) ++ preconditions ++ onSuccessAlarms ++ onFailAlarms
+  override def objects = Seq(database) ++ super.objects
 
   lazy val serialize = AdpRedshiftDataNode(
     id = id,
@@ -52,16 +45,16 @@ case class RedshiftDataNode private (
 }
 
 object RedshiftDataNode {
+
   def apply(database: RedshiftDatabase, tableName: HString): RedshiftDataNode =
     new RedshiftDataNode(
-      id = PipelineObjectId(RedshiftDataNode.getClass),
+      baseFields = BaseFields(PipelineObjectId(RedshiftDataNode.getClass)),
+      dataNodeFields = DataNodeFields(),
       database = database,
       tableName = tableName,
       createTableSql = None,
       schemaName = None,
-      primaryKeys = Seq.empty,
-      preconditions = Seq.empty,
-      onSuccessAlarms = Seq.empty,
-      onFailAlarms = Seq.empty
+      primaryKeys = Seq.empty
     )
+
 }

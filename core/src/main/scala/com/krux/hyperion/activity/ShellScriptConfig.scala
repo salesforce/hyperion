@@ -1,16 +1,20 @@
 package com.krux.hyperion.activity
 
-import com.krux.hyperion.aws.{AdpRef, AdpShellScriptConfig}
-import com.krux.hyperion.common.{PipelineObject, PipelineObjectId}
-import com.krux.hyperion.adt.{HS3Uri, HString}
+import com.krux.hyperion.aws.{ AdpRef, AdpShellScriptConfig }
+import com.krux.hyperion.common.{ PipelineObject, BaseFields, PipelineObjectId, NamedPipelineObject }
+import com.krux.hyperion.adt.{ HS3Uri, HString }
 
 case class ShellScriptConfig(
-  id: PipelineObjectId,
+  baseFields: BaseFields,
   scriptUri: HS3Uri,
   scriptArguments: Seq[HString]
-) extends PipelineObject {
+) extends NamedPipelineObject {
 
-  def withArguments(args: HString*) = this.copy(scriptArguments = scriptArguments ++ args)
+  type Self = ShellScriptConfig
+
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+
+  def withArguments(args: HString*) = copy(scriptArguments = scriptArguments ++ args)
 
   def objects: Iterable[PipelineObject] = None
 
@@ -25,11 +29,13 @@ case class ShellScriptConfig(
 }
 
 object ShellScriptConfig {
+
   def apply(scriptUri: HS3Uri): ShellScriptConfig =
     new ShellScriptConfig(
-      id = PipelineObjectId(ShellScriptConfig.getClass),
+      baseFields = BaseFields(PipelineObjectId(ShellScriptConfig.getClass)),
       scriptUri = scriptUri,
       scriptArguments = Seq.empty
     )
+
 }
 

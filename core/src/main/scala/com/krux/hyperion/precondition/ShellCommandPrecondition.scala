@@ -1,9 +1,9 @@
 package com.krux.hyperion.precondition
 
 import com.krux.hyperion.activity.Script
-import com.krux.hyperion.adt.{HDuration, HString}
+import com.krux.hyperion.adt.HString
 import com.krux.hyperion.aws.AdpShellCommandPrecondition
-import com.krux.hyperion.common.PipelineObjectId
+import com.krux.hyperion.common.{ PipelineObjectId, BaseFields }
 import com.krux.hyperion.HyperionContext
 
 /**
@@ -16,23 +16,22 @@ import com.krux.hyperion.HyperionContext
  *
  */
 case class ShellCommandPrecondition private (
-  id: PipelineObjectId,
+  baseFields: BaseFields,
+  preconditionFields: PreconditionFields,
   script: Script,
   scriptArgument: Seq[HString],
   stdout: Option[HString],
-  stderr: Option[HString],
-  role: HString,
-  preconditionTimeout: Option[HDuration]
+  stderr: Option[HString]
 ) extends Precondition {
 
-  def named(name: String) = this.copy(id = id.named(name))
-  def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
+  type Self = ShellCommandPrecondition
 
-  def withScriptArgument(argument: HString*) = this.copy(scriptArgument = scriptArgument ++ argument)
-  def withStdout(stdout: HString) = this.copy(stdout = Option(stdout))
-  def withStderr(stderr: HString) = this.copy(stderr = Option(stderr))
-  def withRole(role: HString) = this.copy(role = role)
-  def withPreconditionTimeout(timeout: HDuration) = this.copy(preconditionTimeout = Option(timeout))
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+  def updatePreconditionFields(fields: PreconditionFields) = copy(preconditionFields = fields)
+
+  def withScriptArgument(argument: HString*) = copy(scriptArgument = scriptArgument ++ argument)
+  def withStdout(stdout: HString) = copy(stdout = Option(stdout))
+  def withStderr(stderr: HString) = copy(stderr = Option(stderr))
 
   lazy val serialize = AdpShellCommandPrecondition(
     id = id,
@@ -49,14 +48,15 @@ case class ShellCommandPrecondition private (
 }
 
 object ShellCommandPrecondition {
+
   def apply(script: Script)(implicit hc: HyperionContext): ShellCommandPrecondition =
     new ShellCommandPrecondition(
-      id = PipelineObjectId(ShellCommandPrecondition.getClass),
+      baseFields = BaseFields(PipelineObjectId(ShellCommandPrecondition.getClass)),
+      preconditionFields = Precondition.defaultPreconditionFields,
       script = script,
       scriptArgument = Seq.empty,
       stdout = None,
-      stderr = None,
-      role = hc.role,
-      preconditionTimeout = None
+      stderr = None
     )
+
 }

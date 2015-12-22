@@ -1,28 +1,32 @@
 package com.krux.hyperion.common
 
-import com.krux.hyperion.adt.{HString, HInt}
-import com.krux.hyperion.aws.{AdpRef, AdpHttpProxy}
+import com.krux.hyperion.adt.{ HString, HInt }
+import com.krux.hyperion.aws.{ AdpRef, AdpHttpProxy }
 import com.krux.hyperion.expression.Parameter
 
 case class HttpProxy private (
-  id: PipelineObjectId,
+  baseFields: BaseFields,
   hostname: Option[HString],
   port: Option[HInt],
   username: Option[HString],
   password: Option[Parameter[String]],
   windowsDomain: Option[HString],
   windowsWorkGroup: Option[HString]
-) extends PipelineObject {
+) extends NamedPipelineObject {
 
-  def withHostname(hostname: HString) = this.copy(hostname = Option(hostname))
-  def withPort(port: HInt) = this.copy(port = Option(port))
-  def withUsername(username: HString) = this.copy(username = Option(username))
+  type Self = HttpProxy
+
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+
+  def withHostname(hostname: HString) = copy(hostname = Option(hostname))
+  def withPort(port: HInt) = copy(port = Option(port))
+  def withUsername(username: HString) = copy(username = Option(username))
   def withPassword(password: Parameter[String]) = {
     assert(password.isEncrypted)
-    this.copy(password = Option(password))
+    copy(password = Option(password))
   }
-  def withWindowsDomain(windowsDomain: HString) = this.copy(windowsDomain = Option(windowsDomain))
-  def withWindowsWorkGroup(windowsWorkGroup: HString) = this.copy(windowsWorkGroup = Option(windowsWorkGroup))
+  def withWindowsDomain(windowsDomain: HString) = copy(windowsDomain = Option(windowsDomain))
+  def withWindowsWorkGroup(windowsWorkGroup: HString) = copy(windowsWorkGroup = Option(windowsWorkGroup))
 
   lazy val serialize = AdpHttpProxy(
     id = id,
@@ -42,8 +46,9 @@ case class HttpProxy private (
 }
 
 object HttpProxy {
+
   def apply(host: HString, port: HInt): HttpProxy = HttpProxy(
-    id = PipelineObjectId(HttpProxy.getClass),
+    baseFields = BaseFields(PipelineObjectId(HttpProxy.getClass)),
     hostname = Option(host),
     port = Option(port),
     username = None,
@@ -51,4 +56,5 @@ object HttpProxy {
     windowsDomain = None,
     windowsWorkGroup = None
   )
+
 }

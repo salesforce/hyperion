@@ -1,6 +1,8 @@
 package com.krux.hyperion.action
 
-import com.krux.hyperion.common.{PipelineObjectId, PipelineObject}
+import com.krux.hyperion.adt.HString
+import com.krux.hyperion.common.{ PipelineObjectId, NamedPipelineObject, PipelineObject,
+  BaseFields }
 import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.aws.{AdpSnsAlarm, AdpRef}
 
@@ -8,30 +10,31 @@ import com.krux.hyperion.aws.{AdpSnsAlarm, AdpRef}
  * Sends an Amazon SNS notification message when an activity fails or finishes successfully.
  */
 case class SnsAlarm private (
-  id: PipelineObjectId,
-  subject: String,
-  message: String,
-  topicArn: Option[String],
-  role: Option[String]
-) extends PipelineObject {
+  baseFields: BaseFields,
+  subject: HString,
+  message: HString,
+  role: HString,
+  topicArn: HString
+) extends NamedPipelineObject {
 
-  def named(name: String) = this.copy(id = id.named(name))
-  def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
+  type Self = SnsAlarm
 
-  def withSubject(subject: String) = this.copy(subject = subject)
-  def withMessage(message: String) = this.copy(message = message)
-  def withTopicArn(topicArn: String) = this.copy(topicArn = Some(topicArn))
-  def withRole(role: String) = this.copy(role = Some(role))
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
 
   def objects: Iterable[PipelineObject] = None
+
+  def withSubject(subject: HString) = copy(subject = subject)
+  def withMessage(message: HString) = copy(message = message)
+  def withRole(role: HString) = copy(role = role)
+  def withTopicArn(arn: HString) = copy(topicArn = arn)
 
   lazy val serialize = new AdpSnsAlarm(
     id = id,
     name = id.toOption,
-    subject = subject,
-    message = message,
-    topicArn = topicArn.get,
-    role = role.get
+    subject = subject.serialize,
+    message = message.serialize,
+    topicArn = topicArn.serialize,
+    role = role.serialize
   )
 
   def ref: AdpRef[AdpSnsAlarm] = AdpRef(serialize)
@@ -39,12 +42,13 @@ case class SnsAlarm private (
 }
 
 object SnsAlarm {
-  def apply()(implicit hc: HyperionContext) =
-    new SnsAlarm(
-      id = PipelineObjectId(SnsAlarm.getClass),
-      subject = "",
-      message = "",
-      topicArn = hc.snsTopic,
-      role = hc.snsRole
-    )
+
+  def apply()(implicit hc: HyperionContext) = new SnsAlarm(
+    baseFields = BaseFields(PipelineObjectId(SnsAlarm.getClass)),
+    subject = "",
+    message = "",
+    topicArn = hc.snsTopic.getOrElse("").toString,
+    role = hc.snsRole.get
+  )
+
 }

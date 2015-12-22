@@ -222,9 +222,7 @@ case class AdpEmrActivity (
   lateAfterTimeout: Option[String],
   maximumRetries: Option[String],
   retryDelay: Option[String],
-  failureAndRerunMode: Option[String],
-  actionOnResourceFailure: Option[String],
-  actionOnTaskFailure: Option[String]
+  failureAndRerunMode: Option[String]
 ) extends AdpActivity {
 
   val `type` = "EmrActivity"
@@ -327,7 +325,6 @@ case class AdpHiveCopyActivity (
   generatedScriptsPath: Option[String],
   input: Option[AdpRef[AdpDataNode]],
   output: Option[AdpRef[AdpDataNode]],
-  hadoopQueue: Option[String],
   preActivityTaskConfig: Option[AdpRef[AdpShellScriptConfig]],
   postActivityTaskConfig: Option[AdpRef[AdpShellScriptConfig]],
   workerGroup: Option[String],
@@ -373,7 +370,6 @@ class AdpPigActivity (
   val stage: Option[String],
   val input: Option[AdpRef[AdpDataNode]],
   val output: Option[AdpRef[AdpDataNode]],
-  val hadoopQueue: Option[String],
   val preActivityTaskConfig: Option[AdpRef[AdpShellScriptConfig]],
   val postActivityTaskConfig: Option[AdpRef[AdpShellScriptConfig]],
   val workerGroup: Option[String],
