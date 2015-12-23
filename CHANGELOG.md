@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.0.0-SNAPSHOT
 ### Changed
+- [#282](https://github.com/krux/hyperion/issues/282) - Add support for getting hyperion aws client by pipeline name
 - [#280](https://github.com/krux/hyperion/issues/280) - Upgrade to scala 2.10.6
 - [#243](https://github.com/krux/hyperion/issues/243) - Revisit and refactor expression and parameter
   - The actionOnTaskFailure and actionOnResource failure is removed from emr activities, they do not belong there.
