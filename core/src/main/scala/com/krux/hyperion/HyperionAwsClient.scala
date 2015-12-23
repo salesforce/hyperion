@@ -13,6 +13,8 @@ import com.amazonaws.services.datapipeline.model._
 import com.krux.hyperion.DataPipelineDef._
 
 sealed trait HyperionAwsClient {
+  protected lazy val log = LoggerFactory.getLogger(getClass)
+
   def getPipelineId: Option[String]
   def createPipeline(force: Boolean): Option[String]
   def createPipeline(force: Boolean, activate: Boolean): Boolean
@@ -21,7 +23,6 @@ sealed trait HyperionAwsClient {
 }
 
 case class HyperionAwsClientForPipelineId(client: DataPipelineClient, pipelineId: String) extends HyperionAwsClient {
-  private lazy val log = LoggerFactory.getLogger(getClass)
 
   def getPipelineId: Option[String] = Option(pipelineId)
 
@@ -43,19 +44,20 @@ case class HyperionAwsClientForPipelineId(client: DataPipelineClient, pipelineId
 
 }
 
-case class HyperionAwsClientForPipelineDef(client: DataPipelineClient, pipelineDef: DataPipelineDef) extends HyperionAwsClient {
-  private lazy val log = LoggerFactory.getLogger(getClass)
+case class HyperionAwsClientForName(client: DataPipelineClient, pipelineName: String) extends HyperionAwsClient {
 
   def getPipelineId: Option[String] = {
     @tailrec
-    def queryPipelines(ids: List[String] = List.empty, request: ListPipelinesRequest = new
-        ListPipelinesRequest()): List[String] = {
+    def queryPipelines(
+        ids: List[String] = List.empty,
+        request: ListPipelinesRequest = new ListPipelinesRequest()
+      ): List[String] = {
+
       val response = client.listPipelines(request)
 
-      val theseIds: List[String] = response.getPipelineIdList.collect({
-        case idName if idName.getName == pipelineDef.pipelineName => idName.getId
-      }
-      ).toList
+      val theseIds: List[String] = response.getPipelineIdList
+        .collect { case idName if idName.getName == pipelineName => idName.getId }
+        .toList
 
       if (response.getHasMoreResults) {
         queryPipelines(ids ++ theseIds, new ListPipelinesRequest().withMarker(response.getMarker))
@@ -66,15 +68,30 @@ case class HyperionAwsClientForPipelineDef(client: DataPipelineClient, pipelineD
 
     queryPipelines() match {
       // if using Hyperion for all DataPipeline management, this should never happen
-      case _ :: _ :: other => throw new Exception("Duplicated pipeline name")
+      case _ :: _ :: other => throw new RuntimeException("Duplicated pipeline name")
 
       case id :: Nil => Option(id)
 
       case Nil =>
-        log.debug(s"Pipeline ${pipelineDef.pipelineName} does not exist")
+        log.debug(s"Pipeline ${pipelineName} does not exist")
         None
     }
   }
+
+  def createPipeline(force: Boolean): Option[String] = None
+
+  def createPipeline(force: Boolean, activate: Boolean): Boolean = false
+
+  def activatePipeline(): Boolean = getPipelineId.map(HyperionAwsClientForPipelineId(client, _)).exists(_.activatePipeline())
+
+  def deletePipeline(): Boolean = getPipelineId.map(HyperionAwsClientForPipelineId(client, _)).exists(_.deletePipeline())
+
+}
+
+case class HyperionAwsClientForPipelineDef(client: DataPipelineClient, pipelineDef: DataPipelineDef) extends HyperionAwsClient {
+
+  def getPipelineId: Option[String] =
+    HyperionAwsClientForName(client, pipelineDef.pipelineName).getPipelineId
 
   def createPipeline(force: Boolean): Option[String] = {
     log.info(s"Creating pipeline ${pipelineDef.pipelineName}")
