@@ -32,7 +32,7 @@ case class JarActivity private (
   def withOptions(opts: HString*) = copy(options = options ++ opts)
 
   override def scriptArguments =
-    (jarUri.serialize: HString) +: options ++: (mainClass.fullName: HString) +: shellCommandActivityFields.scriptArguments
+    (jarUri.serialize: HString) +: options ++: mainClass.map(_.fullName: HString) ++: shellCommandActivityFields.scriptArguments
 
 }
 
