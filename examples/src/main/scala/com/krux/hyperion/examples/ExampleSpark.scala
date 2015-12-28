@@ -39,10 +39,9 @@ object ExampleSpark extends DataPipelineDef with HyperionCli {
   val dataNode = S3DataNode(s3 / "some-bucket" / "some-path" /)
 
   // Actions
-  val mailAction = SnsAlarm()
+  val mailAction = SnsAlarm("arn:aws:sns:us-east-1:28619EXAMPLE:ExampleTopic")
     .withSubject(s"Something happened at ${RuntimeNode.ScheduledStartTime}")
     .withMessage(s"Some message $instanceCount x $instanceType @ $instanceBid for $location")
-    .withTopicArn("arn:aws:sns:us-east-1:28619EXAMPLE:ExampleTopic")
     .withRole("DataPipelineDefaultResourceRole")
 
   // Resources
