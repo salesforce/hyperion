@@ -15,6 +15,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#271](https://github.com/krux/hyperion/issues/271) - Separate CLI with DataPipelineDef
 - [#214](https://github.com/krux/hyperion/issues/214) - Extend CLI to be able to read parameters to be passed from pipeline
 
+## 2.16.6 - 2015-12-14
+### Fixed
+- [#277](https://github.com/krux/hyperion/issues/277) - InsertTableQuery actually needs the values placeholders
+
+## 2.16.5 - 2015-12-11
+### Fixed
+- [#275](https://github.com/krux/hyperion/issues/275) - Schedule is not honouring settings in non-application.conf config
+>>>>>>> master
+
 ## 2.16.4 - 2015-11-23
 ### Fixed
 - [#273](https://github.com/krux/hyperion/issues/273) - Add `ACCEPTINVCHARS` and the rest of Data Conversion Parameters to redshift copy options

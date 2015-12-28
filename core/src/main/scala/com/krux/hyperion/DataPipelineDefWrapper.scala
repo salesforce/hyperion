@@ -7,6 +7,7 @@ import com.krux.hyperion.expression.Parameter
   * in order to override aspects.
   */
 private[hyperion] case class DataPipelineDefWrapper(
+  override val hc: HyperionContext,
   override val pipelineName: String,
   schedule: Schedule,
   workflow: WorkflowExpression,
@@ -23,6 +24,7 @@ private[hyperion] case class DataPipelineDefWrapper(
 
 object DataPipelineDefWrapper {
   def apply(inner: DataPipelineDef): DataPipelineDefWrapper = DataPipelineDefWrapper(
+    inner.hc,
     inner.pipelineName,
     inner.schedule,
     inner.workflow,
