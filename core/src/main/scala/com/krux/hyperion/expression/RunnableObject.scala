@@ -97,6 +97,18 @@ trait RunnableObject { self =>
     val referenceName = "failureReason"
   }
 
+  case object PipelineId extends ReferenceExpression with StringExp {
+    override val objectName = self.objectName
+    val isRuntime = true
+    val referenceName = "pipelineId"
+  }
+
+  case object Name extends ReferenceExpression with StringExp {
+    override val objectName = self.objectName
+    val isRuntime = false
+    val referenceName = "name"
+  }
+
 }
 
 object RunnableObject extends RunnableObject
