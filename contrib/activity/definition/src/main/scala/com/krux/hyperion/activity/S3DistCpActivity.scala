@@ -6,7 +6,6 @@ import com.krux.hyperion.common.{StorageClass, PipelineObject, PipelineObjectId,
 import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.RunnableObject
 import com.krux.hyperion.adt.{HInt, HDuration, HString, HBoolean}
-import com.krux.hyperion.adt.HType._
 import com.krux.hyperion.precondition.Precondition
 import com.krux.hyperion.resource._
 

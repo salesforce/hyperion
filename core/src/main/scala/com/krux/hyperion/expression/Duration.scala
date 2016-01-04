@@ -1,5 +1,7 @@
 package com.krux.hyperion.expression
 
+import scala.language.implicitConversions
+
 /**
  * Indicates how often a scheduled event should run. It's expressed in the format "N
  * [years|months|weeks|days|hours|minutes]", where N is a positive integer value.
@@ -70,26 +72,4 @@ object Duration {
       case _ => throw new NumberFormatException(s"Cannot parse $s as a time period")
     }
   }
-}
-
-/**
- * Builds Duration, this is mainly used for using implicit conversions
- */
-class DurationBuilder(n: Int) {
-
-  def year = Year(n)
-  def years = this.year
-
-  def month = Month(n)
-  def months = this.month
-
-  def week = Week(n)
-  def weeks = this.week
-
-  def day = Day(n)
-  def days = this.day
-
-  def hour = Hour(n)
-  def hours = this.hour
-
 }

@@ -1,7 +1,6 @@
 package com.krux.hyperion.activity
 
 import com.krux.hyperion.adt._
-import com.krux.hyperion.adt.HType._
 import com.krux.hyperion.aws.AdpShellCommandActivity
 import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.ConstantExpression._

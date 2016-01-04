@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.0.0-SNAPSHOT
 ### Changed
+- [#291](https://github.com/krux/hyperion/issues/291) - Clean up the implicits
 - [#285](https://github.com/krux/hyperion/issues/285) - SnsAlarm requires topic arn and added default subject and message
 - [#286](https://github.com/krux/hyperion/issues/286) - Fix a bug in 3.0 that main class in jar activity is incorrect
 - [#282](https://github.com/krux/hyperion/issues/282) - Add support for getting hyperion aws client by pipeline name

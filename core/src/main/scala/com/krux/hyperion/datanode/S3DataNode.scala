@@ -1,5 +1,7 @@
 package com.krux.hyperion.datanode
 
+import scala.language.implicitConversions
+
 import com.krux.hyperion.aws.AdpS3DataNode
 import com.krux.hyperion.common.S3Uri
 import com.krux.hyperion.common.PipelineObject
@@ -48,6 +50,8 @@ object S3DataNode {
   def apply(s3Path: S3Uri): S3DataNode =
     if (s3Path.ref.endsWith("/")) S3Folder(s3Path)
     else S3File(s3Path)
+
+  implicit def string2S3DataNode(s3path: String): S3DataNode = S3DataNode(S3Uri(s3path))
 
 }
 

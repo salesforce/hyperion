@@ -1,5 +1,7 @@
 package com.krux.hyperion.expression
 
+import scala.language.implicitConversions
+
 /**
  * Expression. Expressions are delimited by: "#{" and "}" and the contents of the braces are
  * evaluated by AWS Data Pipeline.
@@ -11,6 +13,12 @@ trait Expression {
   def serialize: String = s"#{$content}"
 
   override def toString: String = serialize
+
+}
+
+object Expression {
+
+  implicit def expression2String(exp: Expression): String = exp.toString
 
 }
 

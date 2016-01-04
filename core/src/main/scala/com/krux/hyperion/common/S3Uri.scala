@@ -1,5 +1,9 @@
 package com.krux.hyperion.common
 
+import scala.language.implicitConversions
+
+import com.krux.hyperion.datanode.S3DataNode
+
 /**
  * The S3Uri provides a typesafe way of representing S3 URI's.
  *
@@ -34,5 +38,9 @@ object S3Uri extends S3UriHelper {
   implicit class S3StringContext(val sc: StringContext) extends AnyVal {
     def s3(args: Any*): S3Uri = S3Uri.s3(sc.s(args: _*))
   }
+
+  implicit def string2S3Uri(s3path: String): S3Uri = S3Uri(s3path)
+
+  implicit def s3Uri2S3DataNode(s3path: S3Uri): S3DataNode = S3DataNode(s3path)
 
 }

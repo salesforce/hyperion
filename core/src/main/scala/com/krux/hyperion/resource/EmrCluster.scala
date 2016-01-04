@@ -2,7 +2,6 @@ package com.krux.hyperion.resource
 
 import org.slf4j.Logger
 
-import com.krux.hyperion.adt.HType._
 import com.krux.hyperion.adt.{ HInt, HDouble, HString, HBoolean, HDuration }
 import com.krux.hyperion.aws.{ AdpRef, AdpEmrCluster }
 import com.krux.hyperion.HyperionContext

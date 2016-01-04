@@ -2,6 +2,8 @@ package com.krux.hyperion.common
 
 import java.util.UUID
 
+import scala.language.implicitConversions
+
 trait PipelineObjectId extends Ordered[PipelineObjectId] {
 
   def toOption: Option[String] = Option(this.toString)
@@ -13,6 +15,7 @@ trait PipelineObjectId extends Ordered[PipelineObjectId] {
 }
 
 object PipelineObjectId {
+
   def apply[T](klass: Class[T]) = RandomizedObjectId(klass.getSimpleName.stripSuffix("$"))
   def apply(seed: String) = RandomizedObjectId(seed)
   def apply(name: String, group: String) = NameGroupObjectId(name, group)
@@ -29,6 +32,9 @@ object PipelineObjectId {
     case RandomizedObjectId(_, r) => NameGroupObjectId("", group, r)
     case _ => NameGroupObjectId("", group)
   }
+
+  implicit def string2UniquePipelineId(prefix: String): PipelineObjectId = PipelineObjectId(prefix)
+
 }
 
 case class NameGroupObjectId(name: String, group: String, rand: String = UUID.randomUUID.toString) extends PipelineObjectId {
