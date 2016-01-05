@@ -16,6 +16,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#271](https://github.com/krux/hyperion/issues/271) - Separate CLI with DataPipelineDef
 - [#214](https://github.com/krux/hyperion/issues/214) - Extend CLI to be able to read parameters to be passed from pipeline
 
+## 2.16.7 - 2016-01-05
+### Fixed
+- [#291](https://github.com/krux/hyperion/issues/291) - Upgrade AWS SDK to 1.10.43
+
 ## 2.16.6 - 2015-12-14
 ### Fixed
 - [#277](https://github.com/krux/hyperion/issues/277) - InsertTableQuery actually needs the values placeholders

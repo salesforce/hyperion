@@ -1,7 +1,7 @@
 val hyperionVersion = "3.0.0-SNAPSHOT"
 val scala210Version = "2.10.6"
 val scala211Version = "2.11.7"
-val awsSdkVersion   = "1.9.35"
+val awsSdkVersion   = "1.10.43"
 val mailVersion     = "1.5.4"
 val slf4jVersion    = "1.7.12"
 
