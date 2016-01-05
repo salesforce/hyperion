@@ -1,6 +1,5 @@
 package com.krux.hyperion.activity
 
-import com.krux.hyperion.adt.HType._
 import com.krux.hyperion.adt.{ HS3Uri, HString, HBoolean }
 import com.krux.hyperion.aws.AdpShellCommandActivity
 import com.krux.hyperion.common.{ PipelineObjectId, BaseFields, S3Uri }

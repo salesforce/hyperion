@@ -1,6 +1,5 @@
 package com.krux.hyperion.resource
 
-import com.krux.hyperion.adt.HType._
 import com.krux.hyperion.adt.{ HDouble, HBoolean, HString, HDuration }
 import com.krux.hyperion.aws.{ AdpRef, AdpEc2Resource }
 import com.krux.hyperion.common.{ BaseFields, PipelineObjectId }
