@@ -2,7 +2,8 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 3.0.0-SNAPSHOT
+## 3.0.0
+
 ### Changed
 - [#295](https://github.com/krux/hyperion/issues/295) - Refactor parameter with adhoc polymorphism with type class instead of reflection TypeTags
 - [#248](https://github.com/krux/hyperion/issues/248) - Refactor parameter to have EncryptedParameter and UnencryptedParameter
@@ -18,6 +19,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - Removed hadoopQueue from `HiveCopyActivity` and `PigActivity` as it is not documented by AWS
   - `SparkJobActivity` is renamed to `SparkTaskActivity` to be consistent with the `preActivityTaskConfig` field for similar activity naming from AWS
 - [#271](https://github.com/krux/hyperion/issues/271) - Separate CLI with DataPipelineDef
+
+## Added
 - [#214](https://github.com/krux/hyperion/issues/214) - Extend CLI to be able to read parameters to be passed from pipeline
 
 ## 2.16.7 - 2016-01-05
@@ -31,7 +34,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 2.16.5 - 2015-12-11
 ### Fixed
 - [#275](https://github.com/krux/hyperion/issues/275) - Schedule is not honouring settings in non-application.conf config
->>>>>>> master
 
 ## 2.16.4 - 2015-11-23
 ### Fixed
