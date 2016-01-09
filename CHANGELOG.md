@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.1
+
+- [#298](https://github.com/krux/hyperion/issues/295) - Make sequence of native type to sequence of HType implicitly available
+
 ## 3.0.0
 
 ### Changed
