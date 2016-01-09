@@ -1,7 +1,8 @@
 package com.krux.hyperion.common
 
-import com.krux.hyperion.aws.{AdpDataPipelineDefaultObject, AdpDataPipelineObject, AdpRef}
-import com.krux.hyperion.{HyperionContext, Schedule}
+import com.krux.hyperion.aws.{ AdpDataPipelineDefaultObject, AdpDataPipelineObject, AdpRef }
+import com.krux.hyperion.Schedule
+import com.krux.hyperion.HyperionContext
 
 /**
   * Defines the overall behaviour of a data pipeline.
@@ -14,7 +15,7 @@ case class DefaultObject(schedule: Schedule)(implicit val hc: HyperionContext)
   lazy val serialize = new AdpDataPipelineDefaultObject {
     val fields =
       Map[String, Either[String, AdpRef[AdpDataPipelineObject]]](
-        "scheduleType" -> Left(schedule.scheduleType.toString),
+        "scheduleType" -> Left(schedule.scheduleType.serialize),
         "failureAndRerunMode" -> Left(hc.failureRerunMode),
         "pipelineLogUri" -> Left(hc.logUri),
         "role" -> Left(hc.role),

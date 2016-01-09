@@ -1,26 +1,32 @@
 package com.krux.hyperion.resource
 
-import com.krux.hyperion.aws.{AdpEmrConfiguration, AdpRef}
-import com.krux.hyperion.common.PipelineObject
-import com.krux.hyperion.common.PipelineObjectId
+import com.krux.hyperion.aws.{ AdpEmrConfiguration, AdpRef }
+import com.krux.hyperion.common.{ BaseFields, PipelineObjectId, NamedPipelineObject }
+import com.krux.hyperion.adt.HString
 
 case class EmrConfiguration private (
-  id: PipelineObjectId,
-  classification: Option[String],
+  baseFields: BaseFields,
+  classification: Option[HString],
   properties: Seq[Property],
   configurations: Seq[EmrConfiguration]
-) extends PipelineObject {
+) extends NamedPipelineObject {
 
-  def withClassification(classification: String) = this.copy(classification = Option(classification))
-  def withProperty(property: Property*) = this.copy(properties = this.properties ++ property)
-  def withConfiguration(configuration: EmrConfiguration*) = this.copy(configurations = this.configurations ++ configuration)
+  type Self = EmrConfiguration
 
-  def objects: Iterable[PipelineObject] = properties ++ configurations
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+
+  def withClassification(classification: HString) = copy(classification = Option(classification))
+
+  def withProperty(property: Property*) = copy(properties = this.properties ++ property)
+
+  def withConfiguration(configuration: EmrConfiguration*) = copy(configurations = this.configurations ++ configuration)
+
+  def objects = configurations ++ properties
 
   lazy val serialize = AdpEmrConfiguration(
     id = id,
     name = id.toOption,
-    classification = classification,
+    classification = classification.map(_.serialize),
     property = Option(properties.map(_.ref)),
     configuration = Option(configurations.map(_.ref))
   )
@@ -31,7 +37,7 @@ case class EmrConfiguration private (
 object EmrConfiguration {
 
   def apply(property: Property*): EmrConfiguration = EmrConfiguration(
-    id = PipelineObjectId(Property.getClass),
+    baseFields = BaseFields(PipelineObjectId(EmrConfiguration.getClass)),
     classification = None,
     properties = property,
     configurations = Seq.empty

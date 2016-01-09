@@ -1,65 +1,43 @@
 package com.krux.hyperion.activity
 
-import com.krux.hyperion.action.SnsAlarm
+import com.krux.hyperion.adt.HString
 import com.krux.hyperion.aws.AdpSqlActivity
-import com.krux.hyperion.common.{PipelineObjectId, PipelineObject}
 import com.krux.hyperion.database.Database
-import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.parameter.Parameter
-import com.krux.hyperion.precondition.Precondition
-import com.krux.hyperion.resource.{Resource, Ec2Resource}
+import com.krux.hyperion.expression.RunnableObject
+import com.krux.hyperion.common.{ PipelineObjectId, BaseFields }
+import com.krux.hyperion.resource.{ Resource, Ec2Resource }
 
 /**
  * Runs an SQL query on a RedShift cluster. If the query writes out to a table that does not exist,
  * a new table with that name is created.
  */
 case class SqlActivity private (
-  id: PipelineObjectId,
+  baseFields: BaseFields,
+  activityFields: ActivityFields[Ec2Resource],
   script: Script,
-  scriptArgument: Seq[String],
+  scriptArgument: Seq[HString],
   database: Database,
-  queue: Option[String],
-  runsOn: Resource[Ec2Resource],
-  dependsOn: Seq[PipelineActivity],
-  preconditions: Seq[Precondition],
-  onFailAlarms: Seq[SnsAlarm],
-  onSuccessAlarms: Seq[SnsAlarm],
-  onLateActionAlarms: Seq[SnsAlarm],
-  attemptTimeout: Option[Parameter[Duration]],
-  lateAfterTimeout: Option[Parameter[Duration]],
-  maximumRetries: Option[Parameter[Int]],
-  retryDelay: Option[Parameter[Duration]],
-  failureAndRerunMode: Option[FailureAndRerunMode]
-) extends PipelineActivity {
+  queue: Option[HString]
+) extends PipelineActivity[Ec2Resource] {
 
-  def named(name: String) = this.copy(id = id.named(name))
-  def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
+  type Self = SqlActivity
 
-  def withArguments(arg: String*) = this.copy(scriptArgument = scriptArgument ++ arg)
-  def withQueue(queue: String) = this.copy(queue = Option(queue))
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+  def updateActivityFields(fields: ActivityFields[Ec2Resource]) = copy(activityFields = fields)
 
-  private[hyperion] def dependsOn(activities: PipelineActivity*) = this.copy(dependsOn = dependsOn ++ activities)
-  def whenMet(conditions: Precondition*) = this.copy(preconditions = preconditions ++ conditions)
-  def onFail(alarms: SnsAlarm*) = this.copy(onFailAlarms = onFailAlarms ++ alarms)
-  def onSuccess(alarms: SnsAlarm*) = this.copy(onSuccessAlarms = onSuccessAlarms ++ alarms)
-  def onLateAction(alarms: SnsAlarm*) = this.copy(onLateActionAlarms = onLateActionAlarms ++ alarms)
-  def withAttemptTimeout(timeout: Parameter[Duration]) = this.copy(attemptTimeout = Option(timeout))
-  def withLateAfterTimeout(timeout: Parameter[Duration]) = this.copy(lateAfterTimeout = Option(timeout))
-  def withMaximumRetries(retries: Parameter[Int]) = this.copy(maximumRetries = Option(retries))
-  def withRetryDelay(delay: Parameter[Duration]) = this.copy(retryDelay = Option(delay))
-  def withFailureAndRerunMode(mode: FailureAndRerunMode) = this.copy(failureAndRerunMode = Option(mode))
+  def withArguments(arg: HString*) = copy(scriptArgument = scriptArgument ++ arg)
+  def withQueue(queue: HString) = copy(queue = Option(queue))
 
-  def objects: Iterable[PipelineObject] =
-    runsOn.toSeq ++ Seq(database) ++ dependsOn ++ preconditions ++ onFailAlarms ++ onSuccessAlarms ++ onLateActionAlarms
+  override def objects = Seq(database) ++ super.objects
 
   lazy val serialize = AdpSqlActivity(
     id = id,
     name = id.toOption,
-    script = script.content,
-    scriptUri = script.uri.map(_.toString),
-    scriptArgument = scriptArgument,
+    script = script.content.map(_.serialize),
+    scriptUri = script.uri.map(_.serialize),
+    scriptArgument = scriptArgument.map(_.serialize),
     database = database.ref,
-    queue = queue,
+    queue = queue.map(_.serialize),
     workerGroup = runsOn.asWorkerGroup.map(_.ref),
     runsOn = runsOn.asManagedResource.map(_.ref),
     dependsOn = seqToOption(dependsOn)(_.ref),
@@ -67,32 +45,24 @@ case class SqlActivity private (
     onFail = seqToOption(onFailAlarms)(_.ref),
     onSuccess = seqToOption(onSuccessAlarms)(_.ref),
     onLateAction = seqToOption(onLateActionAlarms)(_.ref),
-    attemptTimeout = attemptTimeout.map(_.toString),
-    lateAfterTimeout = lateAfterTimeout.map(_.toString),
-    maximumRetries = maximumRetries.map(_.toString),
-    retryDelay = retryDelay.map(_.toString),
-    failureAndRerunMode = failureAndRerunMode.map(_.toString)
+    attemptTimeout = attemptTimeout.map(_.serialize),
+    lateAfterTimeout = lateAfterTimeout.map(_.serialize),
+    maximumRetries = maximumRetries.map(_.serialize),
+    retryDelay = retryDelay.map(_.serialize),
+    failureAndRerunMode = failureAndRerunMode.map(_.serialize)
   )
 }
 
 object SqlActivity extends RunnableObject {
+
   def apply(database: Database, script: Script)(runsOn: Resource[Ec2Resource]): SqlActivity =
     new SqlActivity(
-      id = PipelineObjectId(SqlActivity.getClass),
+      baseFields = BaseFields(PipelineObjectId(SqlActivity.getClass)),
+      activityFields = ActivityFields(runsOn),
       script = script,
       scriptArgument = Seq.empty,
       database = database,
-      queue = None,
-      runsOn = runsOn,
-      dependsOn = Seq.empty,
-      preconditions = Seq.empty,
-      onFailAlarms = Seq.empty,
-      onSuccessAlarms = Seq.empty,
-      onLateActionAlarms = Seq.empty,
-      attemptTimeout = None,
-      lateAfterTimeout = None,
-      maximumRetries = None,
-      retryDelay = None,
-      failureAndRerunMode = None
+      queue = None
     )
+
 }

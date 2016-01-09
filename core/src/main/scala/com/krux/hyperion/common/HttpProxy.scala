@@ -1,37 +1,42 @@
 package com.krux.hyperion.common
 
-import com.krux.hyperion.parameter.Parameter
-import com.krux.hyperion.aws.{AdpRef, AdpHttpProxy}
+import com.krux.hyperion.adt.{ HString, HInt }
+import com.krux.hyperion.aws.{ AdpRef, AdpHttpProxy }
+import com.krux.hyperion.expression.EncryptedParameter
 
 case class HttpProxy private (
-  id: PipelineObjectId,
-  hostname: Option[String],
-  port: Option[Parameter[Int]],
-  username: Option[String],
-  password: Option[Parameter[String]],
-  windowsDomain: Option[String],
-  windowsWorkGroup: Option[String]
-) extends PipelineObject {
+  baseFields: BaseFields,
+  hostname: Option[HString],
+  port: Option[HInt],
+  username: Option[HString],
+  password: Option[EncryptedParameter[String]],
+  windowsDomain: Option[HString],
+  windowsWorkGroup: Option[HString]
+) extends NamedPipelineObject {
 
-  def withHostname(hostname: String) = this.copy(hostname = Option(hostname))
-  def withPort(port: Parameter[Int]) = this.copy(port = Option(port))
-  def withUsername(username: String) = this.copy(username = Option(username))
-  def withPassword(password: Parameter[String]) = {
+  type Self = HttpProxy
+
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+
+  def withHostname(hostname: HString) = copy(hostname = Option(hostname))
+  def withPort(port: HInt) = copy(port = Option(port))
+  def withUsername(username: HString) = copy(username = Option(username))
+  def withPassword(password: EncryptedParameter[String]) = {
     assert(password.isEncrypted)
-    this.copy(password = Option(password))
+    copy(password = Option(password))
   }
-  def withWindowsDomain(windowsDomain: String) = this.copy(windowsDomain = Option(windowsDomain))
-  def withWindowsWorkGroup(windowsWorkGroup: String) = this.copy(windowsWorkGroup = Option(windowsWorkGroup))
+  def withWindowsDomain(windowsDomain: HString) = copy(windowsDomain = Option(windowsDomain))
+  def withWindowsWorkGroup(windowsWorkGroup: HString) = copy(windowsWorkGroup = Option(windowsWorkGroup))
 
   lazy val serialize = AdpHttpProxy(
     id = id,
     name = id.toOption,
-    hostname = hostname,
-    port = port.map(_.toString),
-    username = username,
-    `*password` = password.map(_.toString),
-    windowsDomain = windowsDomain,
-    windowsWorkGroup = windowsWorkGroup
+    hostname = hostname.map(_.serialize),
+    port = port.map(_.serialize),
+    username = username.map(_.serialize),
+    `*password` = password.map(_.ref.serialize),
+    windowsDomain = windowsDomain.map(_.serialize),
+    windowsWorkGroup = windowsWorkGroup.map(_.serialize)
   )
 
   def ref: AdpRef[AdpHttpProxy] = AdpRef(serialize)
@@ -41,8 +46,9 @@ case class HttpProxy private (
 }
 
 object HttpProxy {
-  def apply(host: String, port: Parameter[Int]): HttpProxy = HttpProxy(
-    id = PipelineObjectId(HttpProxy.getClass),
+
+  def apply(host: HString, port: HInt): HttpProxy = HttpProxy(
+    baseFields = BaseFields(PipelineObjectId(HttpProxy.getClass)),
     hostname = Option(host),
     port = Option(port),
     username = None,
@@ -50,4 +56,5 @@ object HttpProxy {
     windowsDomain = None,
     windowsWorkGroup = None
   )
+
 }

@@ -1,11 +1,10 @@
 package com.krux.hyperion.precondition
 
-import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.activity.Script
+import com.krux.hyperion.adt.HString
 import com.krux.hyperion.aws.AdpShellCommandPrecondition
-import com.krux.hyperion.common.{S3Uri, PipelineObjectId}
-import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.parameter.Parameter
+import com.krux.hyperion.common.{ PipelineObjectId, BaseFields }
+import com.krux.hyperion.HyperionContext
 
 /**
  * A Unix/Linux shell command that can be run as a precondition.
@@ -17,47 +16,47 @@ import com.krux.hyperion.parameter.Parameter
  *
  */
 case class ShellCommandPrecondition private (
-  id: PipelineObjectId,
+  baseFields: BaseFields,
+  preconditionFields: PreconditionFields,
   script: Script,
-  scriptArgument: Seq[String],
-  stdout: Option[String],
-  stderr: Option[String],
-  role: String,
-  preconditionTimeout: Option[Parameter[Duration]]
+  scriptArgument: Seq[HString],
+  stdout: Option[HString],
+  stderr: Option[HString]
 ) extends Precondition {
 
-  def named(name: String) = this.copy(id = id.named(name))
-  def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
+  type Self = ShellCommandPrecondition
 
-  def withScriptArgument(argument: String*) = this.copy(scriptArgument = scriptArgument ++ argument)
-  def withStdout(stdout: String) = this.copy(stdout = Option(stdout))
-  def withStderr(stderr: String) = this.copy(stderr = Option(stderr))
-  def withRole(role: String) = this.copy(role = role)
-  def withPreconditionTimeout(timeout: Parameter[Duration]) = this.copy(preconditionTimeout = Option(timeout))
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+  def updatePreconditionFields(fields: PreconditionFields) = copy(preconditionFields = fields)
+
+  def withScriptArgument(argument: HString*) = copy(scriptArgument = scriptArgument ++ argument)
+  def withStdout(stdout: HString) = copy(stdout = Option(stdout))
+  def withStderr(stderr: HString) = copy(stderr = Option(stderr))
 
   lazy val serialize = AdpShellCommandPrecondition(
     id = id,
     name = id.toOption,
-    command = script.content,
-    scriptUri = script.uri.map(_.ref),
-    scriptArgument = scriptArgument,
-    stdout = stdout,
-    stderr = stderr,
-    role = role,
-    preconditionTimeout = preconditionTimeout.map(_.toString)
+    command = script.content.map(_.serialize),
+    scriptUri = script.uri.map(_.serialize),
+    scriptArgument = scriptArgument.map(_.serialize),
+    stdout = stdout.map(_.serialize),
+    stderr = stderr.map(_.serialize),
+    role = role.serialize,
+    preconditionTimeout = preconditionTimeout.map(_.serialize)
   )
 
 }
 
 object ShellCommandPrecondition {
+
   def apply(script: Script)(implicit hc: HyperionContext): ShellCommandPrecondition =
     new ShellCommandPrecondition(
-      id = PipelineObjectId(ShellCommandPrecondition.getClass),
+      baseFields = BaseFields(PipelineObjectId(ShellCommandPrecondition.getClass)),
+      preconditionFields = Precondition.defaultPreconditionFields,
       script = script,
       scriptArgument = Seq.empty,
       stdout = None,
-      stderr = None,
-      role = hc.role,
-      preconditionTimeout = None
+      stderr = None
     )
+
 }

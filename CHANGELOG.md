@@ -2,6 +2,27 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.0
+
+### Changed
+- [#295](https://github.com/krux/hyperion/issues/295) - Refactor parameter with adhoc polymorphism with type class instead of reflection TypeTags
+- [#248](https://github.com/krux/hyperion/issues/248) - Refactor parameter to have EncryptedParameter and UnencryptedParameter
+- [#281](https://github.com/krux/hyperion/issues/281) - Support for not failing on un-defined pipeline parameters
+- [#291](https://github.com/krux/hyperion/issues/291) - Clean up the implicits
+- [#285](https://github.com/krux/hyperion/issues/285) - SnsAlarm requires topic arn and added default subject and message
+- [#286](https://github.com/krux/hyperion/issues/286) - Fix a bug in 3.0 that main class in jar activity is incorrect
+- [#282](https://github.com/krux/hyperion/issues/282) - Add support for getting hyperion aws client by pipeline name
+- [#280](https://github.com/krux/hyperion/issues/280) - Upgrade to scala 2.10.6
+- [#243](https://github.com/krux/hyperion/issues/243) - Revisit and refactor expression and parameter
+  - The actionOnTaskFailure and actionOnResource failure is removed from emr activities, they do not belong there.
+  - Database objects are changed to be consistent with other objects, this means that one needs to initialize a database object instead of extending a trait
+  - Removed hadoopQueue from `HiveCopyActivity` and `PigActivity` as it is not documented by AWS
+  - `SparkJobActivity` is renamed to `SparkTaskActivity` to be consistent with the `preActivityTaskConfig` field for similar activity naming from AWS
+- [#271](https://github.com/krux/hyperion/issues/271) - Separate CLI with DataPipelineDef
+
+## Added
+- [#214](https://github.com/krux/hyperion/issues/214) - Extend CLI to be able to read parameters to be passed from pipeline
+
 ## 2.16.7 - 2016-01-05
 ### Fixed
 - [#291](https://github.com/krux/hyperion/issues/291) - Upgrade AWS SDK to 1.10.43
@@ -35,7 +56,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - [#240](https://github.com/krux/hyperion/issues/240) - Support EmrConfiguration and Property
 - [#241](https://github.com/krux/hyperion/issues/241) - Support HttpProxy
-- [#255](https://github.com/krux/hyperion/issues/255) - Provide explanations for CLI options 
+- [#255](https://github.com/krux/hyperion/issues/255) - Provide explanations for CLI options
 - [#256](https://github.com/krux/hyperion/issues/256) - Use a logging framework instead of println
 
 ## 2.15.0 - 2015-11-06

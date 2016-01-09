@@ -1,38 +1,41 @@
 package com.krux.hyperion.activity
 
-import com.krux.hyperion.aws.{AdpRef, AdpShellScriptConfig}
-import com.krux.hyperion.common.{S3Uri, PipelineObject, PipelineObjectId}
-import com.krux.hyperion.parameter.Parameter
+import com.krux.hyperion.aws.{ AdpRef, AdpShellScriptConfig }
+import com.krux.hyperion.common.{ PipelineObject, BaseFields, PipelineObjectId, NamedPipelineObject }
+import com.krux.hyperion.adt.{ HS3Uri, HString }
 
 case class ShellScriptConfig(
-  id: PipelineObjectId,
-  scriptUri: Parameter[S3Uri],
-  scriptArguments: Seq[String]
-) extends PipelineObject {
+  baseFields: BaseFields,
+  scriptUri: HS3Uri,
+  scriptArguments: Seq[HString]
+) extends NamedPipelineObject {
 
-  def withArguments(args: String*) = this.copy(scriptArguments = scriptArguments ++ args)
+  type Self = ShellScriptConfig
+
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+
+  def withArguments(args: HString*) = copy(scriptArguments = scriptArguments ++ args)
 
   def objects: Iterable[PipelineObject] = None
 
   lazy val serialize = AdpShellScriptConfig(
     id = id,
     name = id.toOption,
-    scriptUri = scriptUri.toString,
-    scriptArgument = scriptArguments match {
-      case Seq() => None
-      case args => Option(args)
-    }
+    scriptUri = scriptUri.serialize,
+    scriptArgument = scriptArguments.map(_.serialize)
   )
 
   def ref: AdpRef[AdpShellScriptConfig] = AdpRef(serialize)
 }
 
 object ShellScriptConfig {
-  def apply(scriptUri: Parameter[S3Uri]): ShellScriptConfig =
+
+  def apply(scriptUri: HS3Uri): ShellScriptConfig =
     new ShellScriptConfig(
-      id = PipelineObjectId(ShellScriptConfig.getClass),
+      baseFields = BaseFields(PipelineObjectId(ShellScriptConfig.getClass)),
       scriptUri = scriptUri,
       scriptArguments = Seq.empty
     )
+
 }
 

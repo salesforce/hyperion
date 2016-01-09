@@ -5,6 +5,7 @@ import scala.language.implicitConversions
 sealed trait Resource[T] {
   def asWorkerGroup: Option[WorkerGroup]
   def asManagedResource: Option[T]
+
   def toSeq: Seq[T]
 }
 

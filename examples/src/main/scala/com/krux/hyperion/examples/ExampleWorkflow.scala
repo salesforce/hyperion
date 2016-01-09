@@ -1,14 +1,15 @@
 package com.krux.hyperion.examples
 
-import com.krux.hyperion.activity.ShellCommandActivity
-import com.krux.hyperion.Implicits._
-import com.krux.hyperion.parameter.DoubleParameter
-import com.krux.hyperion.resource.Ec2Resource
-import com.krux.hyperion.WorkflowExpression
-import com.krux.hyperion.{Schedule, DataPipelineDef, HyperionContext}
 import com.typesafe.config.ConfigFactory
 
-object ExampleWorkflow extends DataPipelineDef {
+import com.krux.hyperion.activity.ShellCommandActivity
+import com.krux.hyperion.expression.Parameter
+import com.krux.hyperion.Implicits._
+import com.krux.hyperion.resource.Ec2Resource
+import com.krux.hyperion.WorkflowExpression
+import com.krux.hyperion.{Schedule, DataPipelineDef, HyperionContext, HyperionCli}
+
+object ExampleWorkflow extends DataPipelineDef with HyperionCli {
 
   override implicit val hc: HyperionContext = new HyperionContext(ConfigFactory.load("example"))
 
@@ -16,7 +17,7 @@ object ExampleWorkflow extends DataPipelineDef {
     .startAtActivation
     .every(1.day)
 
-  val price = DoubleParameter("SpotPrice", 2.3)
+  val price = Parameter("SpotPrice", 2.3)
 
   override def parameters = Seq(price)
 

@@ -1,10 +1,9 @@
 package com.krux.hyperion.precondition
 
-import com.krux.hyperion.HyperionContext
+import com.krux.hyperion.adt.HString
 import com.krux.hyperion.aws.AdpDynamoDBDataExistsPrecondition
-import com.krux.hyperion.common.PipelineObjectId
-import com.krux.hyperion.expression.Duration
-import com.krux.hyperion.parameter.Parameter
+import com.krux.hyperion.common.{ BaseFields, PipelineObjectId }
+import com.krux.hyperion.HyperionContext
 
 /**
  * A precondition to check that data exists in a DynamoDB table.
@@ -12,34 +11,32 @@ import com.krux.hyperion.parameter.Parameter
  * @param tableName The DynamoDB table to check.
  */
 case class DynamoDBDataExistsPrecondition private (
-  id: PipelineObjectId,
-  tableName: String,
-  role: String,
-  preconditionTimeout: Option[Parameter[Duration]]
+  baseFields: BaseFields,
+  preconditionFields: PreconditionFields,
+  tableName: HString
 ) extends Precondition {
 
-  def named(name: String) = this.copy(id = id.named(name))
-  def groupedBy(group: String) = this.copy(id = id.groupedBy(group))
+  type Self = DynamoDBDataExistsPrecondition
 
-  def withRole(role: String) = this.copy(role = role)
-  def withPreconditionTimeout(timeout: Parameter[Duration]) = this.copy(preconditionTimeout = Option(timeout))
+  def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
+  def updatePreconditionFields(fields: PreconditionFields) = copy(preconditionFields = fields)
 
   lazy val serialize = AdpDynamoDBDataExistsPrecondition(
     id = id,
     name = id.toOption,
-    tableName = tableName,
-    role = role,
-    preconditionTimeout = preconditionTimeout.map(_.toString)
+    tableName = tableName.serialize,
+    role = role.serialize,
+    preconditionTimeout = preconditionTimeout.map(_.serialize)
   )
 
 }
 
 object DynamoDBDataExistsPrecondition {
-  def apply(tableName: String)(implicit hc: HyperionContext) =
-    new DynamoDBDataExistsPrecondition(
-      id = PipelineObjectId(DynamoDBDataExistsPrecondition.getClass),
-      tableName = tableName,
-      role = hc.role,
-      preconditionTimeout = None
-    )
+
+  def apply(tableName: HString)(implicit hc: HyperionContext) = new DynamoDBDataExistsPrecondition(
+    baseFields = BaseFields(PipelineObjectId(DynamoDBDataExistsPrecondition.getClass)),
+    preconditionFields = Precondition.defaultPreconditionFields,
+    tableName = tableName
+  )
+
 }

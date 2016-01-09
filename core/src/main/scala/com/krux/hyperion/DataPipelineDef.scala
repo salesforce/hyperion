@@ -1,27 +1,28 @@
 package com.krux.hyperion
 
-import com.krux.hyperion.activity.MainClass
-import com.krux.hyperion.aws.{AdpParameterSerializer, AdpPipelineSerializer, AdpJsonSerializer}
-import com.krux.hyperion.common.{S3UriHelper, S3Uri, DefaultObject, PipelineObject}
-import com.krux.hyperion.parameter.Parameter
-import com.krux.hyperion.workflow.WorkflowExpressionImplicits
-
 import scala.language.implicitConversions
-
-import org.json4s.JsonDSL._
-import org.json4s.{JValue, JArray}
 
 import com.amazonaws.services.datapipeline.model.{ParameterObject => AwsParameterObject}
 import com.amazonaws.services.datapipeline.model.{PipelineObject => AwsPipelineObject}
+import org.json4s.JsonDSL._
+import org.json4s.{JValue, JArray}
+
+import com.krux.hyperion.activity.MainClass
+import com.krux.hyperion.aws.{AdpParameterSerializer, AdpPipelineSerializer, AdpJsonSerializer}
+import com.krux.hyperion.common.{S3UriHelper, S3Uri, DefaultObject, PipelineObject}
+import com.krux.hyperion.workflow.WorkflowExpressionImplicits
+import com.krux.hyperion.expression.{Parameter, ParameterValues}
 
 /**
  * Base trait of all data pipeline definitions. All data pipelines needs to implement this trait
  */
-trait DataPipelineDef extends HyperionCli with S3UriHelper with WorkflowExpressionImplicits {
+trait DataPipelineDef extends S3UriHelper with WorkflowExpressionImplicits {
 
   private lazy val context = new HyperionContext()
 
   implicit def hc: HyperionContext = context
+
+  implicit val pv: ParameterValues = new ParameterValues()
 
   def schedule: Schedule
 
@@ -46,6 +47,12 @@ trait DataPipelineDef extends HyperionCli with S3UriHelper with WorkflowExpressi
     }
 
   def pipelineName: String = MainClass(this).toString
+
+  def setParameterValue(id: String, value: String, ignoreNonExist: Boolean = true): Unit = {
+    val foundParam = parameters.find(_.id == id)
+    if (ignoreNonExist) foundParam.foreach(_.withValueFromString(value))
+    else foundParam.get.withValueFromString(value)
+  }
 
 }
 

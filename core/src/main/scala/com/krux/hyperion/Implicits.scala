@@ -1,13 +1,14 @@
 package com.krux.hyperion
 
-import com.github.nscala_time.time.Imports._
-import com.krux.hyperion.common.S3Uri.S3StringContext
-import com.krux.hyperion.common.{Memory, S3Uri, PipelineObjectId}
-import com.krux.hyperion.datanode.S3DataNode
-import com.krux.hyperion.expression.DurationBuilder
-import com.krux.hyperion.expression._
 import scala.language.implicitConversions
+
+import com.github.nscala_time.time.Imports._
 import org.json4s.DefaultFormats
+
+import com.krux.hyperion.common.S3Uri.S3StringContext
+import com.krux.hyperion.common.{ Memory, S3Uri, PipelineObjectId }
+import com.krux.hyperion.datanode.S3DataNode
+import com.krux.hyperion.expression._
 
 /**
  * The implicit conversions used in DataPipeline
@@ -18,19 +19,22 @@ object Implicits {
 
   implicit def string2DateTime(day: String): DateTime = new DateTime(day)
 
-  implicit def int2DpPeriod(n: Int): DurationBuilder = new DurationBuilder(n)
+  implicit class DurationBuilder(n: Int) {
+    def year = Year(n)
+    def years = this.year
 
-  implicit def dateTimeRef2dateTimeExp(dtRef: DateTimeRuntimeSlot): DateTimeExp = new DateTimeExp(dtRef.toString)
+    def month = Month(n)
+    def months = this.month
 
-  implicit def expression2String(exp: Expression): String = exp.toString
+    def week = Week(n)
+    def weeks = this.week
 
-  implicit def string2S3DataNode(s3path: String): S3DataNode = S3DataNode(S3Uri(s3path))
+    def day = Day(n)
+    def days = this.day
 
-  implicit def string2S3Uri(s3path: String): S3Uri = S3Uri(s3path)
-
-  implicit def s3Uri2S3DataNode(s3path: S3Uri): S3DataNode = S3DataNode(s3path)
-
-  implicit def string2UniquePipelineId(prefix: String): PipelineObjectId = PipelineObjectId(prefix)
+    def hour = Hour(n)
+    def hours = this.hour
+  }
 
   implicit def stringContext2S3UriHelper(sc: StringContext): S3StringContext = S3StringContext(sc)
 
@@ -45,4 +49,5 @@ object Implicits {
     def megabytes = Memory(n, "M")
     def gigabytes = Memory(n, "G")
   }
+
 }
