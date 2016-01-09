@@ -22,7 +22,7 @@ class RedshiftUnloadActivitySpec extends WordSpec {
     val ec2 = Ec2Resource()
 
     val awsAccessKeyId = Parameter("AwsAccessKeyId", "someId").encrypted
-    val awsAccessKeySecret = Parameter("AwsAccessKeySecret", "someSecret").encrypted
+    val awsAccessKeySecret = Parameter.encrypted("AwsAccessKeySecret", "someSecret")
 
     val mockRedshift = RedshiftDatabase("mockuser", "mockpass", "mock-redshift")
       .named("_MockRedshift")

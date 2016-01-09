@@ -92,8 +92,14 @@ object Parameter {
   def unencrypted[T : GenericParameter](id: String)(implicit pv: ParameterValues): UnencryptedParameter[T] =
     apply(id)
 
+  def unencrypted[T : GenericParameter](id: String, value: T)(implicit pv: ParameterValues): UnencryptedParameter[T] =
+    apply(id, value)
+
   def encrypted[T : GenericParameter](id: String)(implicit pv: ParameterValues): EncryptedParameter[T] =
     new EncryptedParameter(ParameterFields(id = id))
+
+  def encrypted[T : GenericParameter](id: String, value: T)(implicit pv: ParameterValues): EncryptedParameter[T] =
+    new EncryptedParameter(ParameterFields(id = id)).withValue(value)
 
   implicit def stringParameter2HString(p: Parameter[String]): HString = HString(
     Right(

@@ -31,8 +31,8 @@ object ExampleSpark extends DataPipelineDef with HyperionCli {
 
   val location = Parameter[S3Uri]("S3Location").withValue(s3"your-location")
   val instanceType = Parameter[String]("InstanceType").withValue("c3.8xlarge")
-  val instanceCount = Parameter[Int]("InstanceCount").withValue(8)
-  val instanceBid = Parameter[Double]("InstanceBid").withValue(3.40)
+  val instanceCount = Parameter("InstanceCount", 8)
+  val instanceBid = Parameter("InstanceBid", 3.40)
 
   override def parameters: Iterable[Parameter[_]] = Seq(location, instanceType, instanceCount, instanceBid)
 
