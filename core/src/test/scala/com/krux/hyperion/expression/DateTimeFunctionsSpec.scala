@@ -2,8 +2,6 @@ package com.krux.hyperion.expression
 
 import org.scalatest.WordSpec
 
-import com.krux.hyperion.expression.ConstantExpression._
-
 class DateTimeFunctionsSpec extends WordSpec {
 
   "Format" should {

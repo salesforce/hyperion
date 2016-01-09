@@ -5,7 +5,6 @@ import com.krux.hyperion.adt.{HInt, HDuration, HS3Uri, HString, HBoolean, HType,
 import com.krux.hyperion.aws.AdpShellCommandActivity
 import com.krux.hyperion.common.{PipelineObject, PipelineObjectId, BaseFields, S3Uri}
 import com.krux.hyperion.datanode.S3DataNode
-import com.krux.hyperion.expression.ConstantExpression._
 import com.krux.hyperion.expression.{Format, DateTimeConstantExp, RunnableObject, Parameter}
 import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.precondition.Precondition

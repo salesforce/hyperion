@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.1
+### Fixed
+- [#299](https://github.com/krux/hyperion/issues/299) - Fixes ConstantExpression implicits to avoid unnecessary import
+
 ## 3.0.0
 
 ### Changed
