@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - [#299](https://github.com/krux/hyperion/issues/299) - Fixes ConstantExpression implicits to avoid unnecessary import
+- [#298](https://github.com/krux/hyperion/issues/295) - Make sequence of native type to sequence of HType implicitly available
 
 ## 3.0.0
 
