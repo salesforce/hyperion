@@ -2,6 +2,8 @@ package com.krux.hyperion.expression
 
 import scala.language.implicitConversions
 
+import org.joda.time.DateTime
+
 /**
  * Expression. Expressions are delimited by: "#{" and "}" and the contents of the braces are
  * evaluated by AWS Data Pipeline.
@@ -23,6 +25,13 @@ object Expression {
 }
 
 trait TypedExpression extends Expression
+
+object TypedExpression {
+  implicit def int2IntConstantExp(num: Int): IntExp = IntConstantExp(num)
+  implicit def string2StringConstantExp(raw: String): StringExp = StringConstantExp(raw)
+  implicit def double2DoubleConstantExp(num: Double): DoubleExp = DoubleConstantExp(num)
+  implicit def dateTime2DateTimeConstantExp(dt: DateTime): DateTimeExp = DateTimeConstantExp(dt)
+}
 
 trait IntExp extends TypedExpression { self =>
 

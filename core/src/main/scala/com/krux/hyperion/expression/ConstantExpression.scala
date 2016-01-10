@@ -2,22 +2,13 @@ package com.krux.hyperion.expression
 
 import scala.language.implicitConversions
 
-import org.joda.time.{DateTimeZone, DateTime}
+import org.joda.time.{ DateTimeZone, DateTime }
 
 trait ConstantExpression[T] extends Expression with Evaluatable[T] {
   def constantValue: T
   def content: String = constantValue.toString
 
   def evaluate(): T = constantValue
-}
-
-object ConstantExpression {
-
-  implicit def string2StringConstantExp(raw: String): StringConstantExp = StringConstantExp(raw)
-  implicit def int2IntConstantExp(num: Int): IntConstantExp = IntConstantExp(num)
-  implicit def double2DoubleConstantExp(num: Double): DoubleConstantExp = DoubleConstantExp(num)
-  implicit def dateTime2DateTimeConstantExp(dt: DateTime): DateTimeConstantExp = DateTimeConstantExp(dt)
-
 }
 
 case class StringConstantExp(constantValue: String) extends ConstantExpression[String] with StringExp {
@@ -33,8 +24,6 @@ case class LongConstantExp(constantValue: Int) extends ConstantExpression[Int] w
 case class DoubleConstantExp(constantValue: Double) extends ConstantExpression[Double] with DoubleExp
 
 case class DateTimeConstantExp(constantValue: DateTime) extends ConstantExpression[DateTime] with DateTimeExp {
-
-  import ConstantExpression._
 
   override def content: String = {
 

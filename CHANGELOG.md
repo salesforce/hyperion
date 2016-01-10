@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - [#300](https://github.com/krux/hyperion/issues/300) - value option in encrypted and unencrypted method to create new parameters through the Parameter object
 
+### Fixed
+- [#299](https://github.com/krux/hyperion/issues/299) - Fixes ConstantExpression implicits to avoid unnecessary import
+
 ## 3.0.0
 
 ### Changed
