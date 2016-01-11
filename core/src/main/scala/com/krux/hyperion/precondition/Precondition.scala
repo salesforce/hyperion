@@ -1,6 +1,7 @@
 package com.krux.hyperion.precondition
 
-import com.krux.hyperion.adt.{ HDuration, HString }
+import com.krux.hyperion.action.Action
+import com.krux.hyperion.adt.{ HDuration, HString, HInt }
 import com.krux.hyperion.aws.{ AdpRef, AdpPrecondition }
 import com.krux.hyperion.common.{ NamedPipelineObject, PipelineObject }
 import com.krux.hyperion.HyperionContext
@@ -33,6 +34,26 @@ trait Precondition extends NamedPipelineObject {
   def preconditionTimeout: Option[HDuration] = preconditionFields.preconditionTimeout
   def withPreconditionTimeout(timeout: HDuration) = updatePreconditionFields(
     preconditionFields.copy(preconditionTimeout = Option(timeout))
+  )
+
+  def maximumRetries = preconditionFields.maximumRetries
+  def withMaximumRetries(retries: HInt) = updatePreconditionFields(
+    preconditionFields.copy(maximumRetries = Option(retries))
+  )
+
+  def onFail = preconditionFields.onFail
+  def onFail(actions: Action*) = updatePreconditionFields(
+    preconditionFields.copy(onFail = preconditionFields.onFail ++ actions)
+  )
+
+  def onLateAction = preconditionFields.onLateAction
+  def onLateAction(actions: Action*) = updatePreconditionFields(
+    preconditionFields.copy(onLateAction = preconditionFields.onLateAction ++ actions)
+  )
+
+  def onSuccess = preconditionFields.onSuccess
+  def onSuccess(actions: Action*) = updatePreconditionFields(
+    preconditionFields.copy(onSuccess = preconditionFields.onSuccess ++ actions)
   )
 
   def serialize: AdpPrecondition

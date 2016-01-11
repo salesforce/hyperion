@@ -26,7 +26,11 @@ case class S3KeyExistsPrecondition private (
     name = id.toOption,
     s3Key = s3Key.serialize,
     role = role.serialize,
-    preconditionTimeout = preconditionTimeout.map(_.serialize)
+    preconditionTimeout = preconditionTimeout.map(_.serialize),
+    maximumRetries = maximumRetries.map(_.serialize),
+    onFail = seqToOption(onFail)(_.ref),
+    onLateAction = seqToOption(onLateAction)(_.ref),
+    onSuccess = seqToOption(onSuccess)(_.ref)
   )
 
 }

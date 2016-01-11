@@ -21,7 +21,11 @@ case class ExistsPrecondition private (
     id = id,
     name = id.toOption,
     role = role.serialize,
-    preconditionTimeout = preconditionTimeout.map(_.serialize)
+    preconditionTimeout = preconditionTimeout.map(_.serialize),
+    maximumRetries = maximumRetries.map(_.serialize),
+    onFail = seqToOption(onFail)(_.ref),
+    onLateAction = seqToOption(onLateAction)(_.ref),
+    onSuccess = seqToOption(onSuccess)(_.ref)
   )
 
 }
