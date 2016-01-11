@@ -42,7 +42,11 @@ case class ShellCommandPrecondition private (
     stdout = stdout.map(_.serialize),
     stderr = stderr.map(_.serialize),
     role = role.serialize,
-    preconditionTimeout = preconditionTimeout.map(_.serialize)
+    preconditionTimeout = preconditionTimeout.map(_.serialize),
+    maximumRetries = maximumRetries.map(_.serialize),
+    onFail = seqToOption(onFail)(_.ref),
+    onLateAction = seqToOption(onLateAction)(_.ref),
+    onSuccess = seqToOption(onSuccess)(_.ref)
   )
 
 }

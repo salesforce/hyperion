@@ -16,7 +16,7 @@ case class SnsAlarm private (
   message: HString,
   role: HString,
   topicArn: HString
-) extends NamedPipelineObject {
+) extends Action with NamedPipelineObject {
 
   type Self = SnsAlarm
 
@@ -38,7 +38,7 @@ case class SnsAlarm private (
     role = role.serialize
   )
 
-  def ref: AdpRef[AdpSnsAlarm] = AdpRef(serialize)
+  override def ref: AdpRef[AdpSnsAlarm] = AdpRef(serialize)
 
 }
 

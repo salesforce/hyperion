@@ -8,13 +8,13 @@ import com.krux.hyperion.common.{ TerminateObjectId, PipelineObject }
  * node. AWS Data Pipeline attempts to put the activity, resource, or data node into the CANCELLED
  * state if it does not finish by the lateAfterTimeout value.
  */
-object Terminate extends PipelineObject {
+object Terminate extends Action {
 
   val id = TerminateObjectId
 
   def serialize = new AdpTerminate()
 
-  def ref: AdpRef[AdpTerminate] = AdpRef(serialize)
+  override def ref: AdpRef[AdpTerminate] = AdpRef(serialize)
 
   def objects: Iterable[PipelineObject] = None
 

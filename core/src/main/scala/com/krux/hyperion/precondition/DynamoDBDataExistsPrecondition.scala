@@ -26,7 +26,11 @@ case class DynamoDBDataExistsPrecondition private (
     name = id.toOption,
     tableName = tableName.serialize,
     role = role.serialize,
-    preconditionTimeout = preconditionTimeout.map(_.serialize)
+    preconditionTimeout = preconditionTimeout.map(_.serialize),
+    maximumRetries = maximumRetries.map(_.serialize),
+    onFail = seqToOption(onFail)(_.ref),
+    onLateAction = seqToOption(onLateAction)(_.ref),
+    onSuccess = seqToOption(onSuccess)(_.ref)
   )
 
 }

@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.2
+### Added
+- [#304](https://github.com/krux/hyperion/issues/304) - Add the missing options to preconditions
+
 ## 3.0.1
 ### Added
 - [#300](https://github.com/krux/hyperion/issues/300) - value option in encrypted and unencrypted method to create new parameters through the Parameter object
