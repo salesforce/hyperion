@@ -31,7 +31,7 @@ case class SnsAlarm private (
 
   lazy val serialize = new AdpSnsAlarm(
     id = id,
-    name = id.toOption,
+    name = name,
     subject = subject.serialize,
     message = message.serialize,
     topicArn = topicArn.serialize,

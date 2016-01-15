@@ -20,7 +20,7 @@ case class DynamoDBDataFormat private (
 
   lazy val serialize = AdpDynamoDBDataFormat(
     id = id,
-    name = id.toOption,
+    name = name,
     column = columns.map(_.serialize)
   )
 

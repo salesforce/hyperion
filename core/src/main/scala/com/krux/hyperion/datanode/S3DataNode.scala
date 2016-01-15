@@ -75,7 +75,7 @@ case class S3File private (
 
   lazy val serialize = AdpS3DataNode(
     id = id,
-    name = id.toOption,
+    name = name,
     directoryPath = None,
     filePath = Option(filePath.serialize),
     dataFormat = dataFormat.map(_.ref),
@@ -119,7 +119,7 @@ case class S3Folder private(
 
   lazy val serialize = AdpS3DataNode(
     id = id,
-    name = id.toOption,
+    name = name,
     directoryPath = Option(directoryPath.serialize),
     filePath = None,
     dataFormat = dataFormat.map(_.ref),

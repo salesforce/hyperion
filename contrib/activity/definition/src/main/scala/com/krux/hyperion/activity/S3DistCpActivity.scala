@@ -179,7 +179,7 @@ case class S3DistCpActivity[A <: EmrCluster] private (
 
   lazy val serialize = AdpEmrActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     step = steps.map(_.serialize),
     preStepCommand = seqToOption(preStepCommands)(_.serialize),
     postStepCommand = seqToOption(postStepCommands)(_.serialize),

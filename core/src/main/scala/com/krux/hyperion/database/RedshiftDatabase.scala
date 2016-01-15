@@ -20,7 +20,7 @@ case class RedshiftDatabase private (
 
   lazy val serialize = AdpRedshiftDatabase(
     id = id,
-    name = id.toOption,
+    name = name,
     clusterId = clusterId.serialize,
     connectionString = None,
     databaseName = databaseName.map(_.serialize),

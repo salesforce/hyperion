@@ -24,7 +24,7 @@ case class RdsDatabase private (
 
   lazy val serialize = AdpRdsDatabase(
     id = id,
-    name = id.toOption,
+    name = name,
     databaseName = databaseName.map(_.serialize),
     jdbcProperties = jdbcProperties.map(_.serialize),
     username = username.serialize,

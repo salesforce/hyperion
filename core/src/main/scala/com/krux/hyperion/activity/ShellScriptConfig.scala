@@ -20,7 +20,7 @@ case class ShellScriptConfig(
 
   lazy val serialize = AdpShellScriptConfig(
     id = id,
-    name = id.toOption,
+    name = name,
     scriptUri = scriptUri.serialize,
     scriptArgument = scriptArguments.map(_.serialize)
   )

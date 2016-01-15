@@ -25,7 +25,7 @@ case class SqlDataNode (
 
   lazy val serialize = AdpSqlDataNode(
     id = id,
-    name = id.toOption,
+    name = name,
     database = database.ref,
     table = tableQuery.table,
     selectQuery = tableQuery match {

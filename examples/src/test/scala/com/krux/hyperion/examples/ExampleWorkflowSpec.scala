@@ -12,7 +12,7 @@ class ExampleWorkflowSpec extends WordSpec {
 
     "produce correct pipeline JSON" in {
       val pipelineJson: JValue = ExampleWorkflow
-      val objectsField = (pipelineJson \ "objects").children.sortBy(o => (o \ "id").toString)
+      val objectsField = (pipelineJson \ "objects").children.sortBy(o => (o \ "name").toString)
 
       assert(objectsField.size === 9)  // 6 activities, 1 default, 1 schedule, 1 ec2 resource
 
@@ -59,10 +59,10 @@ class ExampleWorkflowSpec extends WordSpec {
 
       val act1 = objectsField(3)
       val act1Id = (act1 \ "id").values.toString
-      assert(act1Id.startsWith("act1"))
+      assert(act1Id.startsWith("ShellCommandActivity"))
       val act1ShouldBe =
         ("id" -> act1Id) ~
-        ("name" -> act1Id) ~
+        ("name" -> "act1") ~
         ("command" -> "run act1") ~
         ("runsOn" -> ("ref" -> ec2Id)) ~
         ("type" -> "ShellCommandActivity")
@@ -70,10 +70,10 @@ class ExampleWorkflowSpec extends WordSpec {
 
       val act2 = objectsField(4)
       val act2Id = (act2 \ "id").values.toString
-      assert(act2Id.startsWith("act2"))
+      assert(act2Id.startsWith("ShellCommandActivity"))
       val act2ShouldBe =
         ("id" -> act2Id) ~
-        ("name" -> act2Id) ~
+        ("name" -> "act2") ~
         ("command" -> "run act2") ~
         ("runsOn" -> ("ref" -> ec2Id)) ~
         ("dependsOn" -> List("ref" -> act1Id)) ~
@@ -82,10 +82,10 @@ class ExampleWorkflowSpec extends WordSpec {
 
       val act3 = objectsField(5)
       val act3Id = (act3 \ "id").values.toString
-      assert(act3Id.startsWith("act3"))
+      assert(act3Id.startsWith("ShellCommandActivity"))
       val act3ShouldBe =
         ("id" -> act3Id) ~
-        ("name" -> act3Id) ~
+        ("name" -> "act3") ~
         ("command" -> "run act3") ~
         ("runsOn" -> ("ref" -> ec2Id)) ~
         ("dependsOn" -> List("ref" -> act1Id)) ~
@@ -94,37 +94,37 @@ class ExampleWorkflowSpec extends WordSpec {
 
       val act4 = objectsField(6)
       val act4Id = (act4 \ "id").values.toString
-      assert(act4Id.startsWith("act4"))
+      assert(act4Id.startsWith("ShellCommandActivity"))
       val act4ShouldBe =
         ("id" -> act4Id) ~
-        ("name" -> act4Id) ~
+        ("name" -> "act4") ~
         ("command" -> "run act4") ~
         ("runsOn" -> ("ref" -> ec2Id)) ~
-        ("dependsOn" -> List("ref" -> act2Id, "ref" -> act3Id)) ~
+        ("dependsOn" -> List("ref" -> act2Id, "ref" -> act3Id).sorted) ~
         ("type" -> "ShellCommandActivity")
       assert(act4ShouldBe === act4)
 
       val act5 = objectsField(7)
       val act5Id = (act5 \ "id").values.toString
-      assert(act5Id.startsWith("act5"))
+      assert(act5Id.startsWith("ShellCommandActivity"))
       val act5ShouldBe =
         ("id" -> act5Id) ~
-        ("name" -> act5Id) ~
+        ("name" -> "act5") ~
         ("command" -> "run act5") ~
         ("runsOn" -> ("ref" -> ec2Id)) ~
-        ("dependsOn" -> List("ref" -> act2Id, "ref" -> act3Id)) ~
+        ("dependsOn" -> List("ref" -> act2Id, "ref" -> act3Id).sorted) ~
         ("type" -> "ShellCommandActivity")
       assert(act5ShouldBe === act5)
 
       val act6 = objectsField(8)
       val act6Id = (act6 \ "id").values.toString
-      assert(act6Id.startsWith("act6"))
+      assert(act6Id.startsWith("ShellCommandActivity"))
       val act6ShouldBe =
         ("id" -> act6Id) ~
-        ("name" -> act6Id) ~
+        ("name" -> "act6") ~
         ("command" -> "run act6") ~
         ("runsOn" -> ("ref" -> ec2Id)) ~
-        ("dependsOn" -> List("ref" -> act4Id, "ref" -> act5Id)) ~
+        ("dependsOn" -> List("ref" -> act4Id, "ref" -> act5Id).sorted) ~
         ("type" -> "ShellCommandActivity")
       assert(act6ShouldBe === act6)
 

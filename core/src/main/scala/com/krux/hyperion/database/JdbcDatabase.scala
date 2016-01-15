@@ -26,7 +26,7 @@ case class JdbcDatabase private (
 
   lazy val serialize = AdpJdbcDatabase(
     id = id,
-    name = id.toOption,
+    name = name,
     connectionString = connectionString.serialize,
     databaseName = databaseName.map(_.serialize),
     username = username.serialize,

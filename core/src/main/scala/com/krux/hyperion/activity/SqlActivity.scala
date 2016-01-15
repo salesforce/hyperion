@@ -32,7 +32,7 @@ case class SqlActivity private (
 
   lazy val serialize = AdpSqlActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     script = script.content.map(_.serialize),
     scriptUri = script.uri.map(_.serialize),
     scriptArgument = scriptArgument.map(_.serialize),

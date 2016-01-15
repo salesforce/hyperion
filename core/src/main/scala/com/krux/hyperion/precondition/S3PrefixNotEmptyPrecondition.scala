@@ -23,7 +23,7 @@ case class S3PrefixNotEmptyPrecondition private (
 
   lazy val serialize = AdpS3PrefixNotEmptyPrecondition(
     id = id,
-    name = id.toOption,
+    name = name,
     s3Prefix = s3Prefix.serialize,
     role = role.serialize,
     preconditionTimeout = preconditionTimeout.map(_.serialize),

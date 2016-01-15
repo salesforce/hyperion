@@ -145,7 +145,7 @@ trait EmrCluster extends ResourceObject {
 
     new AdpEmrCluster(
       id = id,
-      name = id.toOption,
+      name = name,
       amiVersion = amiVersion.map(_.serialize),
       supportedProducts = supportedProducts.map(_.serialize),
       bootstrapAction = (standardBootstrapAction ++ bootstrapAction).map(_.serialize),

@@ -25,7 +25,7 @@ case class CustomDataFormat private (
 
   lazy val serialize = AdpCustomDataFormat(
     id = id,
-    name = id.toOption,
+    name = name,
     column = columns.map(_.serialize),
     columnSeparator = columnSeparator.serialize,
     recordSeparator = recordSeparator.serialize
