@@ -13,7 +13,7 @@ object AdpPipelineSerializer {
     val (idName, otherFields) = fieldList.partition { case (k, v) => k == "id" || k == "name" }
 
     val id = idName.collectFirst { case ("id", JString(x)) => x }.get
-    val name = idName.collectFirst { case ("name", JString(x)) => x }.get
+    val name = idName.collectFirst { case ("name", JString(x)) => x }.getOrElse(id)
 
     val fields = otherFields.flatMap {
       case (k, JString(v)) => List(new AwsField().withKey(k).withStringValue(v))

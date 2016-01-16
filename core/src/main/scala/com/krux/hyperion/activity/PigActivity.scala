@@ -40,7 +40,7 @@ case class PigActivity[A <: EmrCluster] private (
 
   lazy val serialize = new AdpPigActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     script = script.content.map(_.serialize),
     scriptUri = script.uri.map(_.serialize),
     scriptVariable = seqToOption(scriptVariables)(_.serialize),

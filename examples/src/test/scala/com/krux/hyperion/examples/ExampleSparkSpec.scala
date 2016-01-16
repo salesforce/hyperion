@@ -13,7 +13,7 @@ class ExampleSparkSpec extends WordSpec {
     "produce correct pipeline JSON" in {
 
       val pipelineJson: JValue = ExampleSpark
-      val objectsField = pipelineJson.children.head.children.sortBy(o => (o \ "id").toString)
+      val objectsField = pipelineJson.children.head.children.sortBy(o => (o \ "name").toString)
 
       // have the correct number of objects
       assert(objectsField.size === 7)
@@ -86,10 +86,10 @@ class ExampleSparkSpec extends WordSpec {
 
       val filterActivity = objectsField(5)
       val filterActivityId = (filterActivity \ "id").values.toString
-      assert(filterActivityId.startsWith("filterActivity_"))
+      assert(filterActivityId.startsWith("SparkTaskActivity_"))
       val filterActivityShouldBe =
         ("id" -> filterActivityId) ~
-        ("name" -> filterActivityId) ~
+        ("name" -> "filterActivity") ~
         ("jarUri" -> "s3://elasticmapreduce/libs/script-runner/script-runner.jar") ~
         ("runsOn" -> ("ref" -> sparkClusterId)) ~
         ("argument" -> List("s3://your-bucket/datapipeline/scripts/run-spark-step.sh",
@@ -104,10 +104,10 @@ class ExampleSparkSpec extends WordSpec {
 
       val scoreActivity = objectsField(6)
       val scoreActivityId = (scoreActivity \ "id").values.toString
-      assert(scoreActivityId.startsWith("scoreActivity_"))
+      assert(scoreActivityId.startsWith("SparkActivity_"))
       val scoreActivityShouldBe =
         ("id" -> scoreActivityId) ~
-        ("name" -> scoreActivityId) ~
+        ("name" -> "scoreActivity") ~
         ("runsOn" -> ("ref" -> sparkClusterId)) ~
         ("step" -> List(
           "s3://elasticmapreduce/libs/script-runner/script-runner.jar,s3://your-bucket/datapipeline/scripts/run-spark-step.sh,s3://sample-jars/sample-jar-assembly-current.jar,com.krux.hyperion.ScoreJob1,the-target,#{format(minusDays(@scheduledStartTime,3),\"yyyy-MM-dd\")},denormalized",

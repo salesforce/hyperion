@@ -35,7 +35,7 @@ case class Ec2Resource private (
 
   lazy val serialize = AdpEc2Resource(
     id = id,
-    name = id.toOption,
+    name = name,
     instanceType = Option(instanceType.serialize),
     imageId = imageId.map(_.serialize),
     role = role.map(_.serialize),

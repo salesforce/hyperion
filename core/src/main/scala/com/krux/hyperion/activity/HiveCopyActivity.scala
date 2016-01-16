@@ -37,7 +37,7 @@ case class HiveCopyActivity[A <: EmrCluster] private (
 
   lazy val serialize = AdpHiveCopyActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     filterSql = filterSql.map(_.serialize),
     generatedScriptsPath = generatedScriptsPath.map(_.serialize),
     input = Option(input.ref),

@@ -14,7 +14,7 @@ class ExampleRedshiftLoadSpec extends WordSpec {
     "produce correct pipeline JSON" in {
 
       val pipelineJson: JValue = ExampleRedshiftLoad
-      val objectsField = pipelineJson.children(0).children.sortBy(o => (o \ "id").toString)
+      val objectsField = pipelineJson.children(0).children.sortBy(o => (o \ "name").toString)
 
       // have the correct number of objects
       assert(objectsField.size === 8)
@@ -80,10 +80,10 @@ class ExampleRedshiftLoadSpec extends WordSpec {
 
       val mockRedshift = objectsField(7)
       val mockRedshiftId: String = (mockRedshift \ "id").values.toString
-      assert(mockRedshiftId.startsWith("_MockRedshift"))
+      assert(mockRedshiftId.startsWith("RdsDatabase_"))
       val mockRedshiftShouldBe =
         ("id" -> mockRedshiftId) ~
-        ("name" -> mockRedshiftId) ~
+        ("name" -> "_MockRedshift") ~
         ("clusterId" -> "mock-redshift") ~
         ("databaseName" -> "mock_db") ~
         ("*password" -> "mockpass") ~

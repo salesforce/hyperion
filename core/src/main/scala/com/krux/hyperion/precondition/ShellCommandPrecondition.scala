@@ -35,7 +35,7 @@ case class ShellCommandPrecondition private (
 
   lazy val serialize = AdpShellCommandPrecondition(
     id = id,
-    name = id.toOption,
+    name = name,
     command = script.content.map(_.serialize),
     scriptUri = script.uri.map(_.serialize),
     scriptArgument = scriptArgument.map(_.serialize),

@@ -19,7 +19,7 @@ case class ExistsPrecondition private (
 
   lazy val serialize = AdpExistsPrecondition(
     id = id,
-    name = id.toOption,
+    name = name,
     role = role.serialize,
     preconditionTimeout = preconditionTimeout.map(_.serialize),
     maximumRetries = maximumRetries.map(_.serialize),

@@ -41,7 +41,7 @@ case class HiveActivity[A <: EmrCluster] private (
 
   lazy val serialize = new AdpHiveActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     hiveScript = hiveScript.content.map(_.serialize),
     scriptUri = hiveScript.uri.map(_.serialize),
     scriptVariable = seqToOption(scriptVariables)(_.serialize),

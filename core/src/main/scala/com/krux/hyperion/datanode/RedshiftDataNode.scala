@@ -31,7 +31,7 @@ case class RedshiftDataNode private (
 
   lazy val serialize = AdpRedshiftDataNode(
     id = id,
-    name = id.toOption,
+    name = name,
     createTableSql = createTableSql.map(_.serialize),
     database = database.ref,
     schemaName = schemaName.map(_.serialize),

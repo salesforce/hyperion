@@ -37,7 +37,7 @@ case class MapReduceActivity[A <: EmrCluster] private (
 
   def serialize = AdpEmrActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     step = steps.map(_.serialize),
     preStepCommand = seqToOption(preStepCommands)(_.serialize),
     postStepCommand = seqToOption(postStepCommands)(_.serialize),

@@ -38,7 +38,7 @@ trait BaseShellCommandActivity extends PipelineActivity[Ec2Resource] {
 
   def serialize = AdpShellCommandActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     command = script.content.map(_.serialize),
     scriptUri = script.uri.map(_.serialize),
     scriptArgument = scriptArguments.map(_.serialize),

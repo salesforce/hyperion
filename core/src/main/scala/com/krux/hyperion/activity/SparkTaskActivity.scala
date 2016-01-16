@@ -61,7 +61,7 @@ case class SparkTaskActivity private (
 
   lazy val serialize = AdpHadoopActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     jarUri = scriptRunner.serialize,
     mainClass = None,
     argument = jobRunner.serialize +: sparkSettings.map(_.serialize) ++: jarUri.serialize +: mainClass.toString +: arguments.map(_.serialize),

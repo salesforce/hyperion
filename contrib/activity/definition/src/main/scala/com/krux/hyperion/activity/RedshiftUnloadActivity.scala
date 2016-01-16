@@ -109,7 +109,7 @@ case class RedshiftUnloadActivity private (
 
   lazy val serialize = AdpSqlActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     script = Option(unloadScript),
     scriptUri = None,
     scriptArgument = None,

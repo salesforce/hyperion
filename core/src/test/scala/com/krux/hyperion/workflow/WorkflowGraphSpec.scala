@@ -17,12 +17,12 @@ class WorkflowGraphSpec extends WordSpec {
 
     "produce correct dependencies" in {
 
-      val act1 = ShellCommandActivity("run act1")(ec2).named("act1")
-      val act2 = ShellCommandActivity("run act2")(ec2).named("act2")
-      val act3 = ShellCommandActivity("run act3")(ec2).named("act3")
-      val act4 = ShellCommandActivity("run act4")(ec2).named("act4")
-      val act5 = ShellCommandActivity("run act5")(ec2).named("act5")
-      val act6 = ShellCommandActivity("run act6")(ec2).named("act6")
+      val act1 = ShellCommandActivity("run act1")(ec2).idNamed("act1")
+      val act2 = ShellCommandActivity("run act2")(ec2).idNamed("act2")
+      val act3 = ShellCommandActivity("run act3")(ec2).idNamed("act3")
+      val act4 = ShellCommandActivity("run act4")(ec2).idNamed("act4")
+      val act5 = ShellCommandActivity("run act5")(ec2).idNamed("act5")
+      val act6 = ShellCommandActivity("run act6")(ec2).idNamed("act6")
 
       val activityOrders = Seq(
         (act1 -> act3),

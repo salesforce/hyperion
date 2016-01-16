@@ -23,7 +23,7 @@ case class CsvDataFormat private (
 
   lazy val serialize = AdpCsvDataFormat(
     id = id,
-    name = id.toOption,
+    name = name,
     column = columns.map(_.serialize),
     escapeChar = escapeChar.map(_.serialize)
   )

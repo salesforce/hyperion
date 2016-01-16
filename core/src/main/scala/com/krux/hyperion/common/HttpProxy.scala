@@ -30,7 +30,7 @@ case class HttpProxy private (
 
   lazy val serialize = AdpHttpProxy(
     id = id,
-    name = id.toOption,
+    name = name,
     hostname = hostname.map(_.serialize),
     port = port.map(_.serialize),
     username = username.map(_.serialize),

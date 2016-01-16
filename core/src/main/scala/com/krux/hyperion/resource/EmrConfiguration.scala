@@ -25,7 +25,7 @@ case class EmrConfiguration private (
 
   lazy val serialize = AdpEmrConfiguration(
     id = id,
-    name = id.toOption,
+    name = name,
     classification = classification.map(_.serialize),
     property = Option(properties.map(_.ref)),
     configuration = Option(configurations.map(_.ref))

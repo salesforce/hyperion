@@ -41,7 +41,7 @@ case class HadoopActivity[A <: EmrCluster] private (
 
   lazy val serialize = AdpHadoopActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     jarUri = jarUri.serialize,
     mainClass = mainClass.map(_.toString),
     argument = arguments.map(_.serialize),

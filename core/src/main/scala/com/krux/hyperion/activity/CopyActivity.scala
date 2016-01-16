@@ -33,7 +33,7 @@ case class CopyActivity private (
 
   lazy val serialize = AdpCopyActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     input = input.ref,
     output = output.ref,
     workerGroup = runsOn.asWorkerGroup.map(_.ref),

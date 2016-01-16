@@ -23,7 +23,7 @@ case class DynamoDBDataExistsPrecondition private (
 
   lazy val serialize = AdpDynamoDBDataExistsPrecondition(
     id = id,
-    name = id.toOption,
+    name = name,
     tableName = tableName.serialize,
     role = role.serialize,
     preconditionTimeout = preconditionTimeout.map(_.serialize),

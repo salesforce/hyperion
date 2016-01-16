@@ -51,7 +51,7 @@ case class RedshiftCopyActivity private (
 
   lazy val serialize = AdpRedshiftCopyActivity(
     id = id,
-    name = id.toOption,
+    name = name,
     insertMode = insertMode.toString,
     transformSql = transformSql.map(_.serialize),
     queue = queue.map(_.serialize),
