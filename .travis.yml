@@ -34,7 +34,7 @@ before_install:
 after_success:
 - |
   if [[ "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_PULL_REQUEST}" = "false" ]]; then
-    sbt 'set pgpPassphrase := Some(System.getenv("PGP_PASSPHRASE").toCharArray)' 'set credentials += Credentials("Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' +publishSigned sonatypeReleaseAll
+    sbt 'set pgpPassphrase := Some(System.getenv("PGP_PASSPHRASE").toCharArray)' 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USERNAME"), System.getenv("SONATYPE_PASSWORD"))' +publishSigned sonatypeReleaseAll
     rm -f secring.asc pubring.asc
   fi
 
