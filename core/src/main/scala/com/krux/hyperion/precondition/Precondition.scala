@@ -60,7 +60,7 @@ trait Precondition extends NamedPipelineObject {
 
   def ref: AdpRef[AdpPrecondition] = AdpRef(serialize)
 
-  def objects: Iterable[PipelineObject] = None
+  def objects: Iterable[PipelineObject] = onFail.toSeq ++ onLateAction.toSeq ++ onSuccess.toSeq
 
 }
 

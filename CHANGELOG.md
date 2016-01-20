@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.4
+### Fixed
+- [#310](https://github.com/krux/hyperion/issues/310) - fix a bug where preconditions missing the referenced objects
+
 ## 3.0.3
 ### Fixed
 - [#213](https://github.com/krux/hyperion/issues/213) - Start use the `name` field instead of forcing `id` and `name` to be the same
