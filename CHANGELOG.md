@@ -2,19 +2,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 3.0.4
+## 3.0.5 - 2016-01-20
+### Added
+- [#313](https://github.com/krux/hyperion/issues/313) - added option to startThisHourAt schedule
+
+## 3.0.4 - 2016-01-19
 ### Fixed
 - [#310](https://github.com/krux/hyperion/issues/310) - fix a bug where preconditions missing the referenced objects
 
-## 3.0.3
+## 3.0.3 - 2016-01-14
 ### Fixed
 - [#213](https://github.com/krux/hyperion/issues/213) - Start use the `name` field instead of forcing `id` and `name` to be the same
 
-## 3.0.2
+## 3.0.2 - 2016-01-10
 ### Added
 - [#304](https://github.com/krux/hyperion/issues/304) - Add the missing options to preconditions
 
-## 3.0.1
+## 3.0.1 - 2016-01-09
 ### Added
 - [#300](https://github.com/krux/hyperion/issues/300) - value option in encrypted and unencrypted method to create new parameters through the Parameter object
 
@@ -22,7 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - [#299](https://github.com/krux/hyperion/issues/299) - Fixes ConstantExpression implicits to avoid unnecessary import
 - [#298](https://github.com/krux/hyperion/issues/295) - Make sequence of native type to sequence of HType implicitly available
 
-## 3.0.0
+## 3.0.0 - 2016-01-08
 
 ### Changed
 - [#295](https://github.com/krux/hyperion/issues/295) - Refactor parameter with adhoc polymorphism with type class instead of reflection TypeTags

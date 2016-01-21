@@ -24,6 +24,11 @@ case class Schedule private (
 
   def startDateTime(dt: DateTime) = copy(start = Option(dt))
 
+  def startThisHourAt(minuteOfHour: Int, secondOfMinute: Int) = {
+    val currentHour = DateTime.now.withZone(DateTimeZone.UTC).getHourOfDay()
+    startTodayAt(currentHour, minuteOfHour, secondOfMinute)
+  }
+
   def startTodayAt(hourOfDay: Int, minuteOfHour: Int, secondOfMinute: Int) =
     startThisDayOfXAt(0, hourOfDay, minuteOfHour, secondOfMinute)((dt, _) => dt)
 
