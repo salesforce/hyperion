@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.0.6 - 2016-01-21
+## Fixed
+- [#315](https://github.com/krux/hyperion/issues/313) - fixed a bug input and output reference in CopyActivity is not included
+
 ## 3.0.5 - 2016-01-20
 ### Added
 - [#313](https://github.com/krux/hyperion/issues/313) - added option to startThisHourAt schedule
