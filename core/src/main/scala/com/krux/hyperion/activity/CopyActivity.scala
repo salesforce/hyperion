@@ -31,6 +31,8 @@ case class CopyActivity private (
   def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
   def updateActivityFields(fields: ActivityFields[Ec2Resource]) = copy(activityFields = fields)
 
+  override def objects = Seq(input, output) ++ super.objects
+
   lazy val serialize = AdpCopyActivity(
     id = id,
     name = name,
