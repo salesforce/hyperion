@@ -19,7 +19,7 @@ case class GoogleStorageUploadActivity private (
   shellCommandActivityFields: ShellCommandActivityFields,
   botoConfigUrl: HS3Uri,
   googleStorageUri: HString
-) extends GoogleStorageActivity with WithS3Output {
+) extends GoogleStorageActivity with WithS3Input {
 
   type Self = GoogleStorageUploadActivity
 

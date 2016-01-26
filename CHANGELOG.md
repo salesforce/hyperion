@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 3.0.7 - 2016-01-26
 ## Fixed
 - [#318](https://github.com/krux/hyperion/issues/318) - SendFlowdockMessageActivity should use the corresponding HType in apply
+- [#320](https://github.com/krux/hyperion/issues/320) - A few shell command based activity is missing input / output
 
 ## 3.0.6 - 2016-01-21
 ## Fixed
