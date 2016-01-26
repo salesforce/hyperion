@@ -46,7 +46,7 @@ case class SendFlowdockMessageActivity private (
 
 object SendFlowdockMessageActivity extends RunnableObject {
 
-  def apply(flowApiToken: String, message: String)(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SendFlowdockMessageActivity =
+  def apply(flowApiToken: HString, message: HString)(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): SendFlowdockMessageActivity =
     new SendFlowdockMessageActivity(
       baseFields = BaseFields(PipelineObjectId(SendFlowdockMessageActivity.getClass)),
       activityFields = ActivityFields(runsOn),
