@@ -28,7 +28,7 @@ case class SendEmailActivity private (
   body: Option[HString],
   starttls: HBoolean,
   debug: HBoolean
-) extends BaseShellCommandActivity {
+) extends BaseShellCommandActivity with WithS3Input {
 
   type Self = SendEmailActivity
 
