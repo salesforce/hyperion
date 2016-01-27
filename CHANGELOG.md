@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.1.0 - 2016-01-27
+## Fixed
+- [#324](https://github.com/krux/hyperion/issues/324) - Workflow should be evaluated at the last minute possible
+
 ## 3.0.7 - 2016-01-26
 ## Fixed
 - [#318](https://github.com/krux/hyperion/issues/318) - SendFlowdockMessageActivity should use the corresponding HType in apply

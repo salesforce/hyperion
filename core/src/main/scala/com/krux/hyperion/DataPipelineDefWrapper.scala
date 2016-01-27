@@ -10,7 +10,7 @@ private[hyperion] case class DataPipelineDefWrapper(
   override val hc: HyperionContext,
   override val pipelineName: String,
   schedule: Schedule,
-  workflow: WorkflowExpression,
+  workflowFunc: () => WorkflowExpression,
   override val tags: Map[String, Option[String]],
   override val parameters: Iterable[Parameter[_]]
 ) extends DataPipelineDef {
@@ -20,6 +20,8 @@ private[hyperion] case class DataPipelineDefWrapper(
   def withTags(tags: Map[String, Option[String]]) = copy(tags = this.tags ++ tags)
   def withParameters(parameters: Iterable[Parameter[_]]) = copy(parameters = parameters)
 
+  def workflow = workflowFunc()
+
 }
 
 object DataPipelineDefWrapper {
@@ -27,7 +29,7 @@ object DataPipelineDefWrapper {
     inner.hc,
     inner.pipelineName,
     inner.schedule,
-    inner.workflow,
+    () => inner.workflow,
     inner.tags,
     inner.parameters
   )
