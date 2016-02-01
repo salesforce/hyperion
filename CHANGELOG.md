@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.1.2 - 2016-02-01
+### Added
+- [#323](https://github.com/krux/hyperion/issues/323) - Extend `DateTimeExp` to include `format`
+
 ## 3.1.1 - 2016-01-28
 ### Fixed
 - [#327](https://github.com/krux/hyperion/issues/327) - Add a --param option to handle override parameters with a comma in the value

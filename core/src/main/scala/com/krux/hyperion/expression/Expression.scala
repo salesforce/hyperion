@@ -171,6 +171,8 @@ trait DateTimeExp extends TypedExpression {
   def yesterday: DateTimeExp = Yesterday(this)
   def inTimeZone(zone: String): DateTimeExp = InTimeZone(this, StringConstantExp(zone))
 
+  def format(myFormat: StringExp): StringExp = Format(this, myFormat)
+
 }
 
 trait DurationExp extends TypedExpression
