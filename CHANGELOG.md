@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.1.3 - 2016-02-10
+### Changed
+- [#335](https://github.com/krux/hyperion/issues/335) - WorkflowGraphRenderer use name instead of id
+
 ## 3.1.2 - 2016-02-01
 ### Added
 - [#323](https://github.com/krux/hyperion/issues/323) - Extend `DateTimeExp` to include `format`

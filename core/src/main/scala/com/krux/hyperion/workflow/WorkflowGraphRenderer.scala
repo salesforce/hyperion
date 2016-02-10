@@ -24,6 +24,7 @@ case class WorkflowGraphRenderer(
   private lazy val idToLabelMap: Map[String, String] = pipelineObjects.flatMap { obj =>
     label match {
       case "id" => Option(obj.getId -> stripId(obj.getId))
+      case "name" => Option(obj.getId -> obj.getName)
       case _ => obj.getFields.asScala.find(_.getKey == label).map(f => obj.getId -> Option(f.getStringValue).getOrElse(stripId(obj.getId)))
     }
   }.toMap
@@ -51,13 +52,11 @@ case class WorkflowGraphRenderer(
     s"  ${getLabel(from)} -> ${getLabel(to)} ${attrs.getOrElse("")}"
   }
 
-  private def ifNodeIncluded(nodeType: String)(func: => String): Option[String] = {
-    nodeType match {
-      case "Ec2Resource" | "EmrCluster" if !includeResources => None
-      case "DynamoDBDataNode" | "MySqlDataNode" | "RedshiftDataNode" | "S3DataNode" | "SqlDataNode" if !includeDataNodes => None
-      case "JdbcDatabase" | "RdsDatabase" | "RedshiftDatabase" if !includeDatabases => None
-      case _ => Option(func)
-    }
+  private def ifNodeIncluded(nodeType: String)(func: => String): Option[String] = nodeType match {
+    case "Ec2Resource" | "EmrCluster" if !includeResources => None
+    case "DynamoDBDataNode" | "MySqlDataNode" | "RedshiftDataNode" | "S3DataNode" | "SqlDataNode" if !includeDataNodes => None
+    case "JdbcDatabase" | "RdsDatabase" | "RedshiftDatabase" if !includeDatabases => None
+    case _ => Option(func)
   }
 
   def render(): String = {
