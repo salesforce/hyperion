@@ -15,7 +15,7 @@ case class Options(
   region: Option[String] = None,
   roleArn: Option[String] = None,
   output: Option[File] = None,
-  label: String = "id",
+  label: String = "name",
   removeLastNameSegment: Boolean = false,
   includeResources: Boolean = false,
   includeDataNodes: Boolean = false,
