@@ -4,6 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.2.0 - 2016-02-13
 ### Added
+- [#345](https://github.com/krux/hyperion/issues/345) - The default alarm message now contains a link to the pipeline
+
+## 3.2.0 - 2016-02-13
+### Added
 - [#337](https://github.com/krux/hyperion/issues/337) - Implement SendSlackMessage
 
 ## 3.1.3 - 2016-02-10

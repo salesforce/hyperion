@@ -46,9 +46,11 @@ object SnsAlarm {
 
   val defaultSubject = s"[hyperion] (${RuntimeNode.PipelineId}) ${RuntimeNode.Status}: ${RuntimeNode.Name}"
 
-  val defaultMessage = s"""Data pipeline: ${RuntimeNode.PipelineId}
+  def defaultMessage(implicit hc: HyperionContext) = s"""Data pipeline: ${RuntimeNode.PipelineId}
     |Node: ${RuntimeNode.Name}
-    |Status: ${RuntimeNode.Status}""".stripMargin
+    |Status: ${RuntimeNode.Status}
+    |Pipeline Link: https://console.aws.amazon.com/datapipeline/home?region=${hc.region}#ExecutionDetailsPlace:pipelineId=${RuntimeNode.PipelineId}&show=latest
+    |""".stripMargin
 
   def apply()(implicit hc: HyperionContext): SnsAlarm = apply(hc.snsTopic.get)
 
