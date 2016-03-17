@@ -24,7 +24,8 @@ case class SplitMergeFilesActivity private (
   bytesPerFile: Option[HString],
   bufferSize: Option[HString],
   pattern: Option[HString],
-  markSuccessfulJobs: HBoolean
+  markSuccessfulJobs: HBoolean,
+  temporaryDirectory: Option[HString]
 ) extends BaseShellCommandActivity with WithS3Input with WithS3Output {
 
   type Self = SplitMergeFilesActivity
@@ -45,13 +46,15 @@ case class SplitMergeFilesActivity private (
   def withInputPattern(pattern: HString) = copy(pattern = Option(pattern))
   def markingSuccessfulJobs() = copy(markSuccessfulJobs = HBoolean.True)
   def ignoringEmptyInput() = copy(ignoreEmptyInput = HBoolean.True)
+  def withTemporaryDirectory(temporaryDirectory: HString) = copy(temporaryDirectory = Option(temporaryDirectory))
 
   private def arguments: Seq[HType] = Seq(
-    if (compressedOutput) Option(Seq[HString]("-z")) else None,
-    if (skipFirstInputLine) Option(Seq[HString]("--skip-first-line")) else None,
-    if (linkOutputs) Option(Seq[HString]("--link")) else None,
-    if (markSuccessfulJobs) Option(Seq[HString]("--mark-successful-jobs")) else None,
-    if (ignoreEmptyInput) Option(Seq[HString]("--ignore-empty-input")) else None,
+    compressedOutput.exists(Seq[HString]("-z")),
+    skipFirstInputLine.exists(Seq[HString]("--skip-first-line")),
+    linkOutputs.exists(Seq[HString]("--link")),
+    markSuccessfulJobs.exists(Seq[HString]("--mark-successful-jobs")),
+    ignoreEmptyInput.exists(Seq[HString]("--ignore-empty-input")),
+    temporaryDirectory.map(dir => Seq[HString]("-T", dir)),
     header.map(h => Seq[HString]("--header", h)),
     suffixLength.map(s => Seq[HType]("--suffix-length", s)),
     numberOfFiles.map(n => Seq[HType]("-n", n)),
@@ -76,17 +79,18 @@ object SplitMergeFilesActivity extends RunnableObject {
       mainClass = "com.krux.hyperion.contrib.activity.file.RepartitionFile",
       filename = filename,
       header = None,
-      compressedOutput = false,
-      skipFirstInputLine = false,
-      ignoreEmptyInput = false,
-      linkOutputs = false,
+      compressedOutput = HBoolean.False,
+      skipFirstInputLine = HBoolean.False,
+      ignoreEmptyInput = HBoolean.False,
+      linkOutputs = HBoolean.False,
       suffixLength = None,
       numberOfFiles = None,
       linesPerFile = None,
       bytesPerFile = None,
       bufferSize = None,
       pattern = None,
-      markSuccessfulJobs = false
+      markSuccessfulJobs = HBoolean.False,
+      temporaryDirectory = None
     )
 
 }

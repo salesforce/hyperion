@@ -25,12 +25,12 @@ case class SendFlowdockMessageActivity private (
   def updateActivityFields(fields: ActivityFields[Ec2Resource]) = copy(activityFields = fields)
   def updateShellCommandActivityFields(fields: ShellCommandActivityFields) = copy(shellCommandActivityFields = fields)
 
-  def continuingOnError = copy(continueOnError = true)
+  def continuingOnError = copy(continueOnError = HBoolean.True)
   def withUser(user: HString) = copy(user = user)
   def withTags(tag: HString*) = copy(tags = this.tags ++ tag)
 
   private def arguments: Seq[HString] = Seq(
-    if (continueOnError) Seq.empty[HString] else Seq[HString]("--fail-on-error"),
+    continueOnError.exists("--fail-on-error": HString).toSeq,
     Seq[HString]("--api-key", flowApiToken),
     Seq[HString]("--user", user),
     if (tags.isEmpty) Seq.empty else Seq[HString]("--tags", tags.mkString(",")),
@@ -53,7 +53,7 @@ object SendFlowdockMessageActivity extends RunnableObject {
       flowApiToken = flowApiToken,
       message = message,
       user = "hyperion",
-      continueOnError = false,
+      continueOnError = HBoolean.False,
       tags = Seq.empty
     )
 

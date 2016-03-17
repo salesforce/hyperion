@@ -113,7 +113,12 @@ case class HDouble(value: Either[Double, DoubleExp]) extends HType with Optional
 
 }
 
-case class HBoolean(value: Either[Boolean, BooleanExp]) extends HType
+case class HBoolean(value: Either[Boolean, BooleanExp]) extends HType {
+  def exists[B](fn: => B) = value match {
+    case Left(true) => Option(fn)
+    case _ => None
+  }
+}
 
 object HBoolean {
   final val True = HBoolean(Left(true))

@@ -26,14 +26,14 @@ case class SendSlackMessageActivity private (
   def updateActivityFields(fields: ActivityFields[Ec2Resource]) = copy(activityFields = fields)
   def updateShellCommandActivityFields(fields: ShellCommandActivityFields) = copy(shellCommandActivityFields = fields)
 
-  def continuingOnError = copy(continueOnError = true)
+  def continuingOnError = copy(continueOnError = HBoolean.True)
   def withUser(user: HString) = copy(user = Option(user))
   def withEmoji(emoji: HString) = copy(emoji = Option(emoji))
   def toUser(user: HString) = copy(to = Option(s"@$user": HString))
   def toChannel(channel: HString) = copy(to = Option(s"#$channel": HString))
 
   private def arguments: Seq[HString] = Seq(
-    if (continueOnError) None else Option(Seq[HString]("--fail-on-error")),
+    continueOnError.exists(Seq[HString]("--fail-on-error")),
     Option(Seq[HString]("--webhook-url", webhookUrl)),
     user.map(user => Seq[HString]("--user", user)),
     emoji.map(emoji => Seq[HString]("--emoji", emoji)),
@@ -53,7 +53,7 @@ object SendSlackMessageActivity extends RunnableObject {
       shellCommandActivityFields = ShellCommandActivityFields(S3Uri(s"${hc.scriptUri}activities/run-jar.sh")),
       jarUri = s"${hc.scriptUri}activities/hyperion-notification-activity-current-assembly.jar",
       mainClass = "com.krux.hyperion.contrib.activity.notification.SendSlackMessage",
-      continueOnError = false,
+      continueOnError = HBoolean.False,
       webhookUrl = webhookUrl,
       message = message,
       user = None,
