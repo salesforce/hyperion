@@ -2,7 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 3.2.0 - 2016-02-13
+## 3.2.2 - 2016-03-16
+### Added
+- [#349](https://github.com/krux/hyperion/issues/349) - SplitMergeFilesActivity needs to pass `temporary-directory`
+
+## 3.2.1 - 2016-02-13
 ### Added
 - [#345](https://github.com/krux/hyperion/issues/345) - The default alarm message now contains a link to the pipeline
 

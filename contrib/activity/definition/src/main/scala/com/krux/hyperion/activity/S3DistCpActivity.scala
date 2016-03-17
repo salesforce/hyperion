@@ -72,7 +72,7 @@ case class S3DistCpActivity[A <: EmrCluster] private (
 
   def appendLastToFile = s3DistCpActivityFields.appendLastToFile
   def appendToLastFile() = updateS3DistCpActivityFields(
-    s3DistCpActivityFields.copy(appendLastToFile = true)
+    s3DistCpActivityFields.copy(appendLastToFile = HBoolean.True)
   )
 
   def outputCodec = s3DistCpActivityFields.outputCodec
@@ -82,17 +82,17 @@ case class S3DistCpActivity[A <: EmrCluster] private (
 
   def s3ServerSideEncryption = s3DistCpActivityFields.s3ServerSideEncryption
   def withS3ServerSideEncryption() = updateS3DistCpActivityFields(
-    s3DistCpActivityFields.copy(s3ServerSideEncryption = true)
+    s3DistCpActivityFields.copy(s3ServerSideEncryption = HBoolean.True)
   )
 
   def deleteOnSuccess = s3DistCpActivityFields.deleteOnSuccess
   def withDeleteOnSuccess() = updateS3DistCpActivityFields(
-    s3DistCpActivityFields.copy(deleteOnSuccess = true)
+    s3DistCpActivityFields.copy(deleteOnSuccess = HBoolean.True)
   )
 
   def disableMultipartUpload = s3DistCpActivityFields.disableMultipartUpload
   def withoutMultipartUpload() = updateS3DistCpActivityFields(
-    s3DistCpActivityFields.copy(disableMultipartUpload = true)
+    s3DistCpActivityFields.copy(disableMultipartUpload = HBoolean.True)
   )
 
   def chunkSize = s3DistCpActivityFields.chunkSize
@@ -102,7 +102,7 @@ case class S3DistCpActivity[A <: EmrCluster] private (
 
   def numberFiles = s3DistCpActivityFields.numberFiles
   def withNumberFiles() = updateS3DistCpActivityFields(
-    s3DistCpActivityFields.copy(numberFiles = true)
+    s3DistCpActivityFields.copy(numberFiles = HBoolean.True)
   )
 
   def startingIndex = s3DistCpActivityFields.startingIndex
@@ -122,12 +122,12 @@ case class S3DistCpActivity[A <: EmrCluster] private (
 
   def requirePreviousManifest = s3DistCpActivityFields.requirePreviousManifest
   def withRequirePreviousManifest() = updateS3DistCpActivityFields(
-    s3DistCpActivityFields.copy(requirePreviousManifest = true)
+    s3DistCpActivityFields.copy(requirePreviousManifest = HBoolean.True)
   )
 
   def copyFromManifest = s3DistCpActivityFields.copyFromManifest
   def withCopyFromManifest() = updateS3DistCpActivityFields(
-    s3DistCpActivityFields.copy(copyFromManifest = true)
+    s3DistCpActivityFields.copy(copyFromManifest = HBoolean.True)
   )
 
   def endpoint = s3DistCpActivityFields.endpoint
@@ -156,18 +156,18 @@ case class S3DistCpActivity[A <: EmrCluster] private (
     sourcePattern.map(s => Seq[HString]("--srcPattern", s.toString)),
     groupBy.map(s => Seq[HString]("--groupBy", s.toString)),
     targetSize.map(s => Seq[HString]("--targetSize", s.toString)),
-    if (appendLastToFile) Option(Seq[HString]("--appendToLastFile")) else None,
+    appendLastToFile.exists(Seq[HString]("--appendToLastFile")),
     Option(Seq[HString]("--outputCodec", outputCodec.toString)),
-    if (s3ServerSideEncryption) Option(Seq[HString]("--s3ServerSideEncryption")) else None,
-    if (deleteOnSuccess) Option(Seq[HString]("--deleteOnSuccess")) else None,
-    if (disableMultipartUpload) Option(Seq[HString]("--disableMultipartUpload")) else None,
+    s3ServerSideEncryption.exists(Seq[HString]("--s3ServerSideEncryption")),
+    deleteOnSuccess.exists(Seq[HString]("--deleteOnSuccess")),
+    disableMultipartUpload.exists(Seq[HString]("--disableMultipartUpload")),
     chunkSize.map(s => Seq[HString]("--multipartUploadChunkSize", s.toString)),
-    if (numberFiles) Option(Seq[HString]("--numberFiles")) else None,
+    numberFiles.exists(Seq[HString]("--numberFiles")),
     startingIndex.map(s => Seq[HString]("--startingIndex", s.toString)),
     outputManifest.map(s => Seq[HString]("--outputManifest", s)),
     previousManifest.map(s => Seq[HString]("--previousManifest", s)),
-    if (requirePreviousManifest) Option(Seq[HString]("--requirePreviousManifest")) else None,
-    if (copyFromManifest) Option(Seq[HString]("--copyFromManifest")) else None,
+    requirePreviousManifest.exists(Seq[HString]("--requirePreviousManifest")),
+    copyFromManifest.exists(Seq[HString]("--copyFromManifest")),
     endpoint.map(s => Seq[HString]("--endpoint", s)),
     storageClass.map(s => Seq[HString]("--storageClass", s.toString)),
     sourcePrefixesFile.map(s => Seq[HString]("--srcPrefixesFile", s))
@@ -235,18 +235,18 @@ object S3DistCpActivity extends RunnableObject {
         sourcePattern = None,
         groupBy = None,
         targetSize = None,
-        appendLastToFile = false,
+        appendLastToFile = HBoolean.False,
         outputCodec = S3DistCpActivity.OutputCodec.None,
-        s3ServerSideEncryption = false,
-        deleteOnSuccess = false,
-        disableMultipartUpload = false,
+        s3ServerSideEncryption = HBoolean.False,
+        deleteOnSuccess = HBoolean.False,
+        disableMultipartUpload = HBoolean.False,
         chunkSize = None,
-        numberFiles = false,
+        numberFiles = HBoolean.False,
         startingIndex = None,
         outputManifest = None,
         previousManifest = None,
-        requirePreviousManifest = false,
-        copyFromManifest = false,
+        requirePreviousManifest = HBoolean.False,
+        copyFromManifest = HBoolean.False,
         endpoint = None,
         storageClass = None,
         sourcePrefixesFile = None

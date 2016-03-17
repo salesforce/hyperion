@@ -42,8 +42,8 @@ case class SendEmailActivity private (
   def withBcc(bcc: HString) = copy(bcc = this.bcc :+ bcc)
   def withSubject(subject: HString) = copy(subject = Option(subject))
   def withBody(body: HString) = copy(body = Option(body))
-  def withStartTls = copy(starttls = true)
-  def withDebug = copy(debug = true)
+  def withStartTls = copy(starttls = HBoolean.True)
+  def withDebug = copy(debug = HBoolean.True)
 
   private def arguments: Seq[HType] = Seq(
     host.map(h => Seq[HString]("-H", h)),
@@ -56,8 +56,8 @@ case class SendEmailActivity private (
     Option(bcc.flatMap(b => Seq[HString]("--bcc", b))),
     subject.map(s => Seq[HString]("-s", s)),
     body.map(b => Seq[HString]("-B", b)),
-    if (starttls) Option(Seq[HString]("--starttls")) else None,
-    if (debug) Option(Seq[HString]("--debug")) else None
+    starttls.exists(Seq[HString]("--starttls")),
+    debug.exists(Seq[HString]("--debug"))
   ).flatten.flatten
 
   override def scriptArguments = (jarUri.serialize: HString) +: mainClass +: arguments
@@ -83,8 +83,8 @@ object SendEmailActivity extends RunnableObject {
       bcc = Seq.empty,
       subject = None,
       body = None,
-      starttls = false,
-      debug = false
+      starttls = HBoolean.False,
+      debug = HBoolean.False
     )
 
 }

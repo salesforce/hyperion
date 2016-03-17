@@ -24,7 +24,7 @@ case class SetS3AclActivity private (
   def updateActivityFields(fields: ActivityFields[Ec2Resource]) = copy(activityFields = fields)
   def updateShellCommandActivityFields(fields: ShellCommandActivityFields) = copy(shellCommandActivityFields = fields)
 
-  def withRecursive = copy(recursive = true)
+  def withRecursive = copy(recursive = HBoolean.True)
 
   private def arguments: Seq[HType] =
     Seq(
@@ -36,7 +36,7 @@ case class SetS3AclActivity private (
         case Seq() => Seq.empty
         case args => Seq[HString]("--grants", args.mkString(","))
       },
-      if (recursive) Seq[HString]("--recursive") else Seq.empty,
+      recursive.exists("--recursive": HString).toSeq,
       Seq(s3Uri)
     ).flatten
 
@@ -60,7 +60,7 @@ object SetS3AclActivity extends RunnableObject {
         mainClass = "com.krux.hyperion.contrib.activity.s3.SetS3Acl",
         cannedAcls = acls,
         grants = grants,
-        recursive = false,
+        recursive = HBoolean.False,
         s3Uri = s3Uri
       )
   }

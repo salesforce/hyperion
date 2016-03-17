@@ -28,7 +28,7 @@ case class SendSnsMessageActivity private (
 
   def withSubject(subject: HString) = copy(subject = Option(subject))
   def withRegion(region: HString) = copy(region = Option(region))
-  def withStructuredMessage = copy(structuredMessage = true)
+  def withStructuredMessage = copy(structuredMessage = HBoolean.True)
   def withAttribute(key: HString, value: HString, dataType: HString = "String") = {
     val attribute = (key, (dataType, value))
     copy(attributes = attributes + attribute)
@@ -39,7 +39,7 @@ case class SendSnsMessageActivity private (
     region.map(Seq[HString]("--region", _)),
     if (attributes.nonEmpty) Option(Seq[HString]("--attributes", attributes.toSeq.map { case (k, (t, v)) => s"$k:$t=$v"}.mkString(","))) else None,
     subject.map(Seq[HString]("--subject", _)),
-    if (structuredMessage) Option(Seq[HString]("--json")) else None,
+    structuredMessage.exists(Seq[HString]("--json")),
     Option(Seq[HString]("--message", message))
   ).flatten.flatten
 
@@ -59,7 +59,7 @@ object SendSnsMessageActivity extends RunnableObject {
       message = message,
       subject = None,
       region = None,
-      structuredMessage = false,
+      structuredMessage = HBoolean.False,
       attributes = Map.empty
     )
 

@@ -83,9 +83,9 @@ case class RedshiftUnloadActivity private (
       } else {  // the previous char is '#'
         if (curChar == '{') {  // start of an expression
           val (blockBody, rest) = seekEndOfExpr(expTail)
-          prepareScript(rest, false, result += curChar ++= blockBody)
+          prepareScript(rest, hashSpotted = false, result += curChar ++= blockBody)
         } else {  // not start of an expression
-          prepareScript(expTail, false, result ++= escapeChar(curChar))
+          prepareScript(expTail, hashSpotted = false, result ++= escapeChar(curChar))
         }
       }
     }
