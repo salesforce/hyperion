@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.2.3 - 2016-03-28
+### Added
+- [#351](https://github.com/krux/hyperion/issues/351) - DeleteS3PathActivity - add option to check for existence of S3 path
+
 ## 3.2.2 - 2016-03-16
 ### Added
 - [#349](https://github.com/krux/hyperion/issues/349) - SplitMergeFilesActivity needs to pass `temporary-directory`
@@ -277,7 +281,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.0.11 - 2015-08-17
 ### Fixed
-- [#153](https://github.com/krux/hyperion/issues/153) - The create --force action doesnt detect existing pipelines 
+- [#153](https://github.com/krux/hyperion/issues/153) - The create --force action doesnt detect existing pipelines
   if there are more than 25 active pipelines
 
 ## 2.0.10 - 2015-08-14
