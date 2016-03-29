@@ -21,6 +21,16 @@ case class DeleteS3PathActivity private (
   def updateActivityFields(fields: ActivityFields[Ec2Resource]) = copy(activityFields = fields)
   def updateShellCommandActivityFields(fields: ShellCommandActivityFields) = copy(shellCommandActivityFields = fields)
 
+  def ifExists(existsS3Path: HS3Uri) = updateShellCommandActivityFields(
+    shellCommandActivityFields.copy(script =
+        s"""count=`aws s3 ls $existsS3Path | wc -l`;
+            if [[ $$count -gt 0 ]];
+            then
+              aws s3 rm --recursive $s3Path;
+            fi
+        """
+      )
+    )
 }
 
 object DeleteS3PathActivity extends RunnableObject {
