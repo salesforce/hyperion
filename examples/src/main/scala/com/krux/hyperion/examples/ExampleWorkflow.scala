@@ -1,10 +1,11 @@
 package com.krux.hyperion.examples
 
 import com.krux.hyperion.Implicits._
-import com.krux.hyperion.activity.ShellCommandActivity
+import com.krux.hyperion.activity.{GoogleStorageDownloadActivity, ShellCommandActivity}
+import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.Parameter
 import com.krux.hyperion.resource.Ec2Resource
-import com.krux.hyperion.{ DataPipelineDef, HyperionCli, HyperionContext, Schedule }
+import com.krux.hyperion.{DataPipelineDef, HyperionCli, HyperionContext, Schedule}
 import com.typesafe.config.ConfigFactory
 
 object ExampleWorkflow extends DataPipelineDef with HyperionCli {
@@ -29,11 +30,13 @@ object ExampleWorkflow extends DataPipelineDef with HyperionCli {
   val act4 = ShellCommandActivity("run act4")(ec2).named("act4")
   val act5 = ShellCommandActivity("run act5")(ec2).named("act5")
   val act6 = ShellCommandActivity("run act6")(ec2).named("act6")
+  val act7 = GoogleStorageDownloadActivity(s3 / "gsutil.config", "gs://input_location")(ec2).named("act7")
+  val act8 = GoogleStorageDownloadActivity(s3 / "gsutil.config", "gs://input_location")(ec2).named("act8").ifExists
 
   // run act1 first, and then run act2 and act3 at the same time, and then run act4 and act5 the
   // same time, at last run act6
   // Anoternative syntax would be:
   // act1 andThen (act2 and act3) andThen (act4 and act5) andThen act6
-  override def workflow = act1 ~> (act2 + act3) ~> (act4 + act5) ~> act6
+  override def workflow = act1 ~> (act2 + act3) ~> (act4 + act5) ~> act6 ~> act7 ~> act8
 
 }

@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 usage() {
-  echo "usage: gsutil_download.sh s3://bucket/boto.config gs://gsbucket/path/"
+  echo "usage: gsutil_download.sh s3://bucket/boto.config gs://gsbucket/path/ true|false"
   echo
   echo "The contents of the GS path will be downloaded to OUTPUT1_STAGING_DIR (${OUTPUT1_STAGING_DIR})"
   exit 3
@@ -54,6 +54,9 @@ BOTO_CONFIG_SOURCE="$1"
 # This is the destination Google Storage location
 INPUT_GOOGLE_STORAGE="$2"
 
+# This is the flag to ignore if source uri is missing or throw an error.
+IGNORE_IF_SRC_MISSING="${3:-false}"
+
 # Download and extract the tarball.
 # We use --no-check-certificate because Google are naughty with their certificates.
 wget --no-verbose --no-check-certificate ${GSUTIL_URL}
@@ -62,5 +65,12 @@ tar -xzf ${TARBALL}
 # Download the boto configuration
 aws s3 cp ${BOTO_CONFIG_SOURCE} ${BOTO_CONFIG}
 
-./gsutil/gsutil cp ${INPUT_GOOGLE_STORAGE}/* ${OUTPUT1_STAGING_DIR}/
+COMMAND="./gsutil/gsutil -m cp -r ${INPUT_GOOGLE_STORAGE} ${OUTPUT1_STAGING_DIR}/"
 
+if [[ ${IGNORE_IF_SRC_MISSING} == "true" ]]; then
+  if ! ${COMMAND} ; then
+    echo "INFO: no data available to download"
+  fi
+else
+  ${COMMAND}
+fi

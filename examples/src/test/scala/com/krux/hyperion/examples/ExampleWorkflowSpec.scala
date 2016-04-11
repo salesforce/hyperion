@@ -14,7 +14,7 @@ class ExampleWorkflowSpec extends WordSpec {
       val pipelineJson: JValue = ExampleWorkflow
       val objectsField = (pipelineJson \ "objects").children.sortBy(o => (o \ "name").toString)
 
-      assert(objectsField.size === 9)  // 6 activities, 1 default, 1 schedule, 1 ec2 resource
+      assert(objectsField.size === 11)  // 8 activities, 1 default, 1 schedule, 1 ec2 resource
 
       // the first object should be Default
       val defaultObj = objectsField.head
@@ -127,6 +127,32 @@ class ExampleWorkflowSpec extends WordSpec {
         ("dependsOn" -> List("ref" -> act4Id, "ref" -> act5Id).sorted) ~
         ("type" -> "ShellCommandActivity")
       assert(act6ShouldBe === act6)
+
+      val act7 = objectsField(9)
+      val act7Id = (act7 \ "id").values.toString
+      assert(act7Id.startsWith("GoogleStorageDownloadActivity"))
+      val act7ShouldBe =
+        ("id" -> act7Id) ~
+        ("name" -> "act7") ~
+        ("scriptUri" -> "s3://your-bucket/datapipeline/scripts/activities/gsutil-download.sh") ~
+        ("scriptArgument" -> List("s3://gsutil.config", "gs://input_location", "false")) ~
+        ("runsOn" -> ("ref" -> ec2Id)) ~
+        ("dependsOn" -> List("ref" -> act6Id)) ~
+        ("type" -> "ShellCommandActivity")
+      assert(act7ShouldBe === act7)
+
+      val act8 = objectsField(10)
+      val act8Id = (act8 \ "id").values.toString
+      assert(act7Id.startsWith("GoogleStorageDownloadActivity"))
+      val act8ShouldBe =
+        ("id" -> act8Id) ~
+        ("name" -> "act8") ~
+        ("scriptUri" -> "s3://your-bucket/datapipeline/scripts/activities/gsutil-download.sh") ~
+        ("scriptArgument" -> List("s3://gsutil.config", "gs://input_location", "true")) ~
+        ("runsOn" -> ("ref" -> ec2Id)) ~
+        ("dependsOn" -> List("ref" -> act7Id)) ~
+        ("type" -> "ShellCommandActivity")
+      assert(act8ShouldBe === act8)
 
     }
   }

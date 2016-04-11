@@ -2,9 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.2.5 - 2016-04-11
+### Added
+- [#357](https://github.com/krux/hyperion/issues/357) - Add recursive option to GoogleStorageDownloadActivity
+
 ## 3.2.4 - 2016-03-29
 ### Added
-- [#321](https://github.com/krux/hyperion/issues/321) - Add overloaded methods accepting HS3Uri for Activities 
+- [#321](https://github.com/krux/hyperion/issues/321) - Add overloaded methods accepting HS3Uri for Activities
 
 ## 3.2.3 - 2016-03-28
 ### Added
