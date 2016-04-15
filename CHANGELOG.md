@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.2.6 - 2016-04-15
+### Added
+- [#360](https://github.com/krux/hyperion/issues/360) - Unable to create MapReduceCluster with release Label
+
 ## 3.2.5 - 2016-04-11
 ### Added
 - [#357](https://github.com/krux/hyperion/issues/357) - Add recursive option to GoogleStorageDownloadActivity
