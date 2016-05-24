@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.3.2 - 2016-05-23
+##Added
+- [#398](https://github.com/krux/hyperion/issues/397) - Add support for securityGroupIds in Ec2Resource
+
 ## 3.3.1 - 2016-05-20
 ##Added
 - [#388](https://github.com/krux/hyperion/issues/388) - Make hyperion.log.uri optional
