@@ -9,6 +9,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
     - `com.krux.hyperion.HyperionAwsClient` is rewritten and replaced by `com.krux.hyperion.client.AwsClient`
     - `com.krux.hyperion.WorkflowExpression` is moved to `com.krux.hyperion.workflow.WorkflowExpression`
 
+## 3.4.0 - 2016-06-20
+##Added
+- [#410](https://github.com/krux/hyperion/issues/410) - support all redshift unload options for RedshiftUnloadActivity
+
+## 3.3.3 - 2016-05-22
+##Added
+- [#401](https://github.com/krux/hyperion/issues/401) - Handle .compare(_) on parameters without default values
+
 ## 3.3.2 - 2016-05-23
 ##Added
 - [#398](https://github.com/krux/hyperion/issues/397) - Add support for securityGroupIds in Ec2Resource
