@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.0.0-SNAPSHOT
+
+## Added
+- [#344](https://github.com/krux/hyperion/issues/344) - Add support for defining multiple pipelines with shared schedules within one definition with DataPipelineDefGroup
+    - `com.krux.hyperion.HyperionAwsClient` is rewritten and replaced by `com.krux.hyperion.client.AwsClient`
+    - `com.krux.hyperion.WorkflowExpression` is moved to `com.krux.hyperion.workflow.WorkflowExpression`
+
 ## 3.3.2 - 2016-05-23
 ##Added
 - [#398](https://github.com/krux/hyperion/issues/397) - Add support for securityGroupIds in Ec2Resource
