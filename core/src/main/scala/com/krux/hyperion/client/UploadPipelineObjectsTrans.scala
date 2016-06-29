@@ -10,8 +10,11 @@ import org.slf4j.LoggerFactory
 import com.krux.hyperion.DataPipelineDefGroup
 
 
-case class UploadPipelineObjectsTrans(client: DataPipelineClient, pipelineDef: DataPipelineDefGroup)
-  extends Transaction[Option[Unit], AwsClientForId] with Retry {
+case class UploadPipelineObjectsTrans(
+  client: DataPipelineClient,
+  pipelineDef: DataPipelineDefGroup,
+  maxRetry: Int
+) extends Transaction[Option[Unit], AwsClientForId] with Retry {
 
   val log = LoggerFactory.getLogger(getClass)
 
@@ -57,7 +60,7 @@ case class UploadPipelineObjectsTrans(client: DataPipelineClient, pipelineDef: D
     if (putDefinitionResult.getErrored) {
       log.error("Failed to create pipeline")
       log.error("Deleting the just created pipeline")
-      AwsClientForId(client, Set(pipelineId)).deletePipelines()
+      AwsClientForId(client, Set(pipelineId), maxRetry).deletePipelines()
       None
     } else if (putDefinitionResult.getValidationErrors.isEmpty
       && putDefinitionResult.getValidationWarnings.isEmpty) {
@@ -75,7 +78,8 @@ case class UploadPipelineObjectsTrans(client: DataPipelineClient, pipelineDef: D
       .flatMap { case (key, objects) =>
         createAndUploadObjects(DataPipelineDefGroup.pipelineNameForKey(pipelineDef, key), objects)
       }
-      .toSet
+      .toSet,
+    maxRetry
   )
 
   def validate(result: AwsClientForId) = result.pipelineIds.size == keyObjectsMap.size

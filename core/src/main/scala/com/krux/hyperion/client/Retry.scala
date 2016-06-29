@@ -10,7 +10,7 @@ trait Retry {
 
   def log: Logger
 
-  def maxRetry = 3
+  def maxRetry: Int
 
   def retryDelay = 5000  // in miliseconds
 

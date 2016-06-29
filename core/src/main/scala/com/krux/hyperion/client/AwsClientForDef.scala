@@ -13,13 +13,15 @@ case class AwsClientForDef(
   client: DataPipelineClient, pipelineDef: DataPipelineDefGroup
 ) extends AwsClient {
 
+  override lazy val maxRetry = pipelineDef.hc.maxRetry
+
   def createPipelines(force: Boolean): Option[AwsClientForId] = {
     log.info(s"Creating pipeline ${pipelineDef.pipelineName}")
     prepareForCreation(force).flatMap(_.uploadPipelineObjects())
   }
 
   def forName(): Option[AwsClientForName] = Option(
-    AwsClientForName(client, pipelineDef.pipelineName, pipelineDef.nameKeySeparator)
+    AwsClientForName(client, pipelineDef.pipelineName, maxRetry, pipelineDef.nameKeySeparator)
   )
 
   /**
@@ -36,7 +38,7 @@ case class AwsClientForDef(
       .map(DataPipelineDefGroup.pipelineNameForKey(pipelineDef, _))
 
     val existingPipelines =
-      AwsClientForName(client, pipelineMasterName, pipelineDef.nameKeySeparator).pipelineIdNames
+      AwsClientForName(client, pipelineMasterName, maxRetry, pipelineDef.nameKeySeparator).pipelineIdNames
 
     if (existingPipelines.nonEmpty) {
       log.warn("Pipeline group already exists")
@@ -46,7 +48,7 @@ case class AwsClientForDef(
 
       if (force) {
         log.info("Delete the exisiting pipeline")
-        AwsClientForId(client, existingPipelines.keySet).deletePipelines()
+        AwsClientForId(client, existingPipelines.keySet, maxRetry).deletePipelines()
         prepareForCreation(force)
       } else {
         log.error("Use --force to force pipeline creation")
@@ -62,6 +64,6 @@ case class AwsClientForDef(
    * Create and upload the pipeline definitions, if error occurs a full roll back is issued.
    */
   private def uploadPipelineObjects(): Option[AwsClientForId] =
-    UploadPipelineObjectsTrans(client, pipelineDef)().right.toOption
+    UploadPipelineObjectsTrans(client, pipelineDef, maxRetry)().right.toOption
 
 }
