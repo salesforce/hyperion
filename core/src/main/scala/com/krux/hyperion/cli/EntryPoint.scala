@@ -99,6 +99,11 @@ case class EntryPoint(pipeline: DataPipelineDef) {
           |  Creates a DataPipeline by using the AWS SDK.
         """.stripMargin)
       .children(
+        opt[Unit]("no-check").action { (_, c) => c.copy(checkExistence = false) }
+          .text(
+            """
+              |     If specified, the existence of the pipeline will not be checked before creating.
+            """.stripMargin),
         opt[Unit]("force").action { (_, c) => c.copy(force = true) }
           .text(
             """
