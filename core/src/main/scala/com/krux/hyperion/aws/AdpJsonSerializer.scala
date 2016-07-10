@@ -42,7 +42,7 @@ object AdpJsonSerializer {
       case o: AdpParameter => Extraction.decompose(o)
       case o: AdpDataPipelineObject => Extraction.decompose(o)
       case o: AdpDataPipelineDefaultObject =>
-        def jsonAppend(json: JObject, pair: (String, Either[String, AdpRef[AdpDataPipelineObject]])) = {
+        def jsonAppend(json: JObject, pair: (String, Either[String, AdpRef[AdpDataPipelineAbstractObject]])) = {
           pair match {
             case (k, Left(v)) => json ~ (k -> v)
             case (k, Right(v)) => json ~ (k -> (refKey -> v.objId))

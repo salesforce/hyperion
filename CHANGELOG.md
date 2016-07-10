@@ -2,9 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 3.6.2 - 2016-07-10
+## 3.7.1 - 2016-07-11
 ### Added
 - [#430](https://github.com/krux/hyperion/issues/430) - Add a `--no-check` flag to not check for existence of pipeline before creating
+
+## 3.7.0 - 2016-07-10
+### Added
+- [#393](https://github.com/krux/hyperion/issues/393) - Ability to add custom properties to pipeline objects
+- [#379](https://github.com/krux/hyperion/issues/379) - Cannot override DefaultObject
 
 ## 3.6.1 - 2016-07-09
 ### Added
