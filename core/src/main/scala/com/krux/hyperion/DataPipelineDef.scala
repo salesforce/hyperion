@@ -1,15 +1,14 @@
 package com.krux.hyperion
 
 import scala.language.implicitConversions
-
-import com.amazonaws.services.datapipeline.model.{ ParameterObject => AwsParameterObject, PipelineObject => AwsPipelineObject }
+import com.amazonaws.services.datapipeline.model.{ParameterObject => AwsParameterObject, PipelineObject => AwsPipelineObject}
 import com.krux.hyperion.activity.MainClass
-import com.krux.hyperion.aws.{ AdpJsonSerializer, AdpParameterSerializer, AdpPipelineSerializer }
-import com.krux.hyperion.common.{ DefaultObject, PipelineObject, S3UriHelper, HdfsUriHelper }
-import com.krux.hyperion.expression.{ Parameter, ParameterValues }
+import com.krux.hyperion.aws.{AdpJsonSerializer, AdpParameterSerializer, AdpPipelineSerializer}
+import com.krux.hyperion.common._
+import com.krux.hyperion.expression.{Parameter, ParameterValues}
 import com.krux.hyperion.workflow.WorkflowExpressionImplicits
 import org.json4s.JsonDSL._
-import org.json4s.{ JArray, JValue }
+import org.json4s.{JArray, JValue}
 
 /**
  * Base trait of all data pipeline definitions. All data pipelines needs to implement this trait
@@ -58,16 +57,12 @@ object DataPipelineDef {
 
   implicit def dataPipelineDef2Json(pd: DataPipelineDef): JValue =
     ("objects" -> JArray(
-      AdpJsonSerializer(pd.defaultObject.serialize) ::
-      AdpJsonSerializer(pd.schedule.serialize) ::
-      pd.objects.map(_.serialize).toList.sortBy(_.id).map(o => AdpJsonSerializer(o)))) ~
+      (Seq(pd.defaultObject, pd.schedule) ++ pd.objects).map(_.serialize).toList.sortBy(_.id).map(o => AdpJsonSerializer(o)))) ~
     ("parameters" -> JArray(
       pd.parameters.flatMap(_.serialize).map(o => AdpJsonSerializer(o)).toList))
 
   implicit def dataPipelineDef2Aws(pd: DataPipelineDef): Seq[AwsPipelineObject] =
-    AdpPipelineSerializer(pd.defaultObject.serialize) ::
-    AdpPipelineSerializer(pd.schedule.serialize) ::
-    pd.objects.map(o => AdpPipelineSerializer(o.serialize)).toList
+    (Seq(pd.defaultObject, pd.schedule) ++ pd.objects).map(o => AdpPipelineSerializer(o.serialize)).toList
 
   implicit def dataPipelineDef2AwsParameter(pd: DataPipelineDef): Seq[AwsParameterObject] =
     pd.parameters.flatMap(_.serialize).map(o => AdpParameterSerializer(o)).toList
