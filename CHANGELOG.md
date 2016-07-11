@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 3.6.2 - 2016-07-10
+### Added
+- [#430](https://github.com/krux/hyperion/issues/430) - Add a `--no-check` flag to not check for existence of pipeline before creating
+
 ## 3.6.1 - 2016-07-09
 ### Added
 - [#333](https://github.com/krux/hyperion/issues/333) - Allow explicitly converting an Activity to a WorkflowExpression
@@ -37,7 +41,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.3.3 - 2016-05-22
 ### Added
-- [#401](https://github.com/krux/hyperion/issues/401) - Handle .compare(_) on parameters without default values
+- [#401](https://github.com/krux/hyperion/issues/401) - Handle `.compare(_)` on parameters without default values
 
 ## 3.3.2 - 2016-05-23
 ### Added
