@@ -53,7 +53,7 @@ case class AwsClientForName(
       // if using Hyperion for all DataPipeline management, this should never happen
       if (names.size != idNames.size) throw new RuntimeException("Duplicated pipeline name")
 
-      if (idNames.isEmpty) log.debug(s"Pipeline ${pipelineName} does not exist")
+      if (idNames.isEmpty) log.debug(s"Pipeline $pipelineName does not exist")
 
     }
 

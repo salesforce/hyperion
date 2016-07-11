@@ -34,6 +34,7 @@ object AwsClient {
       pipelineDef: DataPipelineDefGroup,
       regionId: Option[String],
       roleArn: Option[String]
-    ): AwsClientForDef = new AwsClientForDef(getClient(regionId, roleArn), pipelineDef)
+    ): AwsClientForDef =
+    new AwsClientForDef(getClient(regionId, roleArn), pipelineDef)
 
 }

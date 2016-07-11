@@ -24,7 +24,7 @@ trait Retry {
         } catch {
           // use startsWith becase the doc says the error code is called "Throttling" but sometimes
           // we see "ThrottlingException" instead
-          case e: AmazonServiceException if e.getErrorCode().startsWith("Throttling") && e.getStatusCode == 400 =>
+          case e: AmazonServiceException if e.getErrorCode.startsWith("Throttling") && e.getStatusCode == 400 =>
             val retryDelay = Random.nextInt(Math.pow(2, (n + 1)).toInt) + 5
             log.warn(s"caught exception: ${e.getMessage}\n Retry (No. $n) after $retryDelay seconds...")
             Thread.sleep(retryDelay * 1000)

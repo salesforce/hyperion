@@ -11,6 +11,23 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - [#356](https://github.com/krux/hyperion/issues/403) - Escape `,` in arguments of Emr and Spark steps
 
+## 3.7.1 - 2016-07-11
+### Added
+- [#430](https://github.com/krux/hyperion/issues/430) - Add a `--no-check` flag to not check for existence of pipeline before creating
+
+## 3.7.0 - 2016-07-10
+### Added
+- [#393](https://github.com/krux/hyperion/issues/393) - Ability to add custom properties to pipeline objects
+- [#379](https://github.com/krux/hyperion/issues/379) - Cannot override DefaultObject
+
+## 3.6.1 - 2016-07-09
+### Added
+- [#333](https://github.com/krux/hyperion/issues/333) - Allow explicitly converting an Activity to a WorkflowExpression
+
+## 3.6.0 - 2016-07-09
+### Fixed
+- [#380](https://github.com/krux/hyperion/issues/380) - Support EMR release label 4.x
+
 ## 3.5.2 - 2016-07-08
 ### Added
 - [#374](https://github.com/krux/hyperion/issues/374) - PgpEncryptActivity to encrypt files using GNU implementation of OpenPGP
@@ -38,7 +55,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 3.3.3 - 2016-05-22
 ### Added
-- [#401](https://github.com/krux/hyperion/issues/401) - Handle .compare(_) on parameters without default values
+- [#401](https://github.com/krux/hyperion/issues/401) - Handle `.compare(_)` on parameters without default values
 
 ## 3.3.2 - 2016-05-23
 ### Added

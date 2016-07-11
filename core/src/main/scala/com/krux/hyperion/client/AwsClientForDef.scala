@@ -15,9 +15,9 @@ case class AwsClientForDef(
 
   override lazy val maxRetry = pipelineDef.hc.maxRetry
 
-  def createPipelines(force: Boolean): Option[AwsClientForId] = {
+  def createPipelines(force: Boolean, checkExistence: Boolean): Option[AwsClientForId] = {
     log.info(s"Creating pipeline ${pipelineDef.pipelineName}")
-    prepareForCreation(force).flatMap(_.uploadPipelineObjects())
+    prepareForCreation(force, checkExistence).flatMap(_.uploadPipelineObjects())
   }
 
   def forName(): Option[AwsClientForName] = Option(
@@ -31,14 +31,17 @@ case class AwsClientForDef(
    * after the exisitng pipeline has been deleted), and None if existing pipelines exist and force
    * is not used.
    */
-  private def prepareForCreation(force: Boolean): Option[AwsClientForDef] = {
+  private def prepareForCreation(force: Boolean, checkExistence: Boolean): Option[AwsClientForDef] = {
 
-    val pipelineMasterName = pipelineDef.pipelineName
-    val pipelineNames = pipelineDef.workflows.keys
+    lazy val pipelineNames = pipelineDef.workflows.keys
       .map(DataPipelineDefGroup.pipelineNameForKey(pipelineDef, _))
 
     val existingPipelines =
-      AwsClientForName(client, pipelineMasterName, maxRetry, pipelineDef.nameKeySeparator).pipelineIdNames
+      if (checkExistence)
+        AwsClientForName(client, pipelineDef.pipelineName, maxRetry, pipelineDef.nameKeySeparator)
+          .pipelineIdNames
+      else
+        Map.empty[String, String]
 
     if (existingPipelines.nonEmpty) {
       log.warn("Pipeline group already exists")
@@ -49,7 +52,7 @@ case class AwsClientForDef(
       if (force) {
         log.info("Delete the exisiting pipeline")
         AwsClientForId(client, existingPipelines.keySet, maxRetry).deletePipelines()
-        prepareForCreation(force)
+        prepareForCreation(force, checkExistence)
       } else {
         log.error("Use --force to force pipeline creation")
         None

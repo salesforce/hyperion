@@ -6,9 +6,9 @@ private[hyperion] case object CreateAction extends AwsAction {
 
   def apply(options: Options, client: AwsClientForDef): Boolean = {
     if (options.activate)
-      client.createPipelines(options.force).flatMap(_.activatePipelines())
+      client.createPipelines(options.force, options.checkExistence).flatMap(_.activatePipelines())
     else
-      client.createPipelines(options.force)
+      client.createPipelines(options.force, options.checkExistence)
   }.isDefined
 
 }
