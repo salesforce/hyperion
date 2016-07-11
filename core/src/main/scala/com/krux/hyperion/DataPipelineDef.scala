@@ -37,7 +37,7 @@ object DataPipelineDef {
   implicit def dataPipelineDef2Json(pd: DataPipelineDef): JValue =
     ("objects" -> JArray(
       (pd.defaultObject +: pd.schedule +: pd.workflow.toPipelineObjects.toList)
-        .map(_.serialize).sortBy(_.id).map(o => AdpJsonSerializer(o)))) ~
+        .map(_.serialize).sortBy(_.id).map(AdpJsonSerializer(_)))) ~
     ("parameters" -> JArray(
       pd.parameters.flatMap(_.serialize).map(o => AdpJsonSerializer(o)).toList))
 

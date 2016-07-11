@@ -13,7 +13,7 @@ private[hyperion] case object GraphAction extends Action {
       val renderer = WorkflowGraphRenderer(pipelineDef, options.removeLastNameSegment,
         options.label, options.includeResources, options.includeDataNodes, options.includeDatabases)
       options.output
-        .map(f => new PrintStream(f + key.map("#" + _).getOrElse("") + ".dot"))
+        .map(f => new PrintStream(f + key.map(pipelineDef.nameKeySeparator + _).getOrElse("") + ".dot"))
         .getOrElse(System.out)
         .println(renderer.render())
     }

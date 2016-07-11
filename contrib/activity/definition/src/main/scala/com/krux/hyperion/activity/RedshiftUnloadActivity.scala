@@ -3,12 +3,12 @@ package com.krux.hyperion.activity
 import scala.annotation.tailrec
 import scala.collection.mutable.StringBuilder
 
-import com.krux.hyperion.adt.{ HS3Uri, HString }
+import com.krux.hyperion.adt.{HS3Uri, HString}
 import com.krux.hyperion.aws.AdpSqlActivity
-import com.krux.hyperion.common.{ BaseFields, PipelineObjectId, Escapable }
+import com.krux.hyperion.common.{BaseFields, PipelineObjectId, Escapable}
 import com.krux.hyperion.database.RedshiftDatabase
-import com.krux.hyperion.expression.{ EncryptedParameter, RunnableObject }
-import com.krux.hyperion.resource.{ Ec2Resource, Resource }
+import com.krux.hyperion.expression.{EncryptedParameter, RunnableObject}
+import com.krux.hyperion.resource.{Ec2Resource, Resource}
 
 /**
  * Unload result of the given sql script from redshift to given s3Path.
@@ -23,7 +23,7 @@ case class RedshiftUnloadActivity private (
   queue: Option[HString],
   accessKeyId: EncryptedParameter[String],
   accessKeySecret: EncryptedParameter[String]
-) extends PipelineActivity[Ec2Resource] with Escapable {
+) extends PipelineActivity[Ec2Resource] {
 
   type Self = RedshiftUnloadActivity
 
@@ -31,7 +31,7 @@ case class RedshiftUnloadActivity private (
   def updateActivityFields(fields: ActivityFields[Ec2Resource]) = copy(activityFields = fields)
 
   def unloadScript = s"""
-    |UNLOAD ('${escape(script.serialize, '\'')}')
+    |UNLOAD ('${Escapable.escape(script.serialize, '\'')}')
     |TO '$s3Path'
     |WITH CREDENTIALS AS
     |'aws_access_key_id=${accessKeyId.ref};aws_secret_access_key=${accessKeySecret.ref}'

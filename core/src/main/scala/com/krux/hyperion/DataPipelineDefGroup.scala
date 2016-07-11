@@ -40,7 +40,7 @@ trait DataPipelineDefGroup
       key,
       DataPipelineDefWrapper(
         hc,
-        DataPipelineDefGroup.pipelineNameForKey(this, key),
+        nameForKey(key),
         schedule,
         () => workflow,
         tags,
@@ -50,11 +50,11 @@ trait DataPipelineDefGroup
   }
 
   /**
-   * @param ignoreNonExist ignores the parameter with id unknown to the definition
+   * @param ignoreMissing ignores the parameter with id unknown to the definition
    */
-  def setParameterValue(id: String, value: String, ignoreNonExist: Boolean = true): Unit = {
+  def setParameterValue(id: String, value: String, ignoreMissing: Boolean = true): Unit = {
     val foundParam = parameters.find(_.id == id)
-    if (ignoreNonExist) foundParam.foreach(_.withValueFromString(value))
+    if (ignoreMissing) foundParam.foreach(_.withValueFromString(value))
     else foundParam.get.withValueFromString(value)
   }
 
@@ -62,19 +62,18 @@ trait DataPipelineDefGroup
     parameters.flatMap(_.serialize).map(o => AdpParameterSerializer(o)).toList
 
   def toAwsPipelineObjects: Map[WorkflowKey, Seq[AwsPipelineObject]] =
-    workflows.mapValues( workflow =>
-      AdpPipelineSerializer(defaultObject.serialize) ::
-      AdpPipelineSerializer(schedule.serialize) ::
-      workflow.toPipelineObjects.map(o => AdpPipelineSerializer(o.serialize)).toList
+    workflows.mapValues(workflow =>
+      (defaultObject +: schedule +: workflow.toPipelineObjects.toList)
+        .map(_.serialize).sortBy(_.id).map(AdpPipelineSerializer(_))
     )
+
+  private[hyperion] def nameForKey(key: WorkflowKey): String =
+    pipelineName + key.map(nameKeySeparator + _).getOrElse("")
 
 }
 
 object DataPipelineDefGroup {
 
   final val DefaultNameKeySeparator = "#"
-
-  final def pipelineNameForKey(pipelineDef: DataPipelineDefGroup, key: WorkflowKey) =
-    pipelineDef.pipelineName + key.map(pipelineDef.nameKeySeparator + _).getOrElse("")
 
 }

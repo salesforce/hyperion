@@ -10,7 +10,8 @@ import com.krux.hyperion.DataPipelineDefGroup
 
 
 case class AwsClientForDef(
-  client: DataPipelineClient, pipelineDef: DataPipelineDefGroup
+  client: DataPipelineClient,
+  pipelineDef: DataPipelineDefGroup
 ) extends AwsClient {
 
   override lazy val maxRetry = pipelineDef.hc.maxRetry
@@ -25,16 +26,15 @@ case class AwsClientForDef(
   )
 
   /**
-   * Check and prepare for the creation of pipleines
+   * Check and prepare for the creation of pipelines
    *
    * @return Some of the this AwsClientForDef if there are no existing pipelines (or use force
-   * after the exisitng pipeline has been deleted), and None if existing pipelines exist and force
+   * after the existing pipeline has been deleted), and None if existing pipelines exist and force
    * is not used.
    */
   private def prepareForCreation(force: Boolean, checkExistence: Boolean): Option[AwsClientForDef] = {
 
-    lazy val pipelineNames = pipelineDef.workflows.keys
-      .map(DataPipelineDefGroup.pipelineNameForKey(pipelineDef, _))
+    lazy val pipelineNames = pipelineDef.workflows.keys.map(pipelineDef.nameForKey)
 
     val existingPipelines =
       if (checkExistence)
@@ -50,7 +50,7 @@ case class AwsClientForDef(
         log.warn(s"Inconsistent data pipeline names: AWS had (${existingPipelines.values.toSet.mkString(", ")}), the pipeline defined (${pipelineNames.mkString(", ")})")
 
       if (force) {
-        log.info("Delete the exisiting pipeline")
+        log.info("Delete the existing pipeline")
         AwsClientForId(client, existingPipelines.keySet, maxRetry).deletePipelines()
         prepareForCreation(force, checkExistence)
       } else {

@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 4.0.0-SNAPSHOT
+## 4.0.0
+
+Please refer to the [wiki](https://github.com/krux/hyperion/wiki/Hyperion-v4.0) page for details of migrating from v3 to v4.
+
 ### Added
 - [#344](https://github.com/krux/hyperion/issues/344) - Add support for defining multiple pipelines with shared schedules within one definition with DataPipelineDefGroup
     - `com.krux.hyperion.HyperionAwsClient` is rewritten and replaced by `com.krux.hyperion.client.AwsClient`

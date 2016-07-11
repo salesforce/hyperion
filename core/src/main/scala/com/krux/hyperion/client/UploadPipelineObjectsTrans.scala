@@ -76,7 +76,7 @@ case class UploadPipelineObjectsTrans(
     client,
     keyObjectsMap
       .flatMap { case (key, objects) =>
-        createAndUploadObjects(DataPipelineDefGroup.pipelineNameForKey(pipelineDef, key), objects)
+        createAndUploadObjects(pipelineDef.nameForKey(key), objects)
       }
       .toSet,
     maxRetry

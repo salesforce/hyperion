@@ -29,7 +29,7 @@ case class AwsClientForId(
 
   def deactivatePipelines(): Option[AwsClientForId] = {
     pipelineIds.foreach { id =>
-      log.info(s"Activating pipeline $id")
+      log.info(s"Deactivating pipeline $id")
 
       client
         .deactivatePipeline(
