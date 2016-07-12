@@ -11,12 +11,13 @@ import scopt.OptionParser
 /**
   * EntryPoint is the main entrypoint for the CLI.
   */
-case class EntryPoint(pipeline: DataPipelineDef) {
+case class EntryPoint(pipeline: DataPipelineDefGroup) {
 
-  def getRecurringSchedule(c: Options, pipeline: DataPipelineDef): RecurringSchedule = c.schedule.getOrElse(pipeline.schedule) match {
-    case s: RecurringSchedule => s
-    case _ => Schedule.cron
-  }
+  def getRecurringSchedule(c: Options, pipeline: DataPipelineDefGroup): RecurringSchedule =
+    c.schedule.getOrElse(pipeline.schedule) match {
+      case s: RecurringSchedule => s
+      case _ => Schedule.cron
+    }
 
   private val parser = new OptionParser[Options](s"hyperion") {
     head("hyperion", s"${BuildInfo.version} (${BuildInfo.scalaVersion})")
@@ -250,14 +251,12 @@ case class EntryPoint(pipeline: DataPipelineDef) {
   }
 
   def run(args: Array[String]): Int = parser.parse(args, Options()).map { cli =>
-    val wrappedPipeline = DataPipelineDefWrapper(pipeline)
+    val wrappedPipeline = DataPipelineDefGroupWrapper(pipeline)
       .withTags(cli.tags)
       .withName(cli.customName.getOrElse(pipeline.pipelineName))
       .withSchedule(cli.schedule.getOrElse(pipeline.schedule))
 
-    for { (id, value) <- cli.params } {
-      wrappedPipeline.setParameterValue(id, value)
-    }
+    for { (id, value) <- cli.params } wrappedPipeline.setParameterValue(id, value)
 
     if (cli.action(cli, wrappedPipeline)) 0 else 3
   }.getOrElse(3)
