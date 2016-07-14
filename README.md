@@ -1,4 +1,4 @@
-# Hyperion
+# Krux Hyperion
 
 [![Gitter](https://badges.gitter.im/krux/hyperion.svg)](https://gitter.im/krux/hyperion)
 [![Stories in Ready](https://badge.waffle.io/krux/hyperion.png?label=ready&title=Ready)](https://waffle.io/krux/hyperion)
@@ -8,7 +8,7 @@
 > Second Great War, Raynor's Raiders made strategic decisions on the
 > Hyperion's bridge -- the battlecruiser's command center.
 
-Library and abstractions of AWS data pipeline.
+Library and abstractions of AWS DataPipeline.
 
 ## Problem Statement
 
@@ -24,12 +24,12 @@ Add the Sonatype.org Releases repo as a resolver in your `build.sbt` or `Build.s
 resolvers += "Sonatype.org Releases" at "https://oss.sonatype.org/content/repositories/releases/"
 ```
 
-Add hyperion as a dependency in your `build.sbt` or `Build.scala` as appropriate.
+Add Krux Hyperion as a dependency in your `build.sbt` or `Build.scala` as appropriate.
 
 ```scala
 libraryDependencies ++= Seq(
   // Other dependencies ...
-  "com.krux" %% "hyperion" % "3.5.1"
+  "com.krux" %% "hyperion" % "4.0.2"
 )
 ```
 
@@ -54,7 +54,7 @@ To generate a JSON file describing the pipeline, ensure you have created the ass
 $ sbt assembly
 ```
 
-Then, run hyperion with the class name (specify the external jar location if it's not in the
+Then, run Krux Hyperion with the class name (specify the external jar location if it's not in the
 classpath):
 ```shell
 $ ./hyperion [-jar your-jar-implementing-pipelines.jar] your.pipelines.ThePipeline generate > ThePipeline.json
@@ -71,7 +71,7 @@ To create a pipeline automatically, ensure you have created the assembly:
 $ sbt assembly
 ```
 
-Then, run hyperion with `create` and the class name:
+Then, run Krux Hyperion with `create` and the class name:
 ```shell
 $ ./hyperion [-jar your-jar-implementing-pipelines.jar] your.pipeline.ThePipeline create
 ```
@@ -93,11 +93,11 @@ The Scaladoc API for this project can be found [here](http://krux.github.io/hype
 
 ## License
 
-Hyperion is licensed under [APL 2.0](LICENSE).
+Krux Hyperion is licensed under [APL 2.0](LICENSE).
 
 ## Note
 
-Due to AWS data pipeline bug, all schemas involve data pipleine needs be available in the default
+Due to AWS DataPipeline bug, all schemas involve data pipleine needs be available in the default
 search_path.
 
 For more details: https://forums.aws.amazon.com/thread.jspa?threadID=166340

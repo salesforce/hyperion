@@ -22,7 +22,7 @@ case class PgpEncryptActivity private(
   shellCommandActivityFields: ShellCommandActivityFields,
   key: HS3Uri,
   markSuccessfulJobs: HBoolean
-) extends PgpActivity with WithS3Input with WithS3Output {
+) extends PgpActivity {
   type Self = PgpEncryptActivity
 
   def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
@@ -40,7 +40,7 @@ case class PgpEncryptActivity private(
 }
 
 object PgpEncryptActivity extends RunnableObject {
-  def apply(key: HS3Uri)(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): PgpActivity =
+  def apply(key: HS3Uri)(runsOn: Resource[Ec2Resource])(implicit hc: HyperionContext): PgpEncryptActivity =
     new PgpEncryptActivity(
       baseFields = BaseFields(PipelineObjectId(PgpEncryptActivity.getClass)),
       activityFields = ActivityFields(runsOn),
