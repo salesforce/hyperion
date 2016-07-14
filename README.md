@@ -21,7 +21,7 @@ This project aims to solve the following problem:
 Add the Sonatype.org Releases repo as a resolver in your `build.sbt` or `Build.scala` as appropriate.
 
 ```scala
-resolvers += "Sonatype.org Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+resolvers += Resolver.sonatypeRepo("releases")
 ```
 
 Add Krux Hyperion as a dependency in your `build.sbt` or `Build.scala` as appropriate.
