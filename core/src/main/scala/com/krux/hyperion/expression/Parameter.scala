@@ -4,9 +4,9 @@ import scala.language.implicitConversions
 
 import org.joda.time.DateTime
 
-import com.krux.hyperion.adt.{ HString, HDouble, HInt, HS3Uri, HDuration, HDateTime, HBoolean }
+import com.krux.hyperion.adt._
 import com.krux.hyperion.aws.AdpParameter
-import com.krux.hyperion.common.S3Uri
+import com.krux.hyperion.common.{HdfsUri, S3Uri}
 
 /**
  * Defines and builds Parameter and returns the specific type instead of the paraent type.
@@ -149,6 +149,15 @@ object Parameter {
   implicit def s3UriParameter2HS3Uri(p: Parameter[S3Uri]): HS3Uri = HS3Uri(
     Right(
       new S3UriExp {
+        def content = p.name
+        def evaluate() = p.evaluate()
+      }
+    )
+  )
+
+  implicit def hdfsUriParameter2HHdfsUri(p: Parameter[HdfsUri]): HHdfsUri = HHdfsUri(
+    Right(
+      new HdfsUriExp {
         def content = p.name
         def evaluate() = p.evaluate()
       }

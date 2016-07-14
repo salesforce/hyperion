@@ -1,6 +1,6 @@
 package com.krux.hyperion.activity
 
-import com.krux.hyperion.adt.{ HBoolean, HInt, HString }
+import com.krux.hyperion.adt._
 import com.krux.hyperion.aws.AdpEmrActivity
 import com.krux.hyperion.common.{ BaseFields, PipelineObjectId, StorageClass, S3Uri, HdfsUri }
 import com.krux.hyperion.datanode.S3DataNode
@@ -55,6 +55,12 @@ case class S3DistCpActivity[A <: EmrCluster] private (
   def withSource(source: S3DataNode) = updateS3DistCpActivityFields(
     s3DistCpActivityFields.copy(source = Option(source.toString: HString))
   )
+  def withSource(source: HHdfsUri) = updateS3DistCpActivityFields(
+    s3DistCpActivityFields.copy(source = Option(source.serialize: HString))
+  )
+  def withSource(source: HS3Uri) = updateS3DistCpActivityFields(
+    s3DistCpActivityFields.copy(source = Option(source.serialize: HString))
+  )
 
   def dest = s3DistCpActivityFields.dest
   def withDestination(dest: HdfsUri) = updateS3DistCpActivityFields(
@@ -65,6 +71,12 @@ case class S3DistCpActivity[A <: EmrCluster] private (
   )
   def withDestination(dest: S3DataNode) = updateS3DistCpActivityFields(
     s3DistCpActivityFields.copy(dest = Option(dest.toString: HString))
+  )
+  def withDestination(dest: HHdfsUri) = updateS3DistCpActivityFields(
+    s3DistCpActivityFields.copy(dest = Option(dest.serialize: HString))
+  )
+  def withDestination(dest: HS3Uri) = updateS3DistCpActivityFields(
+    s3DistCpActivityFields.copy(dest = Option(dest.serialize: HString))
   )
 
   def sourcePattern = s3DistCpActivityFields.sourcePattern
