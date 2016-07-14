@@ -1,6 +1,5 @@
 package com.krux.hyperion.examples
 
-import com.krux.hyperion.DataPipelineDef._
 import org.json4s._
 import org.json4s.jackson.JsonMethods._
 import org.json4s.JsonDSL._
@@ -11,7 +10,7 @@ class ExampleWorkflowSpec extends WordSpec {
   "ExampleWorkflow" should {
 
     "produce correct pipeline JSON" in {
-      val pipelineJson: JValue = ExampleWorkflow
+      val pipelineJson = ExampleWorkflow.toJson
       val objectsField = (pipelineJson \ "objects").children.sortBy(o => (o \ "name").toString)
 
       assert(objectsField.size === 11)  // 8 activities, 1 default, 1 schedule, 1 ec2 resource

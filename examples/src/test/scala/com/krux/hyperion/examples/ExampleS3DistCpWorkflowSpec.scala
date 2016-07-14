@@ -3,7 +3,6 @@ package com.krux.hyperion.examples
 import org.scalatest.WordSpec
 import org.json4s.JsonDSL._
 import org.json4s._
-import com.krux.hyperion.DataPipelineDef._
 
 class ExampleS3DistCpWorkflowSpec extends WordSpec {
 
@@ -11,7 +10,7 @@ class ExampleS3DistCpWorkflowSpec extends WordSpec {
 
     "produce correct pipeline JSON" in {
 
-      val pipelineJson: JValue = ExampleS3DistCpWorkflow
+      val pipelineJson = ExampleS3DistCpWorkflow.toJson
       val objectsField = pipelineJson.children.head.children.sortBy(o => (o \ "name").toString)
 
       // have the correct number of objects

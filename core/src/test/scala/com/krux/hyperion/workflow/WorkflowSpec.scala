@@ -1,7 +1,6 @@
 package com.krux.hyperion.workflow
 
 import com.krux.hyperion.DataPipelineDef
-import com.krux.hyperion.DataPipelineDef._
 import com.krux.hyperion.Schedule.onceAtActivation
 import com.krux.hyperion.activity.Script.string2Script
 import com.krux.hyperion.activity.ShellCommandActivity
@@ -16,6 +15,6 @@ class WorkflowSpec extends FlatSpec {
       override def workflow = ShellCommandActivity("hello world")(WorkerGroup("foo"))
     }
 
-    noException should be thrownBy dataPipelineDef2Json(NoConfigWorkflow)
+    noException should be thrownBy NoConfigWorkflow.toJson
   }
 }
