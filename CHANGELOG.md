@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.0.1
+### Added
+- [#434](https://github.com/krux/hyperion/issues/434) - Allow S3DistCpActivity to receive Parameters.
+
 ## 4.0.0
 
 Please refer to the [wiki](https://github.com/krux/hyperion/wiki/Hyperion-v4.0) page for details of migrating from v3 to v4.

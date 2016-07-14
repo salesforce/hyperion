@@ -67,7 +67,7 @@ class ExampleS3DistCpWorkflowSpec extends WordSpec {
         ("id" -> s3DistCpActivityyId) ~
         ("name" -> "s3DistCpActivity") ~
         ("runsOn" -> ("ref" -> mapReduceClusterId)) ~
-        ("step" -> List("command-runner.jar,s3-dist-cp,--src,s3://the-source,--dest,hdfs:///the-target,--outputCodec,gz")) ~
+        ("step" -> List("command-runner.jar,s3-dist-cp,--src,s3://the-source,--dest,#{my_HdfsLocation},--outputCodec,gz")) ~
         ("type" -> "EmrActivity")
       assert(s3DistCpActivity === filterActivityShouldBe)
 

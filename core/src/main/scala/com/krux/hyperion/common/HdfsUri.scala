@@ -33,5 +33,5 @@ object HdfsUri extends HdfsUriHelper {
   }
 
   implicit def string2HdfsUri(hdfsPath: String): HdfsUri = HdfsUri(hdfsPath)
-
 }
+
