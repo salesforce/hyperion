@@ -16,7 +16,7 @@ case class WorkflowGraphRenderer(
   includeDatabases: Boolean
 ) {
 
-  private lazy val pipelineObjects: Seq[PipelineObject] = pipeline
+  private lazy val pipelineObjects: Iterable[PipelineObject] = pipeline.toAwsPipelineObjects.values.flatten
 
   private lazy val idToTypeMap: Map[String, String] = pipelineObjects.flatMap { obj =>
     obj.getFields.asScala.find(_.getKey == "type").map(f => obj.getId -> f.getStringValue)

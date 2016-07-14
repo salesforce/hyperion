@@ -1,13 +1,15 @@
 package com.krux.hyperion
 
-import com.amazonaws.services.datapipeline.model.{ ParameterObject => AwsParameterObject,
-  PipelineObject => AwsPipelineObject }
+import com.amazonaws.services.datapipeline.model.{ParameterObject => AwsParameterObject, PipelineObject => AwsPipelineObject}
+import org.json4s.JValue
+import org.json4s.JsonAST.JArray
+import org.json4s.JsonDSL._
 
 import com.krux.hyperion.activity.MainClass
-import com.krux.hyperion.aws.{ AdpParameterSerializer, AdpPipelineSerializer }
-import com.krux.hyperion.common.{ DefaultObject, S3UriHelper, HdfsUriHelper }
-import com.krux.hyperion.expression.{ ParameterValues, Parameter }
-import com.krux.hyperion.workflow.{ WorkflowExpression, WorkflowExpressionImplicits }
+import com.krux.hyperion.aws.{AdpJsonSerializer, AdpParameterSerializer, AdpPipelineSerializer}
+import com.krux.hyperion.common.{DefaultObject, HdfsUriHelper, PipelineObject, S3UriHelper}
+import com.krux.hyperion.expression.{Parameter, ParameterValues}
+import com.krux.hyperion.workflow.{WorkflowExpression, WorkflowExpressionImplicits}
 
 
 trait DataPipelineDefGroup
@@ -35,20 +37,6 @@ trait DataPipelineDefGroup
 
   def workflows: Map[WorkflowKey, WorkflowExpression]
 
-  def ungroup(): Map[WorkflowKey, DataPipelineDef] = workflows.map { case (key, workflow) =>
-    (
-      key,
-      DataPipelineDefWrapper(
-        hc,
-        nameForKey(key),
-        schedule,
-        () => workflow,
-        tags,
-        parameters
-      )
-    )
-  }
-
   /**
    * @param ignoreMissing ignores the parameter with id unknown to the definition
    */
@@ -57,15 +45,6 @@ trait DataPipelineDefGroup
     if (ignoreMissing) foundParam.foreach(_.withValueFromString(value))
     else foundParam.get.withValueFromString(value)
   }
-
-  def toAwsParameters: Seq[AwsParameterObject] =
-    parameters.flatMap(_.serialize).map(o => AdpParameterSerializer(o)).toList
-
-  def toAwsPipelineObjects: Map[WorkflowKey, Seq[AwsPipelineObject]] =
-    workflows.mapValues(workflow =>
-      (defaultObject +: schedule +: workflow.toPipelineObjects.toList)
-        .map(_.serialize).sortBy(_.id).map(AdpPipelineSerializer(_))
-    )
 
   private[hyperion] def nameForKey(key: WorkflowKey): String =
     pipelineName + key.map(nameKeySeparator + _).getOrElse("")
@@ -76,4 +55,35 @@ object DataPipelineDefGroup {
 
   final val DefaultNameKeySeparator = "#"
 
+  implicit class DataPipelineDefGroupOps(dpdg: DataPipelineDefGroup) {
+    def ungroup(): Map[WorkflowKey, DataPipelineDef] = dpdg.workflows.map { case (key, workflow) =>
+      (
+        key,
+        DataPipelineDefWrapper(
+          dpdg.hc,
+          dpdg.nameForKey(key),
+          dpdg.schedule,
+          () => workflow,
+          dpdg.tags,
+          dpdg.parameters
+        )
+      )
+    }
+
+    def objects: Map[WorkflowKey, Iterable[PipelineObject]] =
+      dpdg.workflows.mapValues(workflow =>
+        dpdg.defaultObject +: dpdg.defaultObject.objects ++: workflow.toPipelineObjects.toList
+      )
+
+    def toAwsParameters: Seq[AwsParameterObject] =
+      dpdg.parameters.flatMap(_.serialize).map(o => AdpParameterSerializer(o)).toList
+
+    def toAwsPipelineObjects: Map[WorkflowKey, Seq[AwsPipelineObject]] =
+      objects.mapValues(_.map(_.serialize).toList.sortBy(_.id).map(AdpPipelineSerializer(_)))
+
+    def toJson: JValue =
+      ("objects" -> JArray(objects.values.flatten.map(_.serialize).toList.sortBy(_.id).map(AdpJsonSerializer(_)))) ~
+      ("parameters" -> JArray(dpdg.parameters.flatMap(_.serialize).map(o => AdpJsonSerializer(o)).toList))
+
+  }
 }

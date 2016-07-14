@@ -5,16 +5,13 @@ import org.json4s.jackson.JsonMethods._
 import org.json4s.JsonDSL._
 import org.json4s._
 
-import com.krux.hyperion.DataPipelineDef._
-
-
 class ExampleRedshiftLoadSpec extends WordSpec {
 
   "ExampleRedshiftLoad" should {
 
     "produce correct pipeline JSON" in {
 
-      val pipelineJson: JValue = ExampleRedshiftLoad
+      val pipelineJson = ExampleRedshiftLoad.toJson
       val objectsField = pipelineJson.children(0).children.sortBy(o => (o \ "name").toString)
 
       // have the correct number of objects

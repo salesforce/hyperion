@@ -31,24 +31,28 @@ trait DefaultObject extends PipelineObject {
   def withProperty(key: String, value: HType): Self = updateDefaultObjectFields(defaultObjectFields.copy(properties = defaultObjectFields.properties.updated(key, Left(value))))
   def withProperty(key: String, value: PipelineObject): Self = updateDefaultObjectFields(defaultObjectFields.copy(properties = defaultObjectFields.properties.updated(key, Right(value))))
 
-  val objects: Iterable[PipelineObject] = None
+  def objects: Iterable[PipelineObject] = defaultObjectFields.schedule match {
+    case s: OnDemandSchedule => None
+
+    case s => Option(s)
+  }
 
   lazy val serialize = new AdpDataPipelineDefaultObject {
+    val scheduleProps: Map[String, Either[HType, PipelineObject]] = defaultObjectFields.schedule match {
+      case s: OnDemandSchedule => Map(
+        "scheduleType" -> Left(s.scheduleType.serialize)
+      )
+
+      case s => Map(
+        "schedule" -> Right(s),
+        "scheduleType" -> Left(s.scheduleType.serialize)
+      )
+    }
+
     val fields: Map[String, Either[String, AdpRef[AdpDataPipelineAbstractObject]]] = (defaultObjectFields.properties ++ scheduleProps).mapValues {
       case Right(p) => Right(p.ref)
       case Left(s) => Left(s.serialize)
     }
-  }
-
-  val scheduleProps: Map[String, Either[HType, PipelineObject]] = defaultObjectFields.schedule match {
-    case s: OnDemandSchedule => Map(
-      "scheduleType" -> Left(s.scheduleType.serialize)
-    )
-
-    case s => Map(
-      "schedule" -> Right(s),
-      "scheduleType" -> Left(s.scheduleType.serialize)
-    )
   }
 
   def ref: AdpRef[AdpDataPipelineDefaultObject] = AdpRef(serialize)

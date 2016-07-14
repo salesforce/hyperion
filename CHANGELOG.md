@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.0.3 - 2016-07-14
+### Fixed
+- [#439](https://github.com/krux/hyperion/issues/439) - Schedule.ondemand results in pipeline creation failure
+
 ## 4.0.2 - 2016-07-14
 ### Fixed
 - [#436](https://github.com/krux/hyperion/issues/436) - PgpActivity should expose withInput, withOutput and markSuccessful

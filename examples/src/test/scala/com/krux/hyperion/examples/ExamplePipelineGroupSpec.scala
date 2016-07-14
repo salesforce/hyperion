@@ -30,7 +30,7 @@ class ExamplePipelineGroupSpec extends WordSpec {
 
     "Project the correct pipeline jsons" in pipelines.values.foreach { pipeline =>
 
-      val pipelineJson: JValue = pipeline
+      val pipelineJson = pipeline.toJson
 
       val objectsField = pipelineJson.children(0).children.sortBy(o => (o \ "name").toString)
 

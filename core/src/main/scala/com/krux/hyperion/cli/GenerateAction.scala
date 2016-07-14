@@ -15,7 +15,7 @@ private[hyperion] case object GenerateAction extends Action {
       val outputStream = options.output
         .map(o => new PrintStream(o + key.map(pipelineDef.nameKeySeparator + _).getOrElse("")))
         .getOrElse(System.out)
-      outputStream.println(pretty(render(pipelineDef)))
+      outputStream.println(pretty(render(pipelineDef.toJson)))
     }
 
     true

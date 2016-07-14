@@ -5,7 +5,7 @@ import org.json4s.JsonDSL._
 import com.github.nscala_time.time.Imports._
 
 /**
- * Serializes a aws data pipeline object to JSON
+ * Serializes an AWS DataPipeline object to JSON
  */
 object AdpJsonSerializer {
 
