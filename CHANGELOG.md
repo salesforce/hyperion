@@ -2,9 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.2.0 - 2016-08-05
+### Added
+- [#289](https://github.com/krux/hyperion/issues/289) - Allow JarActivity to have environment variables and additional classpath JARs
+
 ## 4.1.0 - 2016-08-04
 ### Changed
- - [#443](https://github.com/krux/hyperion/issues/443) - Allow HiveActivity to accept multiple input and output parameters
+- [#443](https://github.com/krux/hyperion/issues/443) - Allow HiveActivity to accept multiple input and output parameters
 
 ## 4.0.3 - 2016-07-14
 ### Fixed
