@@ -191,7 +191,7 @@ trait EmrCluster extends ResourceObject {
 object EmrCluster {
 
   def defaultEmrClusterFields(hc: HyperionContext) = EmrClusterFields(
-    amiVersion = hc.emrAmiVersion,
+    amiVersion = if (hc.emrReleaseLabel.nonEmpty) None else hc.emrAmiVersion,
     standardBootstrapAction = hc.emrEnvironmentUri.map(env => s"${hc.scriptUri}deploy-hyperion-emr-env.sh,$env": HString).toList,
     masterInstanceType = Option(hc.emrInstanceType: HString),
     coreInstanceCount = 2,
