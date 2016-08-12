@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.3.3 - 2016-08-11
+### Fixed
+- [#455](https://github.com/krux/hyperion/issues/455) - Use emrManaged*SecurityGroupId instead of *SecurityGroupId
+
 ## 4.3.2 - 2016-08-11
 ### Fixed
 - [#452](https://github.com/krux/hyperion/issues/452) - EMR cluster when using configuration to specify release label, the ami field is not overriden
