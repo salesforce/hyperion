@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 4.4.1 - 2016-08-30
+### Fixed
+- [#461](https://github.com/krux/hyperion/issues/461) - Fixed GPG encrypt and decrypt on first run
+
 ## 4.4.0 - 2016-08-12
 ### Added
 - [#457](https://github.com/krux/hyperion/issues/457) - Add support for "APPEND" insert mode to redshift copy activity
