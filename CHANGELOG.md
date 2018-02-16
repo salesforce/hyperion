@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - [#521](https://github.com/krux/hyperion/issues/521) - Upate AWS SDK dependency to 1.11.238 and deprecate support for AWS_SECURITY_TOKEN
 
+## 4.14.3 - 2018-02-09
+### Fixed
+- [#527](https://github.com/krux/hyperion/issues/527) - Updated all serialize calls on pipeline objects to lazy val to fix an issue that very deep dependencies will cause slow serialization
+
 ## 4.14.2 - 2018-02-09
 ### Fixed
 - [#524](https://github.com/krux/hyperion/issues/524) - Updated sbt major version and Scala patch version
