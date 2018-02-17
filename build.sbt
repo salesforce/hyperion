@@ -33,43 +33,32 @@ lazy val publishSettings = Seq(
   pomIncludeRepository := { _ => false },
   pgpSecretRing := file("secring.asc"),
   pgpPublicRing := file("pubring.asc"),
+  licenses := Seq("Apache-2.0" -> url("http://opensource.org/licenses/Apache-2.0")),
+  homepage := Some(url("https://github.com/krux/hyperion")),
+  scmInfo := Some(
+    ScmInfo(
+      url("https://github.com/krux/hyperion"),
+      "scm:git:git@github.com:krux/hyperion.git"
+    )
+  ),
+  developers := List(
+    Developer(id = "realstraw", name = "Kexin Xie", email = "kexin.xie@salesforce.com", url = url("http://github.com/realstraw")),
+    Developer(id = "sethyates", name = "Seth Yates", email = "syates@salesforce.com", url = url("http://github.com/sethyates"))
+  ),
   publishTo := {
     if (isSnapshot.value)
       Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
     else
       Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
-  },
-  pomExtra := (
-    <url>https://github.com/krux/hyperion</url>
-    <scm>
-       <url>git@github.com:krux/hyperion.git</url>
-       <connection>scm:git:git@github.com:krux/hyperion.git</connection>
-    </scm>
-    <licenses>
-      <license>
-        <name>Apache-2.0</name>
-        <url>http://opensource.org/licenses/Apache-2.0</url>
-      </license>
-    </licenses>
-    <developers>
-       <developer>
-         <id>realstraw</id>
-         <name>Kexin Xie</name>
-         <url>http://github.com/realstraw</url>
-       </developer>
-       <developer>
-         <id>sethyates</id>
-         <name>Seth Yates</name>
-         <url>http://github.com/sethyates</url>
-       </developer>
-    </developers>
-  )
+  }
 )
 
 lazy val noPublishSettings = Seq(
   publishArtifact := false,
   publish := {},
-  publishLocal := {}
+  publishLocal := {},
+  // to fix the problem of "Repository for publishing is not specified."
+  publishTo := Some(Resolver.file("Unused transient repository", file("target/unusedrepo")))
 )
 
 lazy val commonSettings = Seq(
