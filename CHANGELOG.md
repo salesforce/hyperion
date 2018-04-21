@@ -31,6 +31,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Relaxes spark related activities to be able to run on any EMR cluster, the compiler will not check the validity, and leave this to the developer
 - Added default `hyperion.emr.release_label` to emr-5.12.0
 
+## 4.14.4 - 2018-04-19
+### Fixed
+- [#540](https://github.com/krux/hyperion/issues/540) - Fixed a bug that the script that handling spark options does not work well with spaces
+
 ## 4.14.3 - 2018-02-09
 ### Fixed
 - [#527](https://github.com/krux/hyperion/issues/527) - Updated all serialize calls on pipeline objects to lazy val to fix an issue that very deep dependencies will cause slow serialization
