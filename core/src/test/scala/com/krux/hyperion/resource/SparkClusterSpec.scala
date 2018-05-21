@@ -9,7 +9,7 @@ import org.scalatest.Matchers._
 class SparkClusterSpec extends FlatSpec {
   implicit val hc = new HyperionContext(ConfigFactory.load("example"))
 
-  it should "be handle old spark versions" in {
+  it should "handle old spark versions" in {
     val cluster = SparkCluster()
     cluster.standardBootstrapAction.length shouldBe 2
     cluster.applications.length shouldBe 0

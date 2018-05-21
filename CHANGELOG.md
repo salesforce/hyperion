@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.0.1 - 2018-05-21
+
+## Fixed
+- (doc) Updated test case message and update Scala 2.12.4 to 2.12.6
+
 ## 5.0.0 - 2018-05-21
 
 ## Added
