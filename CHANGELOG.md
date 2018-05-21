@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 5.0.0-SNAPSHOT
+## 5.0.0 - 2018-05-21
 
 ## Added
 - [#460](https://github.com/krux/hyperion/issues/460) - Add scheduler delay feature to DataPipelinePipelineDefGroup
