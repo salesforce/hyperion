@@ -5,11 +5,11 @@ import org.json4s.JsonDSL._
 import org.scalatest.WordSpec
 
 
-class ExamplePipelineGroupSpec extends WordSpec {
+class ExamplePipelineGroupWithSchedulerDelaySpec extends WordSpec {
 
   "ExamplePiplineGroup" should {
 
-    val pipelines = ExamplePipelineGroup.ungroup()
+    val pipelines = ExamplePipelineGroupWithSchedulerDelay.ungroup()
 
     "Split into correct number of pipelines" in {
 
@@ -19,9 +19,9 @@ class ExamplePipelineGroupSpec extends WordSpec {
 
       assert(
         pipelines.values.map(_.pipelineName).toSet === Set(
-          "com.krux.hyperion.examples.ExamplePipelineGroup#1",
-          "com.krux.hyperion.examples.ExamplePipelineGroup#2",
-          "com.krux.hyperion.examples.ExamplePipelineGroup#3"
+          "com.krux.hyperion.examples.ExamplePipelineGroupWithSchedulerDelay#1",
+          "com.krux.hyperion.examples.ExamplePipelineGroupWithSchedulerDelay#2",
+          "com.krux.hyperion.examples.ExamplePipelineGroupWithSchedulerDelay#3"
         )
       )
 
@@ -64,18 +64,17 @@ class ExamplePipelineGroupSpec extends WordSpec {
         ("initTimeout" -> "1 hours")
       assert(ec2 === ec2ShouldBe)
 
-      val pipelineSchedule = objectsField(2)
-      val pipelineScheduleShouldBe =
-        ("id" -> "PipelineSchedule") ~
-        ("name" -> "PipelineSchedule") ~
-        ("period" -> "1 days") ~
-        ("occurrences" -> "1") ~
-        ("startAt" -> "FIRST_ACTIVATION_DATE_TIME") ~
-        ("type" -> "Schedule")
-      assert(pipelineSchedule === pipelineScheduleShouldBe)
-
       pipeline.pipelineName match {
-        case "com.krux.hyperion.examples.ExamplePipelineGroup#1" =>
+        case "com.krux.hyperion.examples.ExamplePipelineGroupWithSchedulerDelay#1" =>
+
+          val pipelineSchedule = objectsField(2)
+          val pipelineScheduleShouldBe =
+            ("id" -> "PipelineSchedule") ~
+            ("name" -> "PipelineSchedule") ~
+            ("period" -> "1 days") ~
+            ("startDateTime" -> "2018-03-21T01:00:00") ~
+            ("type" -> "Schedule")
+          assert(pipelineSchedule === pipelineScheduleShouldBe)
 
           assert(objectsField.size === 8)
 
@@ -134,7 +133,16 @@ class ExamplePipelineGroupSpec extends WordSpec {
             ("type" -> "ShellCommandActivity")
           assert(act4 === act4ShouldBe)
 
-        case "com.krux.hyperion.examples.ExamplePipelineGroup#2" =>
+        case "com.krux.hyperion.examples.ExamplePipelineGroupWithSchedulerDelay#2" =>
+
+          val pipelineSchedule = objectsField(2)
+          val pipelineScheduleShouldBe =
+            ("id" -> "PipelineSchedule") ~
+            ("name" -> "PipelineSchedule") ~
+            ("period" -> "1 days") ~
+            ("startDateTime" -> "2018-03-21T02:00:00") ~
+            ("type" -> "Schedule")
+          assert(pipelineSchedule === pipelineScheduleShouldBe)
 
           assert(objectsField.size === 4)
 
@@ -149,7 +157,16 @@ class ExamplePipelineGroupSpec extends WordSpec {
             ("type" -> "ShellCommandActivity")
           assert(act5 === act5ShouldBe)
 
-        case "com.krux.hyperion.examples.ExamplePipelineGroup#3" =>
+        case "com.krux.hyperion.examples.ExamplePipelineGroupWithSchedulerDelay#3" =>
+
+          val pipelineSchedule = objectsField(2)
+          val pipelineScheduleShouldBe =
+            ("id" -> "PipelineSchedule") ~
+            ("name" -> "PipelineSchedule") ~
+            ("period" -> "1 days") ~
+            ("startDateTime" -> "2018-03-21T03:00:00") ~
+            ("type" -> "Schedule")
+          assert(pipelineSchedule === pipelineScheduleShouldBe)
 
           assert(objectsField.size === 7)
 

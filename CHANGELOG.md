@@ -2,6 +2,35 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.0.0 - 2018-05-21
+
+## Added
+- [#460](https://github.com/krux/hyperion/issues/460) - Add scheduler delay feature to DataPipelinePipelineDefGroup
+
+### Changed
+- [#521](https://github.com/krux/hyperion/issues/521) - Upate AWS SDK dependency to 1.11.238 and deprecate support for AWS_SECURITY_TOKEN
+- [#503](https://github.com/krux/hyperion/issues/503) - Updated dependencies including scopt, json4s, etc.
+- [#515](https://github.com/krux/hyperion/issues/515) - Remove support for Scala 2.10 and Java 7. Add Scala 2.12 and start build with Java 8
+- [#532](https://github.com/krux/hyperion/issues/532) - Update commons-io dependency to 2.6
+- [#465](https://github.com/krux/hyperion/issues/465) - Update default EC2 AMI to HVM-IS 2017.09.1
+
+### EMR Refactor
+- Introduce a BaseEmrCluster which is the base trait of EmrCluster and LegacyEmrCluster
+    - LegacyEmrCluster is for pre emr release label 4.x.x
+    - EmrCluster is for post release label 4.x.x
+    - MapReduceCluster has been removed and replaced by the above two different clusters
+- Introduce BaseEmrStep
+    - EmrStep is a generic step that can construct any script runner or command runner based activities
+    - HadoopStep is a step that runs hadoop based jobs where one can optionally specify main class in additional to arguments
+    - SparkStep is reworked to better support command-runner (Use `SparkStep.legacyScriptRunner` to run spark steps on pre emr-4.0.0 EMR clusters)
+- EmrActivity is no longer a trait but a case class it should be used for all EMR based activities including Spark where the formal SparkActivity now is simply EmrActivity with spark steps.
+- SparkActivity is removed
+- SparkTaskActivity has been reworked to closer follow the new SparkStep approach. Use `SparkTaskActivity.legacyScriptRunner` to run spark activities on pre emr-4.0.0 EMR clusters.
+- `SparkCommandRunner` trait is removed
+- `EmrConfiguration` now always require a `classification`, empty `classification` is not marked as deprecated
+- Relaxes spark related activities to be able to run on any EMR cluster, the compiler will not check the validity, and leave this to the developer
+- Added default `hyperion.emr.release_label` to emr-5.12.0
+
 ## 4.14.4 - 2018-04-19
 ### Fixed
 - [#540](https://github.com/krux/hyperion/issues/540) - Fixed a bug that the script that handling spark options does not work well with spaces

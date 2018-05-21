@@ -1,13 +1,15 @@
 package com.krux.hyperion.examples
 
-import com.krux.hyperion.common.{HdfsUri, S3Uri}
-import com.krux.hyperion.expression.Parameter
-import com.krux.hyperion.{DataPipelineDef, HyperionCli, HyperionContext, Schedule}
 import com.typesafe.config.ConfigFactory
-import com.krux.hyperion.Implicits._
+
 import com.krux.hyperion.activity.S3DistCpActivity
 import com.krux.hyperion.activity.S3DistCpActivity.OutputCodec
-import com.krux.hyperion.resource.MapReduceCluster
+import com.krux.hyperion.common.HdfsUri
+import com.krux.hyperion.expression.Parameter
+import com.krux.hyperion.Implicits._
+import com.krux.hyperion.resource.EmrCluster
+import com.krux.hyperion.{DataPipelineDef, HyperionCli, HyperionContext, Schedule}
+
 
 object ExampleS3DistCpWorkflow extends DataPipelineDef with HyperionCli {
 
@@ -31,7 +33,7 @@ object ExampleS3DistCpWorkflow extends DataPipelineDef with HyperionCli {
   override def parameters: Iterable[Parameter[_]] = Seq(target, instanceType, instanceCount, instanceBid)
 
   // Resources
-  val emrCluster = MapReduceCluster()
+  val emrCluster = EmrCluster()
     .withTaskInstanceCount(instanceCount)
     .withTaskInstanceType(instanceType)
     .withReleaseLabel("emr-4.4.0")

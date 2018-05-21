@@ -2,15 +2,17 @@ package com.krux.hyperion.examples
 
 import scala.language.postfixOps
 
-import com.krux.hyperion.Implicits._
+import com.typesafe.config.ConfigFactory
+
 import com.krux.hyperion.action.SnsAlarm
-import com.krux.hyperion.activity.{ SparkActivity, SparkStep, SparkTaskActivity }
+import com.krux.hyperion.activity.{EmrActivity, SparkStep, SparkTaskActivity}
 import com.krux.hyperion.common.S3Uri
 import com.krux.hyperion.datanode.S3DataNode
-import com.krux.hyperion.expression.{ Format, Parameter, RuntimeNode }
-import com.krux.hyperion.resource.SparkCluster
-import com.krux.hyperion.{ DataPipelineDef, HyperionCli, HyperionContext, Schedule }
-import com.typesafe.config.ConfigFactory
+import com.krux.hyperion.expression.{Parameter, RuntimeNode}
+import com.krux.hyperion.Implicits._
+import com.krux.hyperion.resource.{EmrCluster, EmrApplication}
+import com.krux.hyperion.{DataPipelineDef, HyperionCli, HyperionContext, Schedule}
+
 
 object ExampleSpark extends DataPipelineDef with HyperionCli {
 
@@ -42,19 +44,21 @@ object ExampleSpark extends DataPipelineDef with HyperionCli {
     .withRole("DataPipelineDefaultResourceRole")
 
   // Resources
-  val sparkCluster = SparkCluster()
+  val sparkCluster = EmrCluster()
+    .withApplications(EmrApplication.Spark)
     .withTaskInstanceCount(instanceCount)
     .withTaskInstanceType(instanceType)
     .withInitTimeout(5.hours)
 
   // First activity
-  val filterActivity = SparkTaskActivity(jar.toString, "com.krux.hyperion.FilterJob")(sparkCluster)
+  val filterActivity = SparkTaskActivity(jar)(sparkCluster)
+    .withMainClass("com.krux.hyperion.FilterJob")
     .named("filterActivity")
     .onFail(mailAction)
     .withInput(dataNode)
     .withArguments(
       target,
-      Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd")
+      (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd")
     )
 
   // Second activity
@@ -62,19 +66,19 @@ object ExampleSpark extends DataPipelineDef with HyperionCli {
     .withMainClass("com.krux.hyperion.ScoreJob1")
     .withArguments(
       target,
-      Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd"),
+      (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd"),
       "denormalized"
     )
 
   val scoreStep2 = SparkStep(jar)
     .withMainClass("com.krux.hyperion.ScoreJob2")
-    .withArguments(target, Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd"))
+    .withArguments(target, (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd"))
 
   val scoreStep3 = SparkStep(jar)
     .withMainClass("com.krux.hyperion.ScoreJob3")
     .withArguments(
       target,
-      Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd"),
+      (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd"),
       "value1,value2"
     )
 
@@ -82,11 +86,11 @@ object ExampleSpark extends DataPipelineDef with HyperionCli {
     .withMainClass("com.krux.hyperion.ScoreJob4")
     .withArguments(
       target,
-      Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd"),
-      "value1,value2," + Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd")
+      (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd"),
+      "value1,value2," + (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd")
     )
 
-  val scoreActivity = SparkActivity(sparkCluster)
+  val scoreActivity = EmrActivity(sparkCluster)
     .named("scoreActivity")
     .withSteps(scoreStep1, scoreStep2, scoreStep3, scoreStep4)
     .onSuccess(mailAction)

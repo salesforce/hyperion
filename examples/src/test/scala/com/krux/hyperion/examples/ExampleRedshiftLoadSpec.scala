@@ -1,9 +1,9 @@
 package com.krux.hyperion.examples
 
-import org.scalatest.WordSpec
-import org.json4s.jackson.JsonMethods._
-import org.json4s.JsonDSL._
 import org.json4s._
+import org.json4s.JsonDSL._
+import org.scalatest.WordSpec
+
 
 class ExampleRedshiftLoadSpec extends WordSpec {
 
@@ -36,7 +36,7 @@ class ExampleRedshiftLoadSpec extends WordSpec {
         ("id" -> ec2Id) ~
         ("name" -> ec2Id) ~
         ("terminateAfter" -> "8 hours") ~
-        ("imageId" -> "ami-ed6aa980") ~
+        ("imageId" -> "ami-f6795a8c") ~
         ("instanceType" -> "m1.small") ~
         ("region" -> "us-east-1") ~
         ("securityGroups" -> Seq("your-security-group")) ~

@@ -2,15 +2,17 @@ package com.krux.hyperion.activity
 
 import com.krux.hyperion.adt.HString
 import com.krux.hyperion.aws.AdpEmrActivity
-import com.krux.hyperion.expression.RunnableObject
-import com.krux.hyperion.common.{ BaseFields, PipelineObjectId }
+import com.krux.hyperion.common.{BaseFields, PipelineObjectId}
 import com.krux.hyperion.datanode.S3DataNode
-import com.krux.hyperion.resource.{ Resource, EmrCluster }
+import com.krux.hyperion.expression.RunnableObject
+import com.krux.hyperion.resource.{Resource, BaseEmrCluster}
+
 
 /**
  * Runs map reduce steps on an Amazon EMR cluster
  */
-case class MapReduceActivity[A <: EmrCluster] private (
+@deprecated("Use EmrActivity instead", "5.0.0")
+case class MapReduceActivity[A <: BaseEmrCluster] private (
   baseFields: BaseFields,
   activityFields: ActivityFields[A],
   steps: Seq[MapReduceStep],
@@ -18,7 +20,7 @@ case class MapReduceActivity[A <: EmrCluster] private (
   outputs: Seq[S3DataNode],
   preStepCommands: Seq[HString],
   postStepCommands: Seq[HString]
-) extends EmrActivity[A] {
+) extends BaseEmrActivity[A] {
 
   type Self = MapReduceActivity[A]
 
@@ -60,9 +62,10 @@ case class MapReduceActivity[A <: EmrCluster] private (
 
 }
 
+@deprecated("Use EmrActivity instead", "5.0.0")
 object MapReduceActivity extends RunnableObject {
 
-  def apply[A <: EmrCluster](runsOn: Resource[A]): MapReduceActivity[A] = new MapReduceActivity(
+  def apply[A <: BaseEmrCluster](runsOn: Resource[A]): MapReduceActivity[A] = new MapReduceActivity(
     baseFields = BaseFields(PipelineObjectId(MapReduceActivity.getClass)),
     activityFields = ActivityFields(runsOn),
     steps = Seq.empty,

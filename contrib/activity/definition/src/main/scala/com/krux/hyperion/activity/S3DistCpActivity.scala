@@ -7,6 +7,7 @@ import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.RunnableObject
 import com.krux.hyperion.resource._
 
+
 case class S3DistCpActivityFields(
   source: Option[HString],
   dest: Option[HString],
@@ -30,14 +31,14 @@ case class S3DistCpActivityFields(
   sourcePrefixesFile: Option[HString]
 )
 
-case class S3DistCpActivity[A <: EmrCluster] private (
+case class S3DistCpActivity[A <: BaseEmrCluster] private (
   baseFields: BaseFields,
   activityFields: ActivityFields[A],
   s3DistCpActivityFields: S3DistCpActivityFields,
   preStepCommands: Seq[HString],
   postStepCommands: Seq[HString],
   arguments: Seq[HString]
-) extends EmrActivity[A] {
+) extends BaseEmrActivity[A] {
 
   type Self = S3DistCpActivity[A]
 
@@ -195,13 +196,11 @@ case class S3DistCpActivity[A <: EmrCluster] private (
     sourcePrefixesFile.map(s => Seq[HString]("--srcPrefixesFile", s))
   ).flatten.flatten
 
-  private def steps: Seq[MapReduceStep] = Seq(
+  private def steps: Seq[BaseEmrStep] = Seq(
     if (runsOn.asManagedResource.flatMap(_.releaseLabel).nonEmpty)
-      MapReduceStep("command-runner.jar")
-        .withArguments((("s3-dist-cp": HString) +: allArguments): _*)
+      EmrStep.commandRunner("s3-dist-cp").withArguments(allArguments: _*)
     else
-      MapReduceStep("/home/hadoop/lib/emr-s3distcp-1.0.jar")
-        .withArguments(allArguments: _*)
+      HadoopStep("/home/hadoop/lib/emr-s3distcp-1.0.jar").withArguments(allArguments: _*)
   )
 
   lazy val serialize = AdpEmrActivity(
@@ -255,7 +254,7 @@ object S3DistCpActivity extends RunnableObject {
     }
   }
 
-  def apply[A <: EmrCluster](runsOn: Resource[A]): S3DistCpActivity[A] =
+  def apply[A <: BaseEmrCluster](runsOn: Resource[A]): S3DistCpActivity[A] =
     new S3DistCpActivity(
       baseFields = BaseFields(PipelineObjectId(S3DistCpActivity.getClass)),
       activityFields = ActivityFields(runsOn),

@@ -1,12 +1,13 @@
 package com.krux.hyperion.activity
 
+import com.krux.hyperion.adt.{HInt, HString, HS3Uri}
 import com.krux.hyperion.aws._
-import com.krux.hyperion.common.{SparkCommandRunner, Memory, PipelineObjectId, BaseFields}
+import com.krux.hyperion.common.{Memory, PipelineObjectId, BaseFields}
 import com.krux.hyperion.datanode.S3DataNode
 import com.krux.hyperion.expression.RunnableObject
-import com.krux.hyperion.adt.{ HInt, HString, HS3Uri }
 import com.krux.hyperion.HyperionContext
-import com.krux.hyperion.resource.{ SparkCluster, Resource }
+import com.krux.hyperion.resource.{BaseEmrCluster, EmrCluster, LegacyEmrCluster, Resource}
+
 
 /**
  * Runs a Spark job on a cluster. The cluster can be an EMR cluster managed by AWS Data Pipeline
@@ -17,26 +18,28 @@ import com.krux.hyperion.resource.{ SparkCluster, Resource }
  */
 case class SparkTaskActivity private (
   baseFields: BaseFields,
-  activityFields: ActivityFields[SparkCluster],
+  activityFields: ActivityFields[BaseEmrCluster],
   emrTaskActivityFields: EmrTaskActivityFields,
-  scriptRunner: HString,
-  jobRunner: HString,
   jarUri: HString,
-  mainClass: MainClass,
+  sparkJarUri: HString,
+  command: HString,
+  sparkMainClass: Option[MainClass],
   arguments: Seq[HString],
   hadoopQueue: Option[HString],
   inputs: Seq[S3DataNode],
   outputs: Seq[S3DataNode],
   sparkOptions: Seq[HString],
   sparkConfig: Map[HString, HString]
-) extends EmrTaskActivity[SparkCluster] {
+) extends EmrTaskActivity[BaseEmrCluster] {
 
   type Self = SparkTaskActivity
 
   def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
-  def updateActivityFields(fields: ActivityFields[SparkCluster]) = copy(activityFields = fields)
+  def updateActivityFields(fields: ActivityFields[BaseEmrCluster]) = copy(activityFields = fields)
   def updateEmrTaskActivityFields(fields: EmrTaskActivityFields) = copy(emrTaskActivityFields = fields)
 
+  def mainClass = None
+  def withMainClass(mc: MainClass) = copy(sparkMainClass = Option(mc))
   def withArguments(args: HString*) = copy(arguments = arguments ++ args)
   def withHadoopQueue(queue: HString) = copy(hadoopQueue = Option(queue))
   def withInput(input: S3DataNode*) = copy(inputs = inputs ++ input)
@@ -62,9 +65,11 @@ case class SparkTaskActivity private (
   lazy val serialize = new AdpHadoopActivity(
     id = id,
     name = name,
-    jarUri = scriptRunner.serialize,
-    mainClass = None,
-    argument = jobRunner.serialize +: sparkSettings.map(_.serialize) ++: jarUri.serialize +: mainClass.toString +: arguments.map(_.serialize),
+    jarUri = jarUri.serialize,
+    mainClass = mainClass,
+    argument = command.serialize +:
+      sparkSettings.map(_.serialize) ++:
+      sparkJarUri.serialize +: sparkMainClass.map(_.toString) ++: arguments.map(_.serialize),
     hadoopQueue = hadoopQueue.map(_.serialize),
     preActivityTaskConfig = preActivityTaskConfig.map(_.ref),
     postActivityTaskConfig = postActivityTaskConfig.map(_.ref),
@@ -87,19 +92,54 @@ case class SparkTaskActivity private (
 
 }
 
-object SparkTaskActivity extends RunnableObject with SparkCommandRunner {
+object SparkTaskActivity extends RunnableObject {
 
-  def apply(jarUri: HS3Uri, mainClass: MainClass)(runsOn: Resource[SparkCluster])(implicit hc: HyperionContext): SparkTaskActivity =
-    apply(jarUri.serialize, mainClass)(runsOn)
-
-  def apply(jarUri: HString, mainClass: MainClass)(runsOn: Resource[SparkCluster])(implicit hc: HyperionContext): SparkTaskActivity = new SparkTaskActivity(
+  def scriptRunner(jarUri: HS3Uri)(runsOn: Resource[EmrCluster])(implicit hc: HyperionContext) = new SparkTaskActivity(
     baseFields = BaseFields(PipelineObjectId(SparkTaskActivity.getClass)),
     activityFields = ActivityFields(runsOn),
     emrTaskActivityFields = EmrTaskActivityFields(),
-    jobRunner = jobRunner(runsOn),
-    scriptRunner = scriptRunner(runsOn),
-    jarUri = jarUri,
-    mainClass = mainClass,
+    jarUri = EmrScriptRunner.toString,
+    sparkJarUri = jarUri.serialize,
+    command = s"${hc.scriptUri}run-spark-step-release-label.sh",
+    sparkMainClass = None,
+    arguments = Seq.empty,
+    hadoopQueue = None,
+    inputs = Seq.empty,
+    outputs = Seq.empty,
+    sparkOptions = Seq.empty,
+    sparkConfig = Map.empty
+  )
+
+  def apply(jarUri: HS3Uri)(runsOn: Resource[EmrCluster])(implicit hc: HyperionContext) =
+    scriptRunner(jarUri)(runsOn)
+
+  /**
+   * Use this one to deploy spark task actvity on pre emr-4.0.0 clusters
+   */
+  def legacyScriptRunner(jarUri: HS3Uri)(runsOn: Resource[LegacyEmrCluster])(implicit hc: HyperionContext) = new SparkTaskActivity(
+    baseFields = BaseFields(PipelineObjectId(SparkTaskActivity.getClass)),
+    activityFields = ActivityFields(runsOn),
+    emrTaskActivityFields = EmrTaskActivityFields(),
+    jarUri = EmrScriptRunner.toString,
+    sparkJarUri = jarUri.serialize,
+    command = s"${hc.scriptUri}run-spark-step.sh",
+    sparkMainClass = None,
+    arguments = Seq.empty,
+    hadoopQueue = None,
+    inputs = Seq.empty,
+    outputs = Seq.empty,
+    sparkOptions = Seq.empty,
+    sparkConfig = Map.empty
+  )
+
+  def commandRunner(jarUri: HString)(runsOn: Resource[EmrCluster]) = new SparkTaskActivity(
+    baseFields = BaseFields(PipelineObjectId(SparkTaskActivity.getClass)),
+    activityFields = ActivityFields(runsOn),
+    emrTaskActivityFields = EmrTaskActivityFields(),
+    jarUri = EmrCommandRunner,
+    sparkJarUri = jarUri,
+    command = "spark-submit",
+    sparkMainClass = None,
     arguments = Seq.empty,
     hadoopQueue = None,
     inputs = Seq.empty,

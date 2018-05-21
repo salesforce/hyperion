@@ -8,51 +8,46 @@ import com.krux.hyperion.HyperionContext
 
 
 /**
- * Launch a EMR cluster later than release label 4.x.x
+ * Use AMI versions to launch EMR clusters. Use EmrCluster for release label 4.x.x or later
  */
-case class EmrCluster private (
+case class LegacyEmrCluster private(
   baseFields: BaseFields,
   resourceFields: ResourceFields,
   emrClusterFields: EmrClusterFields
 ) extends BaseEmrCluster {
 
-  type Self = EmrCluster
+  type Self = LegacyEmrCluster
 
-  val logger = LoggerFactory.getLogger(EmrCluster.getClass)
+  val logger = LoggerFactory.getLogger(LegacyEmrCluster.getClass)
 
   def updateBaseFields(fields: BaseFields) = copy(baseFields = fields)
   def updateResourceFields(fields: ResourceFields) = copy(resourceFields = fields)
   def updateEmrClusterFields(fields: EmrClusterFields) = copy(emrClusterFields = fields)
 
-  def withApplications(apps: EmrApplication*): Self = updateEmrClusterFields(
-    emrClusterFields.copy(applications = emrClusterFields.applications ++ apps)
-  )
-
-  def withReleaseLabel(label: HString): Self = updateEmrClusterFields(
-    emrClusterFields.copy(releaseLabel = Option(label), amiVersion = None)
-  )
-
-  def withConfiguration(conf: EmrConfiguration*): Self = updateEmrClusterFields(
-    emrClusterFields.copy(configuration = emrClusterFields.configuration ++ conf)
+  def withAmiVersion(version: HString): Self = updateEmrClusterFields(
+    emrClusterFields.copy(amiVersion = Option(version), releaseLabel = None)
   )
 
 }
 
-object EmrCluster {
+object LegacyEmrCluster {
 
-  def apply()(implicit hc: HyperionContext): EmrCluster = new EmrCluster(
+  def apply()(implicit hc: HyperionContext): LegacyEmrCluster = new LegacyEmrCluster(
     baseFields = BaseFields(PipelineObjectId(EmrCluster.getClass)),
     resourceFields = BaseEmrCluster.defaultResourceFields(hc),
-    emrClusterFields = EmrClusterFields(
-      amiVersion = None,  // make sure ami version is not set (legacy only settings)
-      standardBootstrapAction = Nil,  // legacy only settings
+    emrClusterFields = LegacyEmrCluster.defaultEmrClusterFields
+  )
+
+  def defaultEmrClusterFields(implicit hc: HyperionContext): EmrClusterFields =
+    EmrClusterFields(
+      amiVersion = hc.emrAmiVersion,
+      standardBootstrapAction = hc.emrEnvironmentUri.map(env => s"${hc.scriptUri}deploy-hyperion-emr-env.sh,$env": HString).toList,
       masterInstanceType = Option(hc.emrInstanceType: HString),
       coreInstanceCount = 2,
       coreInstanceType = Option(hc.emrInstanceType: HString),
       taskInstanceCount = 0,
       taskInstanceType = Option(hc.emrInstanceType: HString),
-      releaseLabel = hc.emrReleaseLabel
+      releaseLabel = None  // make sure release label is not set
     )
-  )
 
 }

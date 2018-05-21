@@ -1,16 +1,12 @@
 package com.krux.hyperion.client
 
-import scala.collection.JavaConverters._
-
-import com.amazonaws.services.datapipeline.DataPipelineClient
-import com.amazonaws.services.datapipeline.model.{PipelineObject, ListPipelinesRequest,
-  ParameterObject, CreatePipelineRequest, Tag, PutPipelineDefinitionRequest}
+import com.amazonaws.services.datapipeline.DataPipeline
 
 import com.krux.hyperion.DataPipelineDefGroup
 
 
 case class AwsClientForDef(
-  client: DataPipelineClient,
+  client: DataPipeline,
   pipelineDef: DataPipelineDefGroup
 ) extends AwsClient {
 

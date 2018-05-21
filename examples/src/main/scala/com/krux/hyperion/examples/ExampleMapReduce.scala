@@ -1,14 +1,15 @@
 package com.krux.hyperion.examples
 
-import scala.language.postfixOps
-import com.krux.hyperion.Implicits._
+import com.typesafe.config.ConfigFactory
+
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.activity._
 import com.krux.hyperion.common.S3Uri
-import com.krux.hyperion.expression.{Format, Parameter, RuntimeNode}
-import com.krux.hyperion.resource.{MapReduceCluster}
-import com.krux.hyperion.{DataPipelineDef, HyperionContext, Schedule, _}
-import com.typesafe.config.ConfigFactory
+import com.krux.hyperion.expression.{Parameter, RuntimeNode}
+import com.krux.hyperion.Implicits._
+import com.krux.hyperion.resource.EmrCluster
+import com.krux.hyperion.{DataPipelineDef, HyperionContext, Schedule, HyperionCli}
+
 
 object ExampleMapReduce extends DataPipelineDef with HyperionCli {
 
@@ -38,48 +39,45 @@ object ExampleMapReduce extends DataPipelineDef with HyperionCli {
     .withRole("DataPipelineDefaultResourceRole")
 
   // Resources
-  val emrCluster = MapReduceCluster()
+  val emrCluster = EmrCluster()
     .withTaskInstanceCount(instanceCount)
     .withTaskInstanceType(instanceType)
     .withReleaseLabel("emr-4.4.0")
     .named("Cluster with release label")
 
   // First activity
-  val filterActivity = MapReduceActivity(emrCluster)
+  val filterActivity = EmrActivity(emrCluster)
     .named("filterActivity")
     .onFail(mailAction)
     .withSteps(
-      MapReduceStep(jar)
+      HadoopStep(jar)
         .withMainClass("com.krux.hyperion.ScoreJob1")
         .withArguments(
           target,
-          Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd")
+          (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd")
         )
     )
 
   // Second activity
-  val scoreActivity = MapReduceActivity(emrCluster)
+  val scoreActivity = EmrActivity(emrCluster)
     .named("scoreActivity")
     .onSuccess(mailAction)
     .withSteps(
-      MapReduceStep(jar)
+      HadoopStep(jar)
         .withMainClass("com.krux.hyperion.ScoreJob2")
         .withArguments(
           target,
-      Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd"),
-      "denormalized"
+          (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd"),
+          "denormalized"
         )
     )
 
-  val scoreHadoopActivity = HadoopActivity(
-    jar,
-    "com.krux.hyperion.ScoreJob2"
-  )(emrCluster)
+  val scoreHadoopActivity = HadoopActivity(jar, "com.krux.hyperion.ScoreJob2")(emrCluster)
     .named("scoreHadoopActivity")
     .onSuccess(mailAction)
     .withArguments(
       target,
-      Format(SparkActivity.ScheduledStartTime - 3.days, "yyyy-MM-dd"),
+      (EmrActivity.ScheduledStartTime - 3.days).format("yyyy-MM-dd"),
       "denormalized"
     )
 
