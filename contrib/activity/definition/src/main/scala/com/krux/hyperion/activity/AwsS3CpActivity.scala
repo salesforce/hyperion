@@ -13,6 +13,7 @@ case class AwsS3CpActivity private(
   destinationS3Path: HS3Uri,
   isRecursive: HBoolean,
   isOverwrite: HBoolean,
+  isSilentFailure: HBoolean,
   additionalArguments: Seq[HString],
   profile: Option[HString]
 ) extends BaseShellCommandActivity with WithS3Input {
@@ -35,6 +36,7 @@ case class AwsS3CpActivity private(
     granteeTypeAndId.map { case (grantType, id) => s"$grantType=$id" }.mkString(s"$permission=", ",", "")
   )
   def withAdditionalArguments(arguments: HString*) = copy(additionalArguments = this.additionalArguments ++ arguments)
+  def withSilentFailure() = copy(isSilentFailure = HBoolean.True)
 
   private val removeScript = isOverwrite match {
     case HBoolean.True => profile match {
@@ -49,6 +51,8 @@ case class AwsS3CpActivity private(
       case None  => s"aws s3 cp ${additionalArguments.mkString(" ")} $sourceS3Path $destinationS3Path;"
   }
 
+  private val silentFailureScript = if (isSilentFailure) "exit 0;" else ""
+
   override def script = s"""
     |if [ -n "$${INPUT1_STAGING_DIR}" ]; then
     | mkdir -p ~/.aws
@@ -57,6 +61,7 @@ case class AwsS3CpActivity private(
     |fi
     |$removeScript
     |$s3CpScript
+    |$silentFailureScript
   """.stripMargin
 }
 
@@ -74,6 +79,7 @@ object AwsS3CpActivity extends RunnableObject {
       destinationS3Path = destinationS3Path,
       isRecursive = HBoolean.False,
       isOverwrite = HBoolean.False,
+      isSilentFailure = HBoolean.False,
       additionalArguments = Seq.empty,
       profile = None
     )

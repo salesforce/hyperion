@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.1.1 - 2018-07-03
+
+## Added
+[#547](https://github.com/krux/hyperion/issues/547) - Added support for AwsS3CpActivity to fail silently if the copy script fails
+
 ## 5.1.0 - 2018-05-29
 
 ## Added
