@@ -2,21 +2,27 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.1.4 - 2018-09-05
+
+## Changed
+- [#546](https://github.com/krux/hyperion/issues/546) - Change Ec2Resource to set security group ids only when security groups are not set
+- [#558](https://github.com/krux/hyperion/issues/558) - Change Ec2Resource to set security groups and ids only when subnet id is not set
+
 ## 5.1.3 - 2018-09-04
 
 ## Changed
-[#554](https://github.com/krux/hyperion/issues/550) - Handle Parquet and ORC formats in Redshift Copy
+- [#554](https://github.com/krux/hyperion/issues/550) - Handle Parquet and ORC formats in Redshift Copy
 
 ## 5.1.2 - 2018-07-06
 
 ## Changed
-[#550](https://github.com/krux/hyperion/issues/550) - Update sbt to 1.1.6
-[#449](https://github.com/krux/hyperion/issues/449) - Update AWS SDK dependency to use 1.11.x instead of specific version of 1.11
+- [#550](https://github.com/krux/hyperion/issues/550) - Update sbt to 1.1.6
+- [#449](https://github.com/krux/hyperion/issues/449) - Update AWS SDK dependency to use 1.11.x instead of specific version of 1.11
 
 ## 5.1.1 - 2018-07-03
 
 ## Added
-[#547](https://github.com/krux/hyperion/issues/547) - Added support for AwsS3CpActivity to fail silently if the copy script fails
+- [#547](https://github.com/krux/hyperion/issues/547) - Added support for AwsS3CpActivity to fail silently if the copy script fails
 
 ## 5.1.0 - 2018-05-29
 
@@ -75,23 +81,23 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 4.14.0 - 2017-11-25
 ### Changed
-- [#507] (https://github.com/krux/hyperion/issues/507) - Support STS token when the environment variable is set
+- [#507](https://github.com/krux/hyperion/issues/507) - Support STS token when the environment variable is set
 
 ## 4.13.2 - 2017-11-16
 ### Changed
-- [#512] (https://github.com/krux/hyperion/issues/512) - Fix invalid syntax bug for AVRO format in RedshiftCopyOption
+- [#512](https://github.com/krux/hyperion/issues/512) - Fix invalid syntax bug for AVRO format in RedshiftCopyOption
 
 ## 4.13.1 - 2017-11-15
 ### Changed
-- [#510] (https://github.com/krux/hyperion/issues/510) - Add AVRO to RedshiftCopyOption
+- [#510](https://github.com/krux/hyperion/issues/510) - Add AVRO to RedshiftCopyOption
 
 ## 4.13.0 - 2017-08-11
 ### Changed
-- [#502] (https://github.com/krux/hyperion/issues/502) - Throw exception when pipeline defines no workflows
+- [#502](https://github.com/krux/hyperion/issues/502) - Throw exception when pipeline defines no workflows
 
 ## 4.12.0 - 2017-06-02
 ### Fixed
-- [#497] (https://github.com/krux/hyperion/issues/497) - Replace the Retry Implementation with Stubborn
+- [#497](https://github.com/krux/hyperion/issues/497) - Replace the Retry Implementation with Stubborn
 
 ## 4.11.1 - 2017-05-12
 ### Fixed
