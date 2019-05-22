@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.4.1 - 2019-05-21
+## Changed
+- [#579](https://github.com/krux/hyperion/issues/579) - Update build to scala 2.12.8 and sbt 1.2.8
+
 ## 5.4.0 - 2019-02-06
 ## Added
 - [#576](https://github.com/krux/hyperion/issues/576) - Support configuration of EBS volumes for EMR clusters
