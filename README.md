@@ -1,7 +1,6 @@
 # Krux Hyperion
 
 [![Gitter](https://badges.gitter.im/krux/hyperion.svg)](https://gitter.im/krux/hyperion)
-[![Stories in Ready](https://badge.waffle.io/krux/hyperion.png?label=ready&title=Ready)](https://waffle.io/krux/hyperion)
 [![Build Status](https://secure.travis-ci.org/krux/hyperion.png)](http://travis-ci.org/krux/hyperion)
 
 > In Starcraft, the Hyperion is a Behemoth-class battlecruiser. During the
@@ -29,7 +28,7 @@ Add Krux Hyperion as a dependency in your `build.sbt` or `Build.scala` as approp
 ```scala
 libraryDependencies ++= Seq(
   // Other dependencies ...
-  "com.krux" %% "hyperion" % "5.3.0"
+  "com.krux" %% "hyperion" % "5.5.0"
 )
 ```
 
@@ -38,7 +37,7 @@ libraryDependencies ++= Seq(
 This project is compiled, tested, and published for the following Scala versions:
 
 1. 2.11.12
-2. 2.12.4
+2. 2.12.9
 
 ## Usage
 
