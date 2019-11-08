@@ -3,8 +3,7 @@ package com.krux.hyperion.contrib.activity.file
 import java.io.{File, FilenameFilter}
 import java.nio.file._
 
-import com.krux.hyperion.contrib.activity.file.enum.CompressionFormat
-import com.krux.hyperion.contrib.activity.file.enum.CompressionFormat.CompressionFormat
+import com.krux.hyperion.contrib.activity.file.CompressionFormat.CompressionFormat
 import scopt.OptionParser
 
 object RepartitionFile {

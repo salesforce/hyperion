@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 5.7.2 - 2019-11-08
+### Changed
+- [#595](https://github.com/krux/hyperion/issues/595) - Not able to import compressionFormat enum in other repository which uses hyperion
+
 ## 5.7.1 - 2019-11-08
 ### Fixed
 [#578](https://github.com/krux/hyperion/issues/578) - Correctly serialize the default value of datetime params.
