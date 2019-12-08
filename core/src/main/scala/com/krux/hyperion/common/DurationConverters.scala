@@ -1,26 +1,23 @@
 package com.krux.hyperion.common
 
-import org.joda.time.Period
-
+import java.time.Period
 import com.krux.hyperion.expression._
 
-
 /**
- * Handles the duration conversion between expression and Joda time
+ * Handles the duration conversion between expression and java.time.Duration
  */
 object DurationConverters {
 
-  implicit class AsJodaPeriod(duration: Duration) {
+  implicit class AsJavaDuration(duration: Duration) {
 
-    def asJodaPeriodMultiplied(multiplier: Int): Period = duration match {
-      case Year(n) => Period.years(n * multiplier)
-      case Month(n) => Period.months(n * multiplier)
-      case Week(n) => Period.weeks(n * multiplier)
-      case Day(n) => Period.days(n * multiplier)
-      case Hour(n) => Period.hours(n * multiplier)
-      case Minute(n) => Period.minutes(n * multiplier)
+    def asDurationMultiplied(multiplier: Int): java.time.Duration = duration match {
+      case Year(n)   => java.time.Duration.ofDays(Period.ofYears(n * multiplier).getDays)
+      case Month(n)  => java.time.Duration.ofDays(Period.ofMonths(n * multiplier).getDays)
+      case Week(n)   => java.time.Duration.ofDays(Period.ofWeeks(n * multiplier).getDays)
+      case Day(n)    => java.time.Duration.ofDays(n * multiplier)
+      case Hour(n)   => java.time.Duration.ofHours(n * multiplier)
+      case Minute(n) => java.time.Duration.ofMinutes(n * multiplier)
     }
 
   }
-
 }

@@ -1,6 +1,7 @@
 package com.krux.hyperion
 
-import com.github.nscala_time.time.Imports.{DateTime, DateTimeZone, Period}
+import java.time.{DayOfWeek, LocalTime, ZoneOffset, ZonedDateTime}
+
 import com.krux.hyperion.Implicits._
 import com.krux.hyperion.adt.{HDateTime, HDuration, HInt}
 import com.krux.hyperion.aws.{AdpOnDemandSchedule, AdpRecurringSchedule, AdpRef}
@@ -51,9 +52,8 @@ final case class RecurringSchedule private[hyperion] (
 
   def startDateTime(dt: HDateTime) = copy(start = Option(dt))
 
-
   def startThisHourAt(minuteOfHour: Int, secondOfMinute: Int) = {
-    val currentHour = DateTime.now.withZone(DateTimeZone.UTC).getHourOfDay
+    val currentHour = ZonedDateTime.now.withZoneSameInstant(ZoneOffset.UTC).getHour
     startTodayAt(currentHour, minuteOfHour, secondOfMinute)
   }
 
@@ -61,15 +61,15 @@ final case class RecurringSchedule private[hyperion] (
     startThisDayOfXAt(0, hourOfDay, minuteOfHour, secondOfMinute)((dt, _) => dt)
 
   def startThisWeekAt(dayOfWeek: Int, hourOfDay: Int, minuteOfHour: Int, secondOfMinute: Int) =
-    startThisDayOfXAt(dayOfWeek, hourOfDay, minuteOfHour, secondOfMinute)(_.withDayOfWeek(_))
+    startThisDayOfXAt(dayOfWeek, hourOfDay, minuteOfHour, secondOfMinute)((dt, int) => dt.`with`(DayOfWeek.of(int)))
 
   def startThisMonthAt(dayOfMonth: Int, hourOfDay: Int, minuteOfHour: Int, secondOfMinute: Int) =
     startThisDayOfXAt(dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute)(_.withDayOfMonth(_))
 
   private def startThisDayOfXAt(dayOfX: Int, hourOfDay: Int, minuteOfHour: Int,
-      secondOfMinute: Int)(dayOfFunc: (DateTime, Int) => DateTime) = {
-    val startDt = dayOfFunc(DateTime.now.withZone(DateTimeZone.UTC), dayOfX)
-      .withTime(hourOfDay, minuteOfHour, secondOfMinute, 0)
+      secondOfMinute: Int)(dayOfFunc: (ZonedDateTime, Int) => ZonedDateTime) = {
+    val startDt = dayOfFunc(ZonedDateTime.now.withZoneSameInstant(ZoneOffset.UTC), dayOfX)
+      .`with`(LocalTime.of(hourOfDay, minuteOfHour, secondOfMinute))
     copy(start = Option(startDt: HDateTime))
   }
 
@@ -131,10 +131,10 @@ object Schedule {
 
   def delay(schedule: Schedule, by: Duration, multiplier: Int): Schedule = {
     import com.krux.hyperion.common.DurationConverters._
-    delay(schedule, by.asJodaPeriodMultiplied(multiplier))
+    delay(schedule, by.asDurationMultiplied(multiplier))
   }
 
-  def delay(schedule: Schedule, by: Period): Schedule = schedule match {
+  def delay(schedule: Schedule, by: java.time.Duration): Schedule = schedule match {
     case s: RecurringSchedule =>
       s.start match {
         case None =>

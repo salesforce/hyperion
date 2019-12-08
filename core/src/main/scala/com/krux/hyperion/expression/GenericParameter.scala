@@ -1,6 +1,6 @@
 package com.krux.hyperion.expression
 
-import org.joda.time.{ DateTime, DateTimeZone }
+import java.time.{ZoneOffset, ZonedDateTime}
 
 import com.krux.hyperion.adt.HDateTime
 import com.krux.hyperion.common.{ HdfsUri, S3Uri }
@@ -109,15 +109,15 @@ object GenericParameter {
 
   }
 
-  implicit object DateTimeGenericParameter extends GenericParameter[DateTime] {
+  implicit object DateTimeGenericParameter extends GenericParameter[ZonedDateTime] {
 
     type Exp = DateTimeExp
 
-    val parseString = (stringValue: String) => new DateTime(stringValue, DateTimeZone.UTC)
+    val parseString = (stringValue: String) => ZonedDateTime.parse(stringValue).withZoneSameLocal(ZoneOffset.UTC)
 
-    override def serialize(t: DateTime): String = (t: HDateTime).serialize
+    override def serialize(t: ZonedDateTime): String = (t: HDateTime).serialize
 
-    def ref(param: Parameter[DateTime]): Exp = new Exp with Evaluatable[DateTime] {
+    def ref(param: Parameter[ZonedDateTime]): Exp = new Exp with Evaluatable[ZonedDateTime] {
       def content = param.name
       def evaluate() = param.evaluate()
     }
