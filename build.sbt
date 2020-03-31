@@ -51,10 +51,7 @@ lazy val publishSettings = Seq(
       Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
     else
       Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
-  },
-  // TODO: For publishing SNAPSHOTs, remove when v6 is done
-  publishConfiguration := publishConfiguration.value.withOverwrite(true),
-  publishLocalConfiguration := publishLocalConfiguration.value.withOverwrite(true)
+  }
 )
 
 lazy val noPublishSettings = Seq(
