@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## 6.0.0-SNAPSHOT - 2020-03-20
+## 6.0.0 - 2020-06-04
 ### Changed
 - [#543](https://github.com/krux/hyperion/issues/543) - Replace joda time with java.time
 - [#577](https://github.com/krux/hyperion/issues/577) - Allow specifying multiple subnet IDs for EC2 resources in 
