@@ -1,9 +1,9 @@
 package com.krux.hyperion.aws
 
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class AdpScheduleSpec extends WordSpec {
+class AdpScheduleSpec extends AnyWordSpec {
 
   "AdpStartAtSchedule" should {
     "converts to Json" in {

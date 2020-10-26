@@ -1,10 +1,10 @@
 package com.krux.hyperion.examples
 
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.json4s.JsonDSL._
 import org.json4s._
 
-class ExampleGoogleUploadActivitySpec extends WordSpec {
+class ExampleGoogleUploadActivitySpec extends AnyWordSpec {
 
   "ExampleGoogleUploadActivitySpec" should {
     "produce correct pipeline JSON" in {

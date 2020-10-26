@@ -1,14 +1,17 @@
 package com.krux.hyperion.client
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
+
 import com.amazonaws.services.datapipeline.DataPipeline
 import com.amazonaws.services.datapipeline.model.{CreatePipelineRequest, InvalidRequestException,
   PipelineObject, PutPipelineDefinitionRequest, Tag}
 import org.slf4j.LoggerFactory
+
 import com.krux.hyperion.DataPipelineDefGroup
 import com.krux.hyperion.PipelineLifeCycle.Status
-import com.krux.stubborn.Retryable
 import com.krux.stubborn.policy.ExponentialBackoffAndJitter
+import com.krux.stubborn.Retryable
+import scala.collection.compat.immutable.LazyList
 
 case class UploadPipelineObjectsTrans(
   client: DataPipeline,
@@ -96,7 +99,7 @@ case class UploadPipelineObjectsTrans(
   def action() = AwsClientForId(
     client,
     keyObjectsMap
-      .toStream  // there is no need to keep perform createAndUploadObojects if one failed
+      .to(LazyList)  // there is no need to keep perform createAndUploadObojects if one failed
       .map { case (key, objects) =>
         log.info(s"Creating pipeline and uploading ${objects.size} objects")
         createAndUploadObjects(pipelineDef.nameForKey(key), objects)

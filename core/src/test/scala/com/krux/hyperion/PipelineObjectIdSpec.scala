@@ -1,9 +1,10 @@
 package com.krux.hyperion
 
-import com.krux.hyperion.common.{ NameGroupObjectId, RandomizedObjectId }
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class PipelineObjectIdSpec extends WordSpec {
+import com.krux.hyperion.common.{ NameGroupObjectId, RandomizedObjectId }
+
+class PipelineObjectIdSpec extends AnyWordSpec {
 
   "RandomizedObjectId" should {
     "generate a stable id" in {

@@ -1,7 +1,7 @@
 package com.krux.hyperion.contrib.activity.s3
 
 import scala.annotation.tailrec
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import com.amazonaws.services.s3.AmazonS3ClientBuilder
 import com.amazonaws.services.s3.model.{
@@ -138,10 +138,10 @@ object SetS3Acl {
       head("hyperion-s3-acl-activity")
       opt[Seq[CannedAccessControlList]]("acl").action((x, c) => c.copy(acl = c.acl ++ x))
         .valueName("acl1,acl2")
-        .unbounded
+        .unbounded()
       opt[Seq[Grant]]("grants").action((x, c) => c.copy(grants = c.grants ++ x))
         .valueName("Permission=Grantee_Type=Grantee_ID[,Permission=Grantee_Type=Grantee_ID ...")
-        .unbounded
+        .unbounded()
       opt[Unit]("recursive").action((_, c) => c.copy(recursive = true))
       arg[String]("s3uri").action((x, c) => c.copy(s3Uri = x))
     }

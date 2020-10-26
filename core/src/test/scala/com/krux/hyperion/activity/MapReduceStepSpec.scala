@@ -4,9 +4,9 @@ import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.common.S3Uri
 import com.krux.hyperion.resource.Ec2Resource
 import com.typesafe.config.ConfigFactory
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class MapReduceStepSpec extends WordSpec {
+class MapReduceStepSpec extends AnyWordSpec {
   class SomeClass
 
   object SomeObject {

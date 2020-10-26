@@ -1,7 +1,7 @@
 package com.krux.hyperion.activity
 
 import com.typesafe.config.ConfigFactory
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 import com.krux.hyperion.common.S3Uri._
 import com.krux.hyperion.database.RedshiftDatabase
@@ -10,7 +10,7 @@ import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.resource.Ec2Resource
 
 
-class RedshiftUnloadActivitySpec extends WordSpec {
+class RedshiftUnloadActivitySpec extends AnyWordSpec {
 
   "RedshiftUnloadActivity" should {
 

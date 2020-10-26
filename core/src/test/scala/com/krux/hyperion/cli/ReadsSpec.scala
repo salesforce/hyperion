@@ -1,9 +1,9 @@
 package com.krux.hyperion.cli
 
 import java.time.{DayOfWeek, ZonedDateTime}
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class ReadsSpec extends WordSpec {
+class ReadsSpec extends AnyWordSpec {
   "`with` function of ZonedDateTime" should {
     "shift the date to the expected" in {
 

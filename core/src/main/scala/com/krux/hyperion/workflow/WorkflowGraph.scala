@@ -25,7 +25,9 @@ class WorkflowGraph private (
 
 
   private lazy val dependencyGraph: Map[A, Seq[A]] =
-    nodes.map(_ -> Nil).toMap[A, Seq[A]] ++ dependencies.groupBy(_._1).mapValues(_.map(_._2))
+    nodes.map(_ -> Nil).toMap[A, Seq[A]] ++ dependencies.groupBy(_._1).map { case (k, v) =>
+      k -> v.map(_._2)
+    }
 
   private lazy val duplicatedIds =
     nodes.groupBy(_.id).filter(_._2.toSet.size > 1).keySet
@@ -41,7 +43,12 @@ class WorkflowGraph private (
       assert(!nodes.isEmpty, "Cyclic dependencies detected")
 
       resolved ++= nodes.map(n => n -> n.dependsOn(dependencyGraph(n).map(resolved).sortBy(_.id):_*))
-      unresolved = unresolved.filterKeys(!nodes.contains(_)).mapValues(_.filterNot(nodes))
+      unresolved = unresolved
+        .filter { case (k, _) => !nodes.contains(k) }
+        .map { case (k, v) =>
+          (k, v.filterNot(nodes))
+        }
+        .toMap
     }
     resolved.values.toSeq
   }

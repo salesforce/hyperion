@@ -1,7 +1,7 @@
 package com.krux.hyperion.client
 
 import scala.annotation.tailrec
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import com.amazonaws.services.datapipeline.DataPipeline
 import com.amazonaws.services.datapipeline.model.ListPipelinesRequest

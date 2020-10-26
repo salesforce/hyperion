@@ -1,12 +1,14 @@
 package com.krux.hyperion.workflow
 
-import com.krux.hyperion.HyperionContext
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
+
 import com.krux.hyperion.activity.ShellCommandActivity
+import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.resource.Ec2Resource
 import com.typesafe.config.ConfigFactory
-import org.scalatest.{ Matchers, WordSpec }
 
-class WorkflowGraphSpec extends WordSpec  with Matchers{
+class WorkflowGraphSpec extends AnyWordSpec with Matchers {
 
   "WorkflowGraph" should {
 

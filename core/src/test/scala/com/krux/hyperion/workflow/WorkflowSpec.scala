@@ -1,14 +1,15 @@
 package com.krux.hyperion.workflow
 
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
+
 import com.krux.hyperion.DataPipelineDef
 import com.krux.hyperion.Schedule.onceAtActivation
 import com.krux.hyperion.activity.Script.string2Script
 import com.krux.hyperion.activity.ShellCommandActivity
 import com.krux.hyperion.resource.WorkerGroup
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
 
-class WorkflowSpec extends FlatSpec {
+class WorkflowSpec extends AnyFlatSpec with Matchers {
   it should "not require logUri" in {
     object NoConfigWorkflow extends DataPipelineDef {
       override def schedule = onceAtActivation

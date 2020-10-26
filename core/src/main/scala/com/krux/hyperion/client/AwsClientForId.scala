@@ -16,7 +16,7 @@ case class AwsClientForId(
       log.info(s"Deleting pipeline $id")
       client.deletePipeline(new DeletePipelineRequest().withPipelineId(id)).retry()
     }
-    Option(Unit)
+    Option(())
   }
 
   def activatePipelines(): Option[AwsClientForId] = {
