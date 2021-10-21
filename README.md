@@ -36,8 +36,8 @@ libraryDependencies ++= Seq(
 
 This project is compiled, tested, and published for the following Scala versions:
 
-1. 2.11.12
-2. 2.12.11
+1. 2.12
+2. 2.13
 
 ## Usage
 
