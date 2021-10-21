@@ -7,7 +7,7 @@
 
 package com.krux.hyperion.contrib.activity.notification
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder
@@ -63,7 +63,7 @@ object SendSqsMessage {
 
   def main(args: Array[String]): Unit = {
     val parser = new OptionParser[Options](s"hyperion-notification-sqs-activity") {
-      override def showUsageOnError = false
+      override def showUsageOnError = Option(true)
 
       note(
         """Sends a notification message to a SQS Queue.
@@ -84,7 +84,6 @@ object SendSqsMessage {
     }
 
     if (!parser.parse(args, Options()).exists(apply)) {
-      parser.showUsageAsError
       System.exit(3)
     }
   }

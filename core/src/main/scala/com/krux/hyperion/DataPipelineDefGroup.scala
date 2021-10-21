@@ -111,7 +111,9 @@ object DataPipelineDefGroup {
       dpdg.parameters.flatMap(_.serialize).map(o => AdpParameterSerializer(o)).toList
 
     def toAwsPipelineObjects: Map[WorkflowKey, Seq[AwsPipelineObject]] =
-      objects.mapValues(_.map(_.serialize).toList.sortBy(_.id).map(AdpPipelineSerializer(_)))
+      objects.map { case (k, v) =>
+        k -> v.map(_.serialize).toList.sortBy(_.id).map(AdpPipelineSerializer(_))
+      }
 
     def toJson: JValue =
       ("objects" -> JArray(objects.values.flatten.map(_.serialize).toList.sortBy(_.id).map(AdpJsonSerializer(_)))) ~

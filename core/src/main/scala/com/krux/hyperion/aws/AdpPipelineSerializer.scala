@@ -11,7 +11,7 @@ import org.json4s._
 import com.amazonaws.services.datapipeline.model.{Field => AwsField,
   PipelineObject => AwsPipelineObject, ParameterObject => AwsParameterObject,
   ParameterAttribute => AwsParameterAttribute}
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object AdpPipelineSerializer {
 

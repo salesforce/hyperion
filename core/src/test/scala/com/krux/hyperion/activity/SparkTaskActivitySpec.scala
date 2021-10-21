@@ -1,8 +1,8 @@
 package com.krux.hyperion.activity
 
 import com.typesafe.config.ConfigFactory
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import com.krux.hyperion.adt.HString
 import com.krux.hyperion.HyperionContext
@@ -10,7 +10,7 @@ import com.krux.hyperion.resource.{EmrCluster, EmrApplication}
 import com.krux.hyperion.common.S3Uri._
 
 
-class SparkTaskActivitySpec extends FlatSpec {
+class SparkTaskActivitySpec extends AnyFlatSpec with Matchers {
   implicit val hc = new HyperionContext(ConfigFactory.load("example"))
 
   class MainClass

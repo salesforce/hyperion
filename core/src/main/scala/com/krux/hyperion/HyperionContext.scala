@@ -7,7 +7,7 @@
 
 package com.krux.hyperion
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.{Random, Try}
 
 import com.typesafe.config.{Config, ConfigFactory}
@@ -39,7 +39,8 @@ class HyperionContext(config: Config) {
   lazy val ec2Region = Try(config.getString("hyperion.aws.ec2.region")).toOption.getOrElse(region)
   lazy val ec2KeyPair = Try(config.getString("hyperion.aws.ec2.keypair")).toOption.orElse(keypair)
   lazy val ec2AvailabilityZone = Try(config.getString("hyperion.aws.ec2.availability_zone")).toOption
-  lazy val ec2SubnetId = Try(pickOneRandom(config.getStringList("hyperion.aws.ec2.subnets").asScala)).toOption
+  lazy val ec2SubnetId =
+    Try(pickOneRandom(config.getStringList("hyperion.aws.ec2.subnets").asScala)).toOption
 
   lazy val ec2Role = Try(config.getString("hyperion.aws.ec2.role")).toOption.getOrElse(role)
   lazy val ec2ResourceRole = Try(config.getString("hyperion.aws.ec2.resource.role")).toOption.getOrElse(resourceRole)
@@ -89,6 +90,6 @@ class HyperionContext(config: Config) {
   //
   lazy val maxRetry = config.getInt("hyperion.aws.client.max_retry")
 
-  private def pickOneRandom[T](elems: Seq[T]): T = elems(new Random().nextInt(elems.size))
+  private def pickOneRandom[T](elems: collection.Seq[T]): T = elems(new Random().nextInt(elems.size))
 
 }

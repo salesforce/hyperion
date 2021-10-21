@@ -1,9 +1,9 @@
 package com.krux.hyperion.aws
 
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class AdpDataFormatsSpec extends WordSpec {
+class AdpDataFormatsSpec extends AnyWordSpec {
   "TsvDataFormat" should {
     "converts to Json" in {
       val testObj = AdpTsvDataFormat(

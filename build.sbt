@@ -1,16 +1,15 @@
-val hyperionVersion = "6.0.0"
-val scala211Version = "2.11.12"
-val scala212Version = "2.12.11"
-val awsSdkVersion   = "[1.11.238, 1.12.0)"
+val hyperionVersion = "7.0.0-RC2"
+val scala212Version = "2.12.12"
+val scala213Version = "2.13.3"
+val awsSdkVersion   = "1.11.+"
 val mailVersion     = "1.6.1"
-val slf4jVersion    = "1.7.25"
+val slf4jVersion    = "1.7.+"
 
-val nscalaTimeArtifact      = "com.github.nscala-time" %% "nscala-time"               % "2.18.0"
 val jodaConvertArtifact     = "org.joda"               %  "joda-convert"              % "2.0"    % "provided"
-val json4sJacksonArtifact   = "org.json4s"             %% "json4s-jackson"            % "3.5.3"
-val scoptArtifact           = "com.github.scopt"       %% "scopt"                     % "3.7.0"
+val json4sJacksonArtifact   = "org.json4s"             %% "json4s-jackson"            % "3.6.10"
+val scoptArtifact           = "com.github.scopt"       %% "scopt"                     % "4.0.0-RC2"
 val jschArtifact            = "com.jcraft"             %  "jsch"                      % "0.1.54"
-val configArtifact          = "com.typesafe"           %  "config"                    % "1.3.2"
+val configArtifact          = "com.typesafe"           %  "config"                    % "1.4.1"
 val commonsIoArtifact       = "commons-io"             %  "commons-io"                % "2.6"
 val commonsCompressArtifact = "org.apache.commons"     %  "commons-compress"          % "1.19"
 val awsDatapipelineArtifact = "com.amazonaws"          %  "aws-java-sdk-datapipeline" % awsSdkVersion
@@ -22,9 +21,11 @@ val mailArtifact            = "com.sun.mail"           %  "mailapi"             
 val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % mailVersion
 val slf4jApiArtifact        = "org.slf4j"              %  "slf4j-api"                 % slf4jVersion
 val slf4jSimpleArtifact     = "org.slf4j"              %  "slf4j-simple"              % slf4jVersion
-val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "3.0.5"  % "test"
-val scalacheckArtifact      = "org.scalacheck"         %% "scalacheck"                % "1.13.5" % "test"
-val stubbornArtifact        = "com.krux"               %% "stubborn"                  % "1.4.1"
+val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "3.2.2"  % Test
+val scalacheckArtifact      = "org.scalacheck"         %% "scalacheck"                % "1.14.3" % Test
+val stubbornArtifact        = "com.krux"               %% "stubborn"                  % "2.0.0"
+// tool to simplify cross build https://docs.scala-lang.org/overviews/core/collections-migration-213.html
+val collectionCompact       = "org.scala-lang.modules" %% "scala-collection-compat"   % "2.2.0"
 
 ThisBuild / scalaVersion := scala212Version
 
@@ -34,7 +35,7 @@ lazy val publishSettings = Seq(
   pomIncludeRepository := { _ => false },
   pgpSecretRing := file("secring.asc"),
   pgpPublicRing := file("pubring.asc"),
-  licenses := Seq("Apache-2.0" -> url("http://opensource.org/licenses/Apache-2.0")),
+  licenses := Seq("Apache-2.0" -> url("https://opensource.org/licenses/Apache-2.0")),
   homepage := Some(url("https://github.com/krux/hyperion")),
   scmInfo := Some(
     ScmInfo(
@@ -43,8 +44,8 @@ lazy val publishSettings = Seq(
     )
   ),
   developers := List(
-    Developer(id = "realstraw", name = "Kexin Xie", email = "kexin.xie@salesforce.com", url = url("http://github.com/realstraw")),
-    Developer(id = "sethyates", name = "Seth Yates", email = "syates@salesforce.com", url = url("http://github.com/sethyates"))
+    Developer(id = "realstraw", name = "Kexin Xie", email = "kexin.xie@salesforce.com", url = url("https://github.com/realstraw")),
+    Developer(id = "sethyates", name = "Seth Yates", email = "syates@salesforce.com", url = url("https://github.com/sethyates"))
   ),
   publishTo := {
     if (isSnapshot.value)
@@ -66,8 +67,8 @@ lazy val commonSettings = Seq(
   organization := "com.krux",
   version := hyperionVersion,
   crossScalaVersions := Seq(
-    scala211Version,
-    scala212Version
+    scala212Version,
+    scala213Version
   ),
   scalacOptions ++= Seq(
     "-deprecation",
@@ -80,8 +81,6 @@ lazy val commonSettings = Seq(
     "-sourcepath", (ThisBuild / baseDirectory).value.toString,
     "-doc-source-url", s"https://github.com/krux/hyperion/tree/master/€{FILE_PATH}.scala"
   ),
-  libraryDependencies += scalatestArtifact,
-  libraryDependencies += scalacheckArtifact,
   headerLicense := Some(HeaderLicense.Custom(
   """|Copyright (c) 2021, salesforce.com, inc.
      |All rights reserved.
@@ -89,7 +88,8 @@ lazy val commonSettings = Seq(
      |For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
      |""".stripMargin
   )),
-  assembly / test := {} // skip test during assembly
+  assembly / test := {}, // skip test during assembly
+  libraryDependencies ++= Seq(scalatestArtifact, scalacheckArtifact, collectionCompact),
 )
 
 // for modules that are not intended to be published as libraries but executable jars
@@ -139,7 +139,6 @@ lazy val core = (project in file("core")).
     libraryDependencies ++= Seq(
       awsDatapipelineArtifact,
       awsStsArtifact,
-      nscalaTimeArtifact,
       json4sJacksonArtifact,
       scoptArtifact,
       configArtifact,

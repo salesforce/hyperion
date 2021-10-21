@@ -28,9 +28,12 @@ object ExamplePipelineGroup extends DataPipelineDefGroup with HyperionCli {
     (Option("3"), (6 until 10))
   )
 
-  def workflows: Map[WorkflowKey, WorkflowExpression] = configGroups.mapValues { intValues =>
-    val ec2 = Ec2Resource()
-    intValues.map(i => ShellCommandActivity(s"echo $i")(ec2).named(s"act$i"))
-  }
+  def workflows: Map[WorkflowKey, WorkflowExpression] = configGroups
+    .map { case (k, intValues) =>
+      val ec2 = Ec2Resource()
+      val exp: WorkflowExpression =
+        intValues.map(i => ShellCommandActivity(s"echo $i")(ec2).named(s"act$i"))
+      k -> exp
+    }
 
 }

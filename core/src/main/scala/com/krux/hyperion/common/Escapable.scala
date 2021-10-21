@@ -23,7 +23,7 @@ trait Escapable {
   private def seekEndOfExpr(
     exp: String,
     quote: Option[Char] = None,
-    expPart: StringBuilder = StringBuilder.newBuilder
+    expPart: StringBuilder = new StringBuilder()
   ): (String, String) = {
 
     if (exp.isEmpty) {
@@ -37,7 +37,7 @@ trait Escapable {
           seekEndOfExpr(next, quote.filter(_ != curChar), expPart += curChar)
         case _ =>
           curChar match {
-            case '}' => ((expPart += curChar).result, next)
+            case '}' => ((expPart += curChar).result(), next)
             case '\'' | '"' => seekEndOfExpr(next, Option(curChar), expPart += curChar)
             case _ => seekEndOfExpr(next, None, expPart += curChar)
           }
@@ -53,7 +53,7 @@ trait Escapable {
     def escapeRec(
       s: String,
       hashSpotted: Boolean = false,
-      result: StringBuilder = StringBuilder.newBuilder
+      result: StringBuilder = new StringBuilder()
     ): String = {
 
       if (s.isEmpty) {

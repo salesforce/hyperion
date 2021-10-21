@@ -31,9 +31,11 @@ object ExamplePipelineGroupWithSchedulerDelay extends DataPipelineDefGroup with 
     (Option("3"), (6 until 10))
   )
 
-  def workflows: Map[WorkflowKey, WorkflowExpression] = configGroups.mapValues { intValues =>
+  def workflows: Map[WorkflowKey, WorkflowExpression] = configGroups.map { case (k, intValues) =>
     val ec2 = Ec2Resource()
-    intValues.map(i => ShellCommandActivity(s"echo $i")(ec2).named(s"act$i"))
+    val exp: WorkflowExpression =
+      intValues.map(i => ShellCommandActivity(s"echo $i")(ec2).named(s"act$i"))
+    k -> exp
   }
 
 }

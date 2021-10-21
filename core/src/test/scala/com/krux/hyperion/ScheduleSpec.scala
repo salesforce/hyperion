@@ -4,9 +4,9 @@ import java.time.format.DateTimeFormatter
 import java.time.{DayOfWeek, ZoneId, ZonedDateTime}
 
 import org.joda.time.{DateTime, DateTimeZone}
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class ScheduleSpec extends WordSpec{
+class ScheduleSpec extends AnyWordSpec {
   "`with` function of DayOfWeek" should {
     "shift the date to the expected" in {
 

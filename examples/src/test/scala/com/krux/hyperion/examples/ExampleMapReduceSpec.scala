@@ -1,10 +1,10 @@
 package com.krux.hyperion.examples
 
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.json4s.JsonDSL._
 import org.json4s._
 
-class ExampleMapReduceSpec extends WordSpec {
+class ExampleMapReduceSpec extends AnyWordSpec {
 
   "ExampleMapReduceSpec" should {
 

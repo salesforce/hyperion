@@ -7,7 +7,7 @@
 
 package com.krux.hyperion.contrib.activity.notification
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.sns.AmazonSNSClientBuilder
@@ -65,7 +65,7 @@ object SendSnsMessage {
 
   def main(args: Array[String]): Unit = {
     val parser = new OptionParser[Options](s"hyperion-notification-sns-activity") {
-      override def showUsageOnError = false
+      override def showUsageOnError = Option(true)
 
       note(
         """Sends a notification message to a SNS Topic.
@@ -88,7 +88,6 @@ object SendSnsMessage {
     }
 
     if (!parser.parse(args, Options()).exists(apply)) {
-      parser.showUsageAsError
       System.exit(3)
     }
   }

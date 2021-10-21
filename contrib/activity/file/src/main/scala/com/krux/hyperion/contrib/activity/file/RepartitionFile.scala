@@ -115,7 +115,7 @@ object RepartitionFile {
 
   def main(args: Array[String]): Unit = {
     val parser = new OptionParser[Options](s"hyperion-file-repartition-activity") {
-      override def showUsageOnError = false
+      override def showUsageOnError = Option(false)
 
       implicit val compressionFormatRead: scopt.Read[CompressionFormat.Value] =
         scopt.Read.reads(CompressionFormat withName _)
@@ -176,8 +176,13 @@ object RepartitionFile {
       }
     }
 
-    if (!parser.parse(args, Options()).map(applyDefaults).flatMap(checkOptions).exists(FileRepartitioner(_).repartition())) {
-      parser.showUsageAsError
+    if (
+      !parser
+        .parse(args, Options())
+        .map(applyDefaults)
+        .flatMap(checkOptions)
+        .exists(FileRepartitioner(_).repartition())
+    ) {
       System.exit(3)
     }
   }

@@ -1,9 +1,9 @@
 package com.krux.hyperion.aws
 
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class AdpDatabasesSpec extends WordSpec {
+class AdpDatabasesSpec extends AnyWordSpec {
 
   "AdpRedshiftDatabase" should {
     "converts to Json" in {

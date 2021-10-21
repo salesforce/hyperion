@@ -1,9 +1,9 @@
 package com.krux.hyperion.aws
 
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class AdpDataPipelineObjectSpec extends WordSpec {
+class AdpDataPipelineObjectSpec extends AnyWordSpec {
 
   class TestObject extends AdpDataPipelineObject {
     val id: String = "TestId"

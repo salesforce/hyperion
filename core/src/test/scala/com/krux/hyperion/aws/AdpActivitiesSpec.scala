@@ -1,9 +1,9 @@
 package com.krux.hyperion.aws
 
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class AdpActivitiesSpec extends WordSpec {
+class AdpActivitiesSpec extends AnyWordSpec {
   "AdpCopyActivity" should {
     "converts to json" in {
       val testObj = AdpCopyActivity(

@@ -4,9 +4,9 @@ import java.time.{ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
 import org.joda.time.{DateTime, DateTimeZone}
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class HTypeSpec extends WordSpec {
+class HTypeSpec extends AnyWordSpec {
   "HDateTime" should {
     "be serialized in the correct datetime format" in {
 

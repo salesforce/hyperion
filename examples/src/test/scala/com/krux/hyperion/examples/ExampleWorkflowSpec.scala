@@ -2,10 +2,10 @@ package com.krux.hyperion.examples
 
 import org.json4s._
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 
-class ExampleWorkflowSpec extends WordSpec {
+class ExampleWorkflowSpec extends AnyWordSpec {
 
   "ExampleWorkflow" should {
 

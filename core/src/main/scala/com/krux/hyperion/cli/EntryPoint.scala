@@ -28,8 +28,8 @@ case class EntryPoint(pipeline: DataPipelineDefGroup) {
 
   private val parser = new OptionParser[Options](s"hyperion") {
     head("hyperion", s"${BuildInfo.version} (${BuildInfo.scalaVersion})")
-    help("help").hidden
-    version("version").hidden
+    help("help").hidden()
+    version("version").hidden()
 
     note("Hyperion CLI provides tools to generate, graph and generate Data Pipelines.\n")
 

@@ -74,6 +74,6 @@ case class AwsClientForDef(
    * Create and upload the pipeline definitions, if error occurs a full roll back is issued.
    */
   private def uploadPipelineObjects(): Option[AwsClientForId] =
-    UploadPipelineObjectsTrans(client, pipelineDef, maxRetry)().right.toOption
+    UploadPipelineObjectsTrans(client, pipelineDef, maxRetry)().toOption
 
 }
