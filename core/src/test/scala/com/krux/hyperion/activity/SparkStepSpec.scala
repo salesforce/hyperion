@@ -4,10 +4,10 @@ import com.krux.hyperion.common.S3Uri
 import com.krux.hyperion.HyperionContext
 import com.krux.hyperion.Implicits._
 import com.typesafe.config.ConfigFactory
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
 
-class SparkStepSpec extends WordSpec {
+class SparkStepSpec extends AnyWordSpec {
   class SomeClass
 
   object SomeObject

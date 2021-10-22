@@ -1,10 +1,11 @@
 package com.krux.hyperion.resource
 
-import com.krux.hyperion.expression.{Parameter, ParameterValues}
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ParameterSpec extends FlatSpec {
+import com.krux.hyperion.expression.{Parameter, ParameterValues}
+
+class ParameterSpec extends AnyFlatSpec with Matchers {
   implicit val pv = new ParameterValues
 
   it should "handle comparing int params without values" in {

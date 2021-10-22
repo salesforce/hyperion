@@ -49,10 +49,12 @@ trait DefaultObject extends PipelineObject {
       )
     }
 
-    val fields: Map[String, Either[String, AdpRef[AdpDataPipelineAbstractObject]]] = (defaultObjectFields.properties ++ scheduleProps).mapValues {
-      case Right(p) => Right(p.ref)
-      case Left(s) => Left(s.serialize)
-    }
+    val fields: Map[String, Either[String, AdpRef[AdpDataPipelineAbstractObject]]] =
+      (defaultObjectFields.properties ++ scheduleProps)
+        .map {
+          case (k, Right(p)) => k -> Right(p.ref)
+          case (k, Left(s)) => k -> Left(s.serialize)
+        }
   }
 
   def ref: AdpRef[AdpDataPipelineDefaultObject] = AdpRef(serialize)

@@ -44,7 +44,7 @@ object SendFlowdockMessage {
 
   def main(args: Array[String]): Unit = {
     val parser = new OptionParser[Options](s"hyperion-notification-flowdock-activity") {
-      override def showUsageOnError = true
+      override def showUsageOnError = Option(true)
 
       note("Sends a notification message to a Flowdock flow.")
       help("help").text("prints this usage text")

@@ -1,6 +1,6 @@
 package com.krux.hyperion.contrib.activity.sftp
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.{Failure, Success, Try}
 
 import java.io._
@@ -332,7 +332,6 @@ object SftpActivity {
           this(options)
 
         case _ =>
-          parser.showUsageAsError
           false
       }
     }) System.exit(3)

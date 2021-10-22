@@ -1,9 +1,9 @@
 package com.krux.hyperion.aws
 
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class AdpDataNodesSpec extends WordSpec {
+class AdpDataNodesSpec extends AnyWordSpec {
 
   val tsvFormat = AdpTsvDataFormat("tsv", None, None, None)
 

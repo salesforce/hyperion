@@ -2,7 +2,7 @@ package com.krux.hyperion.datanode
 
 import com.krux.hyperion.action.SnsAlarm
 import com.krux.hyperion.aws.{AdpRef, AdpDataNode}
-import com.krux.hyperion.common.NamedPipelineObject
+import com.krux.hyperion.common.{NamedPipelineObject, PipelineObject}
 import com.krux.hyperion.precondition.Precondition
 
 
@@ -32,6 +32,6 @@ trait DataNode extends NamedPipelineObject {
 
   def serialize: AdpDataNode
 
-  def objects = preconditions ++ onFailAlarms ++ onSuccessAlarms
+  def objects: Iterable[PipelineObject] = preconditions ++ onFailAlarms ++ onSuccessAlarms
 
 }

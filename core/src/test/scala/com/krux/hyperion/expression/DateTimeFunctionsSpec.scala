@@ -1,8 +1,8 @@
 package com.krux.hyperion.expression
 
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class DateTimeFunctionsSpec extends WordSpec {
+class DateTimeFunctionsSpec extends AnyWordSpec {
 
   "Format" should {
     "return the correct function String" in {

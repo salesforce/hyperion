@@ -1,9 +1,9 @@
 package com.krux.hyperion.aws
 
 import org.json4s.JsonDSL._
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class AdpResourcesSpec extends WordSpec {
+class AdpResourcesSpec extends AnyWordSpec {
 
   "AdpEc2Resource" should {
     "converts to Json" in {

@@ -2,11 +2,11 @@ package com.krux.hyperion.resource
 
 import com.krux.hyperion.HyperionContext
 import com.typesafe.config.ConfigFactory
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 @deprecated("Use EmrCluster instead", "5.0.0")
-class SparkClusterSpec extends FlatSpec {
+class SparkClusterSpec extends AnyFlatSpec with Matchers {
   implicit val hc = new HyperionContext(ConfigFactory.load("example"))
 
   it should "handle old spark versions" in {

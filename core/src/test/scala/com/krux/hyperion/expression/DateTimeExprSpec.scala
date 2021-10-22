@@ -1,8 +1,8 @@
 package com.krux.hyperion.expression
 
-import org.scalatest.WordSpec
+import org.scalatest.wordspec.AnyWordSpec
 
-class DateTimeExprSpec extends WordSpec {
+class DateTimeExprSpec extends AnyWordSpec {
   "+" should {
     "add hour period to DateTime expression" in {
       val expectation = PlusMinutes(RunnableObject.ActualStartTime,120)
