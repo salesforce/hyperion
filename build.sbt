@@ -1,4 +1,4 @@
-val hyperionVersion = "7.0.0-RC1"
+val hyperionVersion = "7.0.0-RC3"
 val scala212Version = "2.12.12"
 val scala213Version = "2.13.3"
 val awsSdkVersion   = "1.11.+"
@@ -27,10 +27,11 @@ val stubbornArtifact        = "com.krux"               %% "stubborn"            
 // tool to simplify cross build https://docs.scala-lang.org/overviews/core/collections-migration-213.html
 val collectionCompact       = "org.scala-lang.modules" %% "scala-collection-compat"   % "2.2.0"
 
-scalaVersion in ThisBuild := scala212Version
+ThisBuild / scalaVersion := scala212Version
 
 lazy val publishSettings = Seq(
   sonatypeProfileName := "com.krux",
+  publishTo := sonatypePublishToBundle.value,
   publishMavenStyle := true,
   pomIncludeRepository := { _ => false },
   pgpSecretRing := file("secring.asc"),
@@ -46,13 +47,7 @@ lazy val publishSettings = Seq(
   developers := List(
     Developer(id = "realstraw", name = "Kexin Xie", email = "kexin.xie@salesforce.com", url = url("https://github.com/realstraw")),
     Developer(id = "sethyates", name = "Seth Yates", email = "syates@salesforce.com", url = url("https://github.com/sethyates"))
-  ),
-  publishTo := {
-    if (isSnapshot.value)
-      Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
-    else
-      Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
-  }
+  )
 )
 
 lazy val noPublishSettings = Seq(
@@ -77,21 +72,28 @@ lazy val commonSettings = Seq(
     "-Xfatal-warnings",
     "-language:existentials"
   ),
-  scalacOptions in (Compile, doc) ++= Seq(
-    "-sourcepath", (baseDirectory in ThisBuild).value.toString,
+  Compile / doc / scalacOptions ++= Seq(
+    "-sourcepath", (ThisBuild / baseDirectory).value.toString,
     "-doc-source-url", s"https://github.com/krux/hyperion/tree/master/€{FILE_PATH}.scala"
   ),
+  headerLicense := Some(HeaderLicense.Custom(
+  """|Copyright (c) 2021, salesforce.com, inc.
+     |All rights reserved.
+     |SPDX-License-Identifier: BSD-3-Clause
+     |For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/BSD-3-Clause
+     |""".stripMargin
+  )),
+  assembly / test := {}, // skip test during assembly
   libraryDependencies ++= Seq(scalatestArtifact, scalacheckArtifact, collectionCompact),
-  test in assembly := {} // skip test during assembly
 )
 
 // for modules that are not intended to be published as libraries but executable jars
 lazy val artifactSettings = commonSettings ++ Seq(
-  artifact in (Compile, assembly) := {
-    val art = (artifact in (Compile, assembly)).value
+  Compile / assembly / artifact := {
+    val art = (Compile / assembly / artifact).value
     art.withClassifier(Some("assembly"))
   },
-  addArtifact(artifact in (Compile, assembly), assembly)
+  addArtifact(Compile / assembly / artifact, assembly)
 )
 
 lazy val root = (project in file(".")).
@@ -102,7 +104,7 @@ lazy val root = (project in file(".")).
   enablePlugins(GhpagesPlugin).
   settings(
     name := "hyperion",
-    siteSubdirName in ScalaUnidoc := "latest/api",
+    ScalaUnidoc / siteSubdirName := "latest/api",
     addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
     git.remoteRepo := "git@github.com:krux/hyperion.git"
   ).

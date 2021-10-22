@@ -1,13 +1,16 @@
 # Krux Hyperion
 
-[![Gitter](https://badges.gitter.im/krux/hyperion.svg)](https://gitter.im/krux/hyperion)
-[![Build Status](https://secure.travis-ci.org/krux/hyperion.png)](http://travis-ci.org/krux/hyperion)
+[![Gitter](https://badges.gitter.im/salesforce/hyperion.svg)](https://gitter.im/salesforce/hyperion)
+[![CircleCI](https://circleci.com/gh/salesforce/hyperion.svg?style=svg)](https://circleci.com/gh/salesforce/hyperion)
 
 > In Starcraft, the Hyperion is a Behemoth-class battlecruiser. During the
 > Second Great War, Raynor's Raiders made strategic decisions on the
 > Hyperion's bridge -- the battlecruiser's command center.
 
 Library and abstractions of AWS DataPipeline.
+
+This project is migrated from https://github.com/krux/hyperion. Please refer to
+that repo for prior commit history.
 
 ## Problem Statement
 
@@ -28,7 +31,7 @@ Add Krux Hyperion as a dependency in your `build.sbt` or `Build.scala` as approp
 ```scala
 libraryDependencies ++= Seq(
   // Other dependencies ...
-  "com.krux" %% "hyperion" % "5.5.0"
+  "com.krux" %% "hyperion" % "7.0.0"
 )
 ```
 
@@ -36,8 +39,8 @@ libraryDependencies ++= Seq(
 
 This project is compiled, tested, and published for the following Scala versions:
 
-1. 2.11.12
-2. 2.12.11
+1. 2.12
+2. 2.13
 
 ## Usage
 
@@ -103,10 +106,6 @@ $ ./hyperion activate df-1234567890
 ## Scaladoc API
 
 The Scaladoc API for this project can be found [here](http://krux.github.io/hyperion/latest/api).
-
-## License
-
-Krux Hyperion is licensed under [APL 2.0](LICENSE).
 
 ## Note
 
