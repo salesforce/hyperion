@@ -1,17 +1,17 @@
-val hyperionVersion = "7.0.0-RC5"
-val scala212Version = "2.12.12"
-val scala213Version = "2.13.3"
+val hyperionVersion = "7.0.0-RC6"
+val scala212Version = "2.12.15"
+val scala213Version = "2.13.8"
 val awsSdkVersion   = "1.11.+"
-val mailVersion     = "1.6.1"
+val mailVersion     = "1.6.7"
 val slf4jVersion    = "1.7.+"
 
-val jodaConvertArtifact     = "org.joda"               %  "joda-convert"              % "2.0"    % "provided"
+val jodaConvertArtifact     = "org.joda"               %  "joda-convert"              % "2.2.2" % Provided
 val json4sJacksonArtifact   = "org.json4s"             %% "json4s-jackson"            % "3.6.10"
-val scoptArtifact           = "com.github.scopt"       %% "scopt"                     % "4.0.0-RC2"
-val jschArtifact            = "com.jcraft"             %  "jsch"                      % "0.1.54"
+val scoptArtifact           = "com.github.scopt"       %% "scopt"                     % "4.0.1"
+val jschArtifact            = "com.jcraft"             %  "jsch"                      % "0.1.55"
 val configArtifact          = "com.typesafe"           %  "config"                    % "1.4.1"
-val commonsIoArtifact       = "commons-io"             %  "commons-io"                % "2.6"
-val commonsCompressArtifact = "org.apache.commons"     %  "commons-compress"          % "1.19"
+val commonsIoArtifact       = "commons-io"             %  "commons-io"                % "2.11.0"
+val commonsCompressArtifact = "org.apache.commons"     %  "commons-compress"          % "1.21"
 val awsDatapipelineArtifact = "com.amazonaws"          %  "aws-java-sdk-datapipeline" % awsSdkVersion
 val awsStsArtifact          = "com.amazonaws"          %  "aws-java-sdk-sts"          % awsSdkVersion
 val awsS3Artifact           = "com.amazonaws"          %  "aws-java-sdk-s3"           % awsSdkVersion
@@ -21,11 +21,11 @@ val mailArtifact            = "com.sun.mail"           %  "mailapi"             
 val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % mailVersion
 val slf4jApiArtifact        = "org.slf4j"              %  "slf4j-api"                 % slf4jVersion
 val slf4jSimpleArtifact     = "org.slf4j"              %  "slf4j-simple"              % slf4jVersion
-val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "3.2.2"  % Test
-val scalacheckArtifact      = "org.scalacheck"         %% "scalacheck"                % "1.14.3" % Test
-val stubbornArtifact        = "com.krux"               %% "stubborn"                  % "2.0.0"
+val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "3.2.10"  % Test
+val scalacheckArtifact      = "org.scalacheck"         %% "scalacheck"                % "1.15.4" % Test
+val stubbornArtifact        = "com.krux"               %% "stubborn"                  % "3.0.3"
 // tool to simplify cross build https://docs.scala-lang.org/overviews/core/collections-migration-213.html
-val collectionCompact       = "org.scala-lang.modules" %% "scala-collection-compat"   % "2.2.0"
+val collectionCompact       = "org.scala-lang.modules" %% "scala-collection-compat"   % "2.6.0"
 
 ThisBuild / scalaVersion := scala212Version
 
@@ -105,7 +105,7 @@ lazy val root = (project in file(".")).
   settings(
     name := "hyperion",
     ScalaUnidoc / siteSubdirName := "latest/api",
-    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+    addMappingsToSiteDir(ScalaUnidoc / packageDoc / mappings, ScalaUnidoc / siteSubdirName),
     git.remoteRepo := "git@github.com:krux/hyperion.git"
   ).
   dependsOn(
