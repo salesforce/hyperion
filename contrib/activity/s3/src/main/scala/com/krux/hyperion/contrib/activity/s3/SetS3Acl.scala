@@ -31,6 +31,7 @@ object SetS3Acl {
     val (bucket: String, key: String) = ref.stripPrefix(S3Protocol).split("/", 2) match {
       case Array(b, k) => (b, k)
       case Array(b) => (b, "")
+      case _ => throw new MatchError("invalid s3 format")
     }
   }
 

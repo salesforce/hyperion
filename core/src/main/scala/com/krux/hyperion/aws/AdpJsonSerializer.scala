@@ -43,6 +43,8 @@ object AdpJsonSerializer {
           }
         }
         o.fields.foldLeft((idKey -> o.id) ~ (nameKey -> o.name))(jsonAppend)
+      case _ =>
+        throw new MatchError("invalid json format")
     }
   }
 
