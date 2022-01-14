@@ -84,6 +84,13 @@ lazy val commonSettings = Seq(
      |""".stripMargin
   )),
   assembly / test := {}, // skip test during assembly
+  assembly / assemblyMergeStrategy := {
+    case PathList(ps @ _*) if ps.last == "module-info.class" =>
+      MergeStrategy.first
+    case x =>
+      val oldStrategy = (assembly / assemblyMergeStrategy).value
+      oldStrategy(x)
+  },
   libraryDependencies ++= Seq(scalatestArtifact, scalacheckArtifact, collectionCompact),
 )
 
