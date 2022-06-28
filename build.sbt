@@ -1,15 +1,15 @@
-val hyperionVersion = "7.0.0-RC7"
-val scala212Version = "2.12.15"
+val hyperionVersion = "7.0.0-RC8"
+val scala212Version = "2.12.16"
 val scala213Version = "2.13.8"
 val awsSdkVersion   = "1.11.+"
 val mailVersion     = "1.6.7"
 val slf4jVersion    = "1.7.+"
 
 val jodaConvertArtifact     = "org.joda"               %  "joda-convert"              % "2.2.2" % Provided
-val json4sJacksonArtifact   = "org.json4s"             %% "json4s-jackson"            % "3.6.10"
+val json4sArtifact          = "org.json4s"             %% "json4s-native"             % "4.0.5"
 val scoptArtifact           = "com.github.scopt"       %% "scopt"                     % "4.0.1"
 val jschArtifact            = "com.jcraft"             %  "jsch"                      % "0.1.55"
-val configArtifact          = "com.typesafe"           %  "config"                    % "1.4.1"
+val configArtifact          = "com.typesafe"           %  "config"                    % "1.4.2"
 val commonsIoArtifact       = "commons-io"             %  "commons-io"                % "2.11.0"
 val commonsCompressArtifact = "org.apache.commons"     %  "commons-compress"          % "1.21"
 val awsDatapipelineArtifact = "com.amazonaws"          %  "aws-java-sdk-datapipeline" % awsSdkVersion
@@ -21,11 +21,11 @@ val mailArtifact            = "com.sun.mail"           %  "mailapi"             
 val smtpArtifact            = "com.sun.mail"           %  "smtp"                      % mailVersion
 val slf4jApiArtifact        = "org.slf4j"              %  "slf4j-api"                 % slf4jVersion
 val slf4jSimpleArtifact     = "org.slf4j"              %  "slf4j-simple"              % slf4jVersion
-val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "3.2.10"  % Test
-val scalacheckArtifact      = "org.scalacheck"         %% "scalacheck"                % "1.15.4" % Test
-val stubbornArtifact        = "com.krux"               %% "stubborn"                  % "3.0.3"
+val scalatestArtifact       = "org.scalatest"          %% "scalatest"                 % "3.2.12"  % Test
+val scalacheckArtifact      = "org.scalacheck"         %% "scalacheck"                % "1.16.0" % Test
+val stubbornArtifact        = "com.krux"               %% "stubborn"                  % "3.0.4"
 // tool to simplify cross build https://docs.scala-lang.org/overviews/core/collections-migration-213.html
-val collectionCompact       = "org.scala-lang.modules" %% "scala-collection-compat"   % "2.6.0"
+val collectionCompact       = "org.scala-lang.modules" %% "scala-collection-compat"   % "2.7.0"
 
 ThisBuild / scalaVersion := scala212Version
 
@@ -141,7 +141,7 @@ lazy val core = (project in file("core")).
     libraryDependencies ++= Seq(
       awsDatapipelineArtifact,
       awsStsArtifact,
-      json4sJacksonArtifact,
+      json4sArtifact,
       scoptArtifact,
       configArtifact,
       slf4jApiArtifact,
@@ -210,7 +210,7 @@ lazy val contribActivityNotification = (project in file("contrib/activity/notifi
     name := "hyperion-notification-activity",
     libraryDependencies ++= Seq(
       scoptArtifact,
-      json4sJacksonArtifact,
+      json4sArtifact,
       awsSnsArtifact,
       awsSqsArtifact,
       smtpArtifact
