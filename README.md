@@ -1,3 +1,13 @@
+Note: This project is no longer being maintained, as AWS is no longer investing
+in AWS Data Pipeline. If you are seeking data pipeline solutions, consider
+exploring the [Orchard](https://github.com/salesforce/orchard) project, along
+with its accompanying Scala client,
+[Spade](https://github.com/salesforce/spade), and the scheduler,
+[Sprinkler](https://github.com/salesforce/sprinkler).
+
+---
+
+
 # Krux Hyperion
 
 [![Gitter](https://badges.gitter.im/salesforce/hyperion.svg)](https://gitter.im/salesforce/hyperion)
